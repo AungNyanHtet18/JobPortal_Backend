@@ -1,0 +1,23 @@
+name: JobProtal
+
+services:
+  db: 
+    image: postgres:17.6-alpine
+    container_name: job-db
+    environment:
+      - POSTGRES_DB=jobdb
+    env_file:
+      - .env.postgres
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - job-net
+    ports:
+      - 5432:5432
+
+networks:
+      job-net:
+
+volumes:
+      dbdata:
+    
