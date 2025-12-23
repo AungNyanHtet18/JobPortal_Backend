@@ -1,6 +1,5 @@
 package com.dev.anh.job.model.entity;
 
-import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,20 +10,24 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Member {
+public class Company {
 
-	@Id
-	private Long  id;
+	@Id	
+	private Long id;
 	
-	@OneToOne(optional = false)
+	@OneToOne
 	@MapsId
 	@JoinColumn(name = "id")
 	private Account account;
 	
 	@Column(nullable = false)
-	private String username;
+	private String companyName;
+	
+	@Column(nullable = false)
+	private String location;
 	
 	private String phone;
-	private LocalDate birth;
-	private String address;
+	
+
+
 }

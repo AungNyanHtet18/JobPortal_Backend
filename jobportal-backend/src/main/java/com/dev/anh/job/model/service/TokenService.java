@@ -9,15 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.input.RefreshForm;
 import com.dev.anh.job.model.input.SignInForm;
 import com.dev.anh.job.model.input.SignUpForm;
 import com.dev.anh.job.model.output.TokenResult;
 import com.dev.anh.job.model.repo.AccountRepo;
-import com.dev.anh.job.model.repo.MemberRepo;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class TokenService {
 	
 	private final AccountRepo accountRepo;
-	private final MemberRepo memberRepo;
 	private final AuthenticationManager authManager;	
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
@@ -34,8 +29,7 @@ public class TokenService {
 	@Transactional
 	public TokenResult signUp(SignUpForm form) {
 		var account = accountRepo.save(form.entity(passwordEncoder));
-		memberRepo.save(form.entity(account));
-		
+				
 		var authentication = UsernamePasswordAuthenticationToken.authenticated(
 							 account.getEmail(), 
 							 null, 
@@ -44,22 +38,17 @@ public class TokenService {
 		return getTokenResult(authentication);
 	}
 
-
 	public TokenResult signIn(SignInForm form) {
 	   var authentication = authManager.authenticate(form.authentication());
 		
 	   return getTokenResult(authentication);
 	}
 
-	
-	
 	public TokenResult refresh(RefreshForm form) {
 		var authentication = jwtTokenProvider.parseRefreshToken(form.getToken());
 		
 		return getTokenResult(authentication);
 	}
-	
-	
 	
 	private TokenResult getTokenResult(Authentication authentication) {
 		
@@ -67,17 +56,8 @@ public class TokenService {
 								 .orElseThrow(() -> new UsernameNotFoundException(authentication.getName()));
 		
 		
-		
-		
 		return TokenResult.from(account,
 						   jwtTokenProvider.generateAccessToken(authentication),
 						   jwtTokenProvider.generateRefreshToken(authentication));
 	}
-
-
-
-	
-	
-	
-	
 }

@@ -10,14 +10,12 @@ public record TokenResult(
 	String accessToken,
 	String refreshToken){
 
-	
-	public static TokenResult from(Account account, String accessToken, String refreshToken) {
+	public static TokenResult from(Account account, String accessToken, String refreshToken) {		
 		return new TokenResult(
-					, 
-					account.getEmail(), 
-					account.getRole(), 
-					accessToken, 
-					refreshToken);
+			   account.getUsername(), 
+			   account.getEmail(), 
+			   account.getRole(), 
+			   accessToken, 
+			   refreshToken);
 	}
-
 }
