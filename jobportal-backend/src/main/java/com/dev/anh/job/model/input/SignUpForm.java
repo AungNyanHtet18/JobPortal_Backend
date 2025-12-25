@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.dev.anh.job.model.consts.Role;
 import com.dev.anh.job.model.entity.Account;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -18,6 +19,7 @@ public class SignUpForm {
 	private  String email;
 	@NotBlank(message = "Please enter password.")
 	private String password;
+	@NotNull(message = "Please select role to create account")
 	private Role role;
 	
 	public Account entity(PasswordEncoder passwordEncoder) {

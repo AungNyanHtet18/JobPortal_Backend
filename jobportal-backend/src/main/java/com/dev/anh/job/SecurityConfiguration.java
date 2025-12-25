@@ -37,7 +37,7 @@ public class SecurityConfiguration {
 			 request.requestMatchers("/token/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
-			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant,CompanyAccount");
+			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.anyRequest().authenticated();
 		 });
 

@@ -20,17 +20,17 @@ public class TokenController {
 	
 	private final TokenService tokenService;
 	
-	@PostMapping("signUp")
+	@PostMapping("signup")
 	TokenResult signUp(@RequestBody @Validated SignUpForm form ) {
 		return tokenService.signUp(form);
 	}
 	
-	
-	@PostMapping("signIn")
+	@PostMapping("signin")
 	TokenResult signIn(@RequestBody @Validated SignInForm form ) {
 		 return tokenService.signIn(form);
 	}
 	
+	@PostMapping("refresh")
 	TokenResult refresh(@RequestBody @Validated RefreshForm form) {
 		 return tokenService.refresh(form);
 	}

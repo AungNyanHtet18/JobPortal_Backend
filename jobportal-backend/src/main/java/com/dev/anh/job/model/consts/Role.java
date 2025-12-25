@@ -1,5 +1,7 @@
 package com.dev.anh.job.model.consts;
 
 public enum Role {
-	 Admin,Applicant,CompanyAccount
+	 Admin,
+	 Applicant,
+	 CompanyAccount
 }
