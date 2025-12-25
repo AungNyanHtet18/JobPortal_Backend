@@ -1,8 +1,10 @@
 package com.dev.anh.job.utils.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,8 +22,21 @@ public class ExceptionHandlers {
 			  .toList();
 	}
 	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.GONE)
+	List<String> handle(TokenExpirationException e) {
+		return List.of(e.getMessage());
+	}
 	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	List<String> handle(AuthenticationException e) {
+		 return List.of(e.getMessage());
+	}
 	
-	
-	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.FORBIDDEN)
+	List<String> handle(AccessDeniedException e) {
+		 return List.of(e.getMessage());
+	}	
 }

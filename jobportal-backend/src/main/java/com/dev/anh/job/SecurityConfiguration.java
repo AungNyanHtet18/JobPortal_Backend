@@ -20,6 +20,7 @@ import com.dev.anh.job.model.consts.Role;
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.service.JwtTokenFilter;
+import com.dev.anh.job.utils.exception.SecurityExceptionHandler;
 
 
 @Configuration
@@ -42,7 +43,13 @@ public class SecurityConfiguration {
 		 });
 
 		 http.addFilterAfter(jwtTokenFilter(), ExceptionTranslationFilter.class);
-		  
+		 
+		 http.exceptionHandling(exception -> { 
+			exception.authenticationEntryPoint(securityExceptionHandler());
+			exception.accessDeniedHandler(securityExceptionHandler()); 
+		 });
+		 
+		 
 		 return http.build();
 	}
 	
@@ -80,10 +87,8 @@ public class SecurityConfiguration {
 		};
 	}
 	
-	
-	
-	
-	
-	
-	
+	@Bean
+	SecurityExceptionHandler securityExceptionHandler() {
+		 return new SecurityExceptionHandler();
+	}
 }
