@@ -14,6 +14,8 @@ import com.dev.anh.job.model.input.SignInForm;
 import com.dev.anh.job.model.input.SignUpForm;
 import com.dev.anh.job.model.output.TokenResult;
 import com.dev.anh.job.model.repo.AccountRepo;
+import com.dev.anh.job.utils.exception.BusinessException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,6 +30,9 @@ public class TokenService {
 	
 	@Transactional
 	public TokenResult signUp(SignUpForm form) {
+		
+	   checkingEmail(form.getEmail());
+		
 		var account = accountRepo.save(form.entity(passwordEncoder));
 				
 		var authentication = UsernamePasswordAuthenticationToken.authenticated(
@@ -60,4 +65,13 @@ public class TokenService {
 						   jwtTokenProvider.generateAccessToken(authentication),
 						   jwtTokenProvider.generateRefreshToken(authentication));
 	}
+	
+	
+	private void checkingEmail(String email) {
+		accountRepo.findOneByEmail(email)
+			.ifPresent((a) -> { 
+				throw new BusinessException("%s account exisited.Choose another gmail".formatted(a.getEmail()));
+			});
+	}
+	
 }

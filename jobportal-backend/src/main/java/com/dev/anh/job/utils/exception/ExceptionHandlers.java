@@ -16,6 +16,12 @@ public class ExceptionHandlers {
 
 	@ExceptionHandler
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	List<String> handle(BusinessException e) {
+		 return List.of(e.getMessage());
+	}
+	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	List<String> handle(MethodArgumentNotValidException e) {
 	  return e.getFieldErrors().stream()
 			  .map(a -> a.getDefaultMessage())
