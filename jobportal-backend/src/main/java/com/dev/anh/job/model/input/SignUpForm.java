@@ -24,7 +24,7 @@ public class SignUpForm {
 	
 	public Account entity(PasswordEncoder passwordEncoder) {
 		var account = new Account();
-		account.setUsername(name);
+		account.setName(name);
 		account.setEmail(email);
 		account.setPassword(passwordEncoder.encode(password));
 		account.setActive(true);

@@ -12,7 +12,7 @@ public record TokenResult(
 
 	public static TokenResult from(Account account, String accessToken, String refreshToken) {		
 		return new TokenResult(
-			   account.getUsername(), 
+			   account.getName(), 
 			   account.getEmail(), 
 			   account.getRole(), 
 			   accessToken, 

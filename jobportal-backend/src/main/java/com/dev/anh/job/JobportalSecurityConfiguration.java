@@ -24,10 +24,10 @@ import com.dev.anh.job.utils.exception.SecurityExceptionHandler;
 
 
 @Configuration
-public class SecurityConfiguration {
+public class JobportalSecurityConfiguration {
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) {
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		 http.csrf(csrf -> csrf.disable());
 		 http.cors(withDefaults());
 		 http.sessionManagement(session -> {
@@ -65,7 +65,7 @@ public class SecurityConfiguration {
 	
 	
 	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 	
@@ -75,7 +75,7 @@ public class SecurityConfiguration {
 		return args -> {
 		   if(repo.count() == 0L) {
 			    var admin = new Account();
-			    admin.setUsername("Admin");
+			    admin.setName("Admin");
 			    admin.setEmail("admin@gmail.com");
 			    admin.setPassword(passwordEncoder().encode("admin"));
 			    admin.setRole(Role.Admin);
