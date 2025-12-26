@@ -11,14 +11,4 @@ public class JobportalBackendApplication {
 	 	
 	}
 	
-	
-	public void hello() {
-		greeting(); 
-	}
-	
-	public static void greeting() {
-		
-	}
-
-
 }
