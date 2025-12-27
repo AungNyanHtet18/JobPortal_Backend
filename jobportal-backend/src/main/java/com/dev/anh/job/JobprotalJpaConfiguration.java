@@ -8,8 +8,4 @@ import com.dev.anh.job.model.BaseRepositoryImpl;
 @Configuration
 @EnableJpaRepositories(repositoryBaseClass =  BaseRepositoryImpl.class)
 public class JobprotalJpaConfiguration {
-
-	
-	
-	
 }

@@ -15,11 +15,12 @@ import lombok.Data;
 public class Applicant {
 
 	@Id
+	@Column(name = "applicant_id")
 	private Long id;
 	
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "applicant_id")
 	private Account account;
 	
 	@Column(nullable = false)
