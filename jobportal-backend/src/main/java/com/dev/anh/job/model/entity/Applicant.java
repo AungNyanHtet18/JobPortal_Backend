@@ -23,20 +23,23 @@ public class Applicant {
 	@JoinColumn(name = "applicant_id")
 	private Account account;
 
-	
 	@Column(nullable = false)
 	private Gender gender;
-	
-	private String professionalSummary;
-	
+		
 	private String highestEducationalAttainment;
 	
 	private String resumeUrl;
 	
+	@Column(nullable = false)
 	private String skills;
 	
 	private String currentJob;
 	
+	private String professionalSummary;
+	
 	@Column(nullable = false)
-	private String contactDetails;
+	private String contactDetail;
+	
+	@Column(nullable = false)
+	private String address;
 }

@@ -31,8 +31,4 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint, Acces
 		
 		handlerExceptionResolver.resolveException(request, response, null, authException);
 	}
-
-	
-	
-	
 }
