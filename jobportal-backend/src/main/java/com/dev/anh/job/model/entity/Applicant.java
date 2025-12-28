@@ -22,11 +22,7 @@ public class Applicant {
 	@MapsId
 	@JoinColumn(name = "applicant_id")
 	private Account account;
-	
-	@Column(nullable = false)
-	private String applicantName;
-	
-	private String contactDetails;
+
 	
 	@Column(nullable = false)
 	private Gender gender;
@@ -39,4 +35,8 @@ public class Applicant {
 	
 	private String skills;
 	
+	private String currentJob;
+	
+	@Column(nullable = false)
+	private String contactDetails;
 }

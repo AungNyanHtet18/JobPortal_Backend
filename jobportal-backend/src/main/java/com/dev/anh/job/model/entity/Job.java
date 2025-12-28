@@ -1,5 +1,8 @@
 package com.dev.anh.job.model.entity;
 
+import com.dev.anh.job.model.consts.JobLevel;
+import com.dev.anh.job.model.consts.JobType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +28,11 @@ public class Job {
 	
 	@Column(nullable = false)
 	private Double salary;
+	
+	private JobLevel jobLevel;
+	
+	@Column(nullable =  false)
+	private JobType jobType;
 	
 	@ManyToOne
 	@JoinColumn(name = "company_id", nullable = false)

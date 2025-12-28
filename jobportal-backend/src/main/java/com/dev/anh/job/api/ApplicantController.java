@@ -15,4 +15,8 @@ public class ApplicantController {
 	String hello() {
 		 return "hello applicant";
 	}
+	
+	
+	
+	
 }
