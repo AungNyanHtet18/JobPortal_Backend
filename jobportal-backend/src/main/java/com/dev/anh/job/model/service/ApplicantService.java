@@ -24,16 +24,38 @@ public class ApplicantService {
 	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form) {
 		
 		var account = accountRepo.findOneByEmail(username)
-						.orElseThrow(() -> new BusinessException("Account that using %s is not found".formatted(username)));
+						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
 		 applicantRepo.save(form.entity(account));
 		
 		return  new ModificationResult<Long>(account.getId());
+	}
+
+	@Transactional
+	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
+	public ModificationResult<Long> updateApplicantInfo(Long id, ApplicantForm form) {
+		
+		var account = accountRepo.findById(id)
+						 .orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
+		
+		
+		var applicant = applicantRepo.findById(id)
+							.orElseThrow(() -> new BusinessException("Applicant with %s id is nod found".formatted(id)));
+		
+		applicant.setAccount(account);
+		applicant.setGender(form.gender());
+		applicant.setHighestEducationalAttainment(form.highestEducationalAttainment());
+		applicant.setResumeUrl(form.resumeUrl());
+		applicant.setSkills(form.skills());
+		applicant.setCurrentJob(form.currentJob());
+		applicant.setProfessionalSummary(form.professionalSummary());
+		applicant.setContactDetail(form.contactDetail());
+		applicant.setAddress(form.address());
+		
+	    applicantRepo.save(applicant);
+
+		return new ModificationResult<Long>(id);
 	} 
-	
-	
-	
-	
-	
+
 	
 }
