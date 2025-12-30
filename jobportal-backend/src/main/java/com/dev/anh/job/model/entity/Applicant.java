@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-public class Applicant {
+@EqualsAndHashCode(callSuper = false)
+public class Applicant extends AbstractEntity{
 
 	@Id
 	@Column(name = "applicant_id")

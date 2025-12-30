@@ -22,7 +22,6 @@ import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.service.JwtTokenFilter;
 import com.dev.anh.job.utils.exception.SecurityExceptionHandler;
 
-
 @Configuration
 public class JobportalSecurityConfiguration {
 

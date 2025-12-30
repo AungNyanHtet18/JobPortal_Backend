@@ -2,6 +2,7 @@ package com.dev.anh.job.model.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -9,11 +10,11 @@ import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ApplicantService {
 
 	private final AccountRepo accountRepo;

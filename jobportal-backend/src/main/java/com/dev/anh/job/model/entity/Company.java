@@ -1,8 +1,6 @@
 package com.dev.anh.job.model.entity;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,10 +9,12 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-public class Company {
+@EqualsAndHashCode(callSuper = false)
+public class Company extends AbstractEntity{
 
 	@Id	
 	@Column(name = "company_id")
@@ -38,11 +38,7 @@ public class Company {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 	
-	private LocalDateTime createAt;
-	private LocalDateTime updateAt;
-	
 	@OneToMany(mappedBy = "company")
 	private List<Job> jobs;
-	
-	
+
 }
