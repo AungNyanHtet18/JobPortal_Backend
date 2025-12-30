@@ -3,6 +3,7 @@ package com.dev.anh.job.model.service;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -10,6 +11,7 @@ import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
 
+import ch.qos.logback.core.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,6 +29,12 @@ public class ApplicantService {
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
+		
+		 if(StringUtils.hasLength(form.applicantName())) {
+			  account.setName(form.applicantName());
+			  accountRepo.saveAndFlush(account);
+		 }
+		
 		 applicantRepo.save(form.entity(account));
 		
 		return  new ModificationResult<Long>(account.getId());
@@ -42,6 +50,11 @@ public class ApplicantService {
 		
 		var applicant = applicantRepo.findById(id)
 							.orElseThrow(() -> new BusinessException("Applicant with %s id is nod found".formatted(id)));
+		
+		 if(StringUtils.hasLength(form.applicantName())) {
+			  account.setName(form.applicantName());
+			  accountRepo.saveAndFlush(account);
+		 }
 		
 		applicant.setAccount(account);
 		applicant.setGender(form.gender());

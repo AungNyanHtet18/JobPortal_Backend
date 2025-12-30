@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ApplicantForm(
 	
+	 String applicantName,
 	 @NotNull(message = "Please select gender")
 	 Gender gender,
 	 String highestEducationalAttainment,

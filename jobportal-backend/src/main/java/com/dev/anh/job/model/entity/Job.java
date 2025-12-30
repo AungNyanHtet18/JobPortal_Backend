@@ -34,7 +34,6 @@ public class Job {
 	@Column(nullable =  false)
 	private JobType jobType;
 	
-	@ManyToOne
-	@JoinColumn(name = "company_id", nullable = false)
+	@ManyToOne()	
 	private Company company;
 }

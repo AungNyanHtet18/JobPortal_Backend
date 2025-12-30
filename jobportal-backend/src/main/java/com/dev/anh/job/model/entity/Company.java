@@ -26,9 +26,6 @@ public class Company extends AbstractEntity{
 	private Account account;
 	
 	@Column(nullable = false)
-	private String companyName;
-	
-	@Column(nullable = false)
 	private String location;
 	
 	private String phone;
