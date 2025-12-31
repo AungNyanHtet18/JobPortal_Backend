@@ -10,8 +10,6 @@ import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
-
-import ch.qos.logback.core.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service

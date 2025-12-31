@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
@@ -18,7 +17,7 @@ public class Job {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	
 	@Column(nullable = false)
 	private String positionName;
@@ -29,11 +28,12 @@ public class Job {
 	@Column(nullable = false)
 	private Double salary;
 	
+	@Column(nullable =  false)
 	private JobLevel jobLevel;
 	
 	@Column(nullable =  false)
 	private JobType jobType;
 	
-	@ManyToOne()	
+	@ManyToOne(optional = false)	
 	private Company company;
 }
