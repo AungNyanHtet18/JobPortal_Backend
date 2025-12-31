@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.anh.job.model.input.JobForm;
+import com.dev.anh.job.model.input.JobSearch;
+import com.dev.anh.job.model.output.JobListItem;
 import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.service.JobService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +28,11 @@ public class JobController {
 	private final JobService service;
 	
 	@GetMapping
-	String hello() {
-	  return "hello";
+	PageResult<JobListItem> search(JobSearch jobSearch,
+					@RequestParam(required = false,defaultValue = "0")int page,
+					@RequestParam(required = false,defaultValue = "10")int size) {
+		
+		return service.searchJob(jobSearch, page, size);
 	}
 	
 	@PostMapping

@@ -10,10 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-public class Job {
+@EqualsAndHashCode(callSuper = false)
+public class Job extends AbstractEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +35,8 @@ public class Job {
 	
 	@Column(nullable =  false)
 	private JobType jobType;
+	
+	private boolean deleted;
 	
 	@ManyToOne(optional = false)	
 	private Company company;

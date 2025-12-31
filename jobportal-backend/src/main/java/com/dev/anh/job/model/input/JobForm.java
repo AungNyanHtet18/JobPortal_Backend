@@ -19,7 +19,8 @@ public record JobForm(
  	@NotNull(message = "Please enter job level.")
  	JobLevel jobLevel,
  	@NotNull(message = "Please enter job type.")
- 	JobType jobType) {
+ 	JobType jobType,
+ 	boolean deleted) {
 
 	public Job entity(Company company) {
 		var job = new Job();
@@ -29,6 +30,7 @@ public record JobForm(
 		job.setJobLevel(jobLevel);
 		job.setJobType(jobType);
 		job.setCompany(company);
+		
 		return job;
 	}
 
