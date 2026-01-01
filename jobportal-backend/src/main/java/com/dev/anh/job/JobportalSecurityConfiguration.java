@@ -38,6 +38,7 @@ public class JobportalSecurityConfiguration {
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
 			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant", "CompanyAccount");
+			 request.requestMatchers("/job/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.anyRequest().authenticated();
 		 });
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.anh.job.model.input.ApplicantForm;
+import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.service.ApplicantService;
 
@@ -23,9 +24,9 @@ public class ApplicantController {
 
 	private final ApplicantService service;
 	
-	@GetMapping
-	String hello() {
-		 return "hello applicant";
+	@GetMapping("{id}")
+	ApplicantDetails findById(@PathVariable Long id) {
+		return service.findById(id);
 	}
 	
 	@PostMapping
@@ -41,4 +42,5 @@ public class ApplicantController {
 		return service.updateApplicantInfo(id, form);
 	}
 	
+
 }

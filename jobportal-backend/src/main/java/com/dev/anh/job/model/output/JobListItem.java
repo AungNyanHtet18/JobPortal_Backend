@@ -1,8 +1,6 @@
 package com.dev.anh.job.model.output;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 import com.dev.anh.job.model.entity.Account_;
@@ -10,7 +8,6 @@ import com.dev.anh.job.model.entity.Company;
 import com.dev.anh.job.model.entity.Company_;
 import com.dev.anh.job.model.entity.Job;
 import com.dev.anh.job.model.entity.Job_;
-
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;

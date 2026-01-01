@@ -10,6 +10,7 @@ import com.dev.anh.job.model.entity.Job;
 import com.dev.anh.job.model.entity.Job_;
 import com.dev.anh.job.model.input.JobForm;
 import com.dev.anh.job.model.input.JobSearch;
+import com.dev.anh.job.model.output.JobDetails;
 import com.dev.anh.job.model.output.JobListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
@@ -89,5 +90,11 @@ public class JobService {
 		jobRepo.save(job);
 		
 		return new ModificationResult<Long>(id);
+	}
+	
+	
+	public JobDetails findById(Long id) {
+		return jobRepo.findById(id).map(a -> JobDetails.from(a))
+					.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
 	}
 }

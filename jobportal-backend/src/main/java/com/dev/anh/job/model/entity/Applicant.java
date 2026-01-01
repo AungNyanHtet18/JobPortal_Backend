@@ -27,21 +27,26 @@ public class Applicant extends AbstractEntity{
 
 	@Column(nullable = false)
 	private Gender gender;
+			
+	@Column(nullable = false)
+	private String skills;
 		
 	private String highestEducationalAttainment;
 	
-	private String resumeUrl;
+	private String professionalSummary;
 	
-	@Column(nullable = false)
-	private String skills;
+	private String resumeUrl;
+	private String coverLetter;
+	
+	private String profilePhoto;
 	
 	private String currentJob;
-	
-	private String professionalSummary;
 	
 	@Column(nullable = false)
 	private String contactDetail;
 	
 	@Column(nullable = false)
 	private String address;
+	
+	
 }

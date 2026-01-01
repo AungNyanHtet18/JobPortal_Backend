@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.anh.job.model.input.JobForm;
 import com.dev.anh.job.model.input.JobSearch;
+import com.dev.anh.job.model.output.JobDetails;
 import com.dev.anh.job.model.output.JobListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
@@ -48,4 +49,9 @@ public class JobController {
 		return service.updateJobInfo(id, form);
 	}
 	
+	@GetMapping("{id}")
+	JobDetails findById(@PathVariable Long id) {
+		return service.findById(id);
+	}
+
 }

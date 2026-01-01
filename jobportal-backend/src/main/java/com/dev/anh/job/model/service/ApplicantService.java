@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.dev.anh.job.model.input.ApplicantForm;
+import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
@@ -67,6 +68,10 @@ public class ApplicantService {
 	    applicantRepo.save(applicant);
 
 		return new ModificationResult<Long>(id);
+	}
+
+	public ApplicantDetails findById(Long id) {
+		return applicantRepo.findById(id).map(a -> ApplicantDetails.from(a)).orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
 	} 
 
 	
