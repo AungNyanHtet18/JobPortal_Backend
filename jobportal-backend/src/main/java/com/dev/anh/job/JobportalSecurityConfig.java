@@ -23,7 +23,7 @@ import com.dev.anh.job.model.service.JwtTokenFilter;
 import com.dev.anh.job.utils.exception.SecurityExceptionHandler;
 
 @Configuration
-public class JobportalSecurityConfiguration {
+public class JobportalSecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{

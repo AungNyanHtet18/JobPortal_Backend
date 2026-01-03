@@ -1,9 +1,15 @@
 package com.dev.anh.job.model.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
@@ -36,7 +42,7 @@ public class ApplicantService {
 		
 			 //Convert Skill List to String
 			 String skills = String.join(",", form.skills());
-			 
+			  
 			 applicantRepo.save(form.entity(account, skills));
 			return  new ModificationResult<Long>(account.getId());
 		
@@ -79,6 +85,48 @@ public class ApplicantService {
 
 	public ApplicantDetails findById(Long id) {
 		return applicantRepo.findById(id).map(a -> ApplicantDetails.from(a)).orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+	}
+
+	@Transactional
+	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
+	public String uploadImages(String username, String uploadPath, MultipartFile file) {
+		
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
+		
+		try {
+		var profileImageName = getProfileImageName(username, file);
+		var profileImagePath = Path.of(uploadPath, profileImageName);
+
+		
+		if(!Files.exists(profileImagePath)) {
+			 Files.createDirectories(profileImagePath);
+		}
+		
+		
+		//Save the file 
+		Files.copy(file.getInputStream(), profileImagePath, StandardCopyOption.REPLACE_EXISTING);
+		applicant.setProfilePhoto(profileImageName);
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return "uploaded succesfully";
+
+	}
+
+	private String getProfileImageName(String username, MultipartFile file) {
+		
+		if(file.isEmpty()) {
+			 throw new BusinessException("File is empty");
+		}
+		
+		var fileName = file.getOriginalFilename(); //Retrieving original file name 
+		var array = fileName.split("\\."); //Split with .(dot) 
+		var extension = array[array.length -1]; //Retrieving latest extension(eg.jpg)
+		
+		return "%s.%s".formatted(username,extension);
 	} 
 
 	
