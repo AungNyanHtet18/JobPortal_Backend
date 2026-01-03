@@ -11,6 +11,7 @@ import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,15 +29,18 @@ public class ApplicantService {
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
+			 if(StringUtils.hasLength(form.applicantName())) {
+				  account.setName(form.applicantName());
+				  accountRepo.saveAndFlush(account);
+			 }
 		
-		 if(StringUtils.hasLength(form.applicantName())) {
-			  account.setName(form.applicantName());
-			  accountRepo.saveAndFlush(account);
-		 }
+			 //Convert Skill List to String
+			 String skills = String.join(",", form.skills());
+			 
+			 applicantRepo.save(form.entity(account, skills));
+			return  new ModificationResult<Long>(account.getId());
 		
-		 applicantRepo.save(form.entity(account));
 		
-		return  new ModificationResult<Long>(account.getId());
 	}
 
 	@Transactional
@@ -54,12 +58,15 @@ public class ApplicantService {
 			  account.setName(form.applicantName());
 			  accountRepo.saveAndFlush(account);
 		 }
-		
+			
+		 //Convert Skill List to String
+		 String skills = String.join(",", form.skills());
+		 
 		applicant.setAccount(account);
 		applicant.setGender(form.gender());
 		applicant.setHighestEducationalAttainment(form.highestEducationalAttainment());
-		applicant.setResumeUrl(form.resumeUrl());
-		applicant.setSkills(form.skills());
+		applicant.setResume(form.resume());
+		applicant.setSkills(skills);
 		applicant.setCurrentJob(form.currentJob());
 		applicant.setProfessionalSummary(form.professionalSummary());
 		applicant.setContactDetail(form.contactDetail());

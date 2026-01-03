@@ -6,9 +6,12 @@ import com.dev.anh.job.model.consts.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
@@ -23,6 +26,7 @@ public class Account {
 	private String name;
 	
 	@Column(nullable = false, unique = true)
+	@Email(message = "Email should be valid")
 	private String email;
 	
 	@Column(nullable = false)
@@ -31,6 +35,7 @@ public class Account {
 	private Boolean active;
 	
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private  Role role;
 	
 	private LocalDateTime activatedAt;

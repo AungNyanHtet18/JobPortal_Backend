@@ -1,13 +1,16 @@
 package com.dev.anh.job.model.entity;
 
-import com.dev.anh.job.model.consts.Gender;
 
+import com.dev.anh.job.model.consts.Gender;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,26 +29,29 @@ public class Applicant extends AbstractEntity{
 	private Account account;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 			
 	@Column(nullable = false)
 	private String skills;
 		
-	private String highestEducationalAttainment;
-	
+	@Column(columnDefinition = "TEXT")
 	private String professionalSummary;
 	
-	private String resumeUrl;
+	private String resume;
 	private String coverLetter;
 	
 	private String profilePhoto;
 	
 	private String currentJob;
+	private String highestEducationalAttainment;
 	
 	@Column(nullable = false)
+	@Size(min = 10, max = 200, message = "Contact details must be between 10 and 200")
 	private String contactDetail;
 	
 	@Column(nullable = false)
+	@Size(min = 10, max = 200, message = "Address must be between 10 and 200")
 	private String address;
 	
 	

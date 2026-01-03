@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.dev.anh.job.model.input.CompanyForm;
+import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.CompanyRepo;
@@ -59,7 +60,7 @@ public class CompanyService {
 		company.setAccount(account);
 		company.setLocation(form.location());
 		company.setPhone(form.phone());
-		company.setWebsite(form.website());
+		company.setWebsiteUrl(form.websiteUrl());
 		company.setDescription(form.description());
 	
 		companyRepo.save(company);
@@ -67,5 +68,8 @@ public class CompanyService {
 		return new ModificationResult<Long>(id);
 	}
 	
-
+	public CompanyDetails findById(Long id) {
+		 return companyRepo.findById(id)
+				 .map(a -> CompanyDetails.from(a)).orElseThrow(() -> new BusinessException("Company with %d is not found".formatted(id)));
+	}
 }

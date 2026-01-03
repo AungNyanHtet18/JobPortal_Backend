@@ -11,7 +11,7 @@ public record CompanyForm(
 	String location,
 	@NotBlank(message = "Please enter your phone number.")
 	String phone,
-	String website,
+	String websiteUrl,
 	@NotBlank(message = "Please enter your description.")
 	String description){
 
@@ -20,7 +20,7 @@ public record CompanyForm(
 		company.setAccount(account);
 		company.setLocation(location);
 		company.setPhone(phone);
-		company.setWebsite(website);
+		company.setWebsiteUrl(websiteUrl);
 		company.setDescription(description);
 		
 		return company;

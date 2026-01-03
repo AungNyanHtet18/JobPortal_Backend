@@ -11,7 +11,7 @@ public record JobDetails(
 	String companyPhone,
 	String companyWebsite,
 	String positionName,
-	String summaryForPosition,
+	String JobDescription,
 	JobLevel jobLevel,
 	JobType jobType) {
 
@@ -21,9 +21,9 @@ public record JobDetails(
 			entity.getCompany().getAccount().getName(),
 			entity.getCompany().getLocation(), 
 			entity.getCompany().getPhone(), 
-			entity.getCompany().getWebsite(), 
+			entity.getCompany().getWebsiteUrl(), 
 			entity.getPositionName(), 
-			entity.getSummaryForPosition(), 
+			entity.getJobDescription(), 
 			entity.getJobLevel(), 
 			entity.getJobType());
 	}

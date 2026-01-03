@@ -5,10 +5,13 @@ import com.dev.anh.job.model.consts.JobType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,16 +27,19 @@ public class Job extends AbstractEntity{
 	@Column(nullable = false)
 	private String positionName;
 	
-	@Column(nullable = false)
-	private String summaryForPosition;
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String JobDescription;
 	
 	@Column(nullable = false)
+	@Positive(message = "Salary must be greater than 0")
 	private Double salary;
 	
 	@Column(nullable =  false)
+	@Enumerated(EnumType.STRING)
 	private JobLevel jobLevel;
 	
 	@Column(nullable =  false)
+	@Enumerated(EnumType.STRING)
 	private JobType jobType;
 	
 	private boolean deleted;

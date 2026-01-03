@@ -36,6 +36,12 @@ public class JobController {
 		return service.searchJob(jobSearch, page, size);
 	}
 	
+	
+	@GetMapping("{id}")
+	JobDetails findById(@PathVariable Long id) {
+		return service.findById(id);
+	}
+	
 	@PostMapping
 	ModificationResult<Long> storeJobInfo(@RequestBody @Validated JobForm form) {
 		
@@ -49,9 +55,4 @@ public class JobController {
 		return service.updateJobInfo(id, form);
 	}
 	
-	@GetMapping("{id}")
-	JobDetails findById(@PathVariable Long id) {
-		return service.findById(id);
-	}
-
 }

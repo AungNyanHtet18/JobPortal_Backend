@@ -13,7 +13,7 @@ public record JobForm(
 	@NotBlank(message = "Please enter job position name.")
  	String positionName,
  	@NotBlank(message = "Please enter summary for position.")
- 	String summaryForPosition,
+ 	String jobDescription,
  	@NotNull(message = "Please enter salary.")
  	Double salary,
  	@NotNull(message = "Please enter job level.")
@@ -25,7 +25,7 @@ public record JobForm(
 	public Job entity(Company company) {
 		var job = new Job();
 		job.setPositionName(positionName);
-		job.setSummaryForPosition(summaryForPosition);
+		job.setJobDescription(jobDescription);
 		job.setSalary(salary);
 		job.setJobLevel(jobLevel);
 		job.setJobType(jobType);

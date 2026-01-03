@@ -81,7 +81,7 @@ public class JobService {
 		var job = jobRepo.findById(id).orElseThrow(() -> new BusinessException("Job with %d  is not found".formatted(id)));
 		
 		job.setPositionName(form.positionName());
-		job.setSummaryForPosition(form.summaryForPosition());
+		job.setJobDescription(form.jobDescription());
 		job.setSalary(form.salary());
 		job.setJobLevel(form.jobLevel());
 		job.setJobType(form.jobType());
