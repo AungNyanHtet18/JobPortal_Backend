@@ -1,9 +1,11 @@
 package com.dev.anh.job.model.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,9 @@ import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
+import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
+import com.dev.anh.job.utils.exception.FileInvalidException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +31,7 @@ public class ApplicantService {
 
 	private final AccountRepo accountRepo;
 	private final ApplicantRepo applicantRepo;
+	private final FileProvider fileProvider;
 	
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
@@ -89,45 +94,62 @@ public class ApplicantService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
-	public String uploadImages(String username, String uploadPath, MultipartFile file) {
+	public ModificationResult<String> uploadApplicantProfile(String username, String uploadPath, MultipartFile file) {
+		
+		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg"));
+		
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
+			
+		try {
+			var profileImageName = fileProvider.generateFileName(applicant.getAccount().getName(), file); 
+			var profileImagePath = Path.of(uploadPath, profileImageName);
+		
+			if(!Files.exists(profileImagePath.getParent())) {
+				 Files.createDirectories(profileImagePath.getParent()); //Create directory to save the images
+			}
+			
+			//Save the file 
+			Files.copy(file.getInputStream(), profileImagePath, StandardCopyOption.REPLACE_EXISTING);
+			applicant.setProfilePhoto(profileImageName);
+			
+			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);
+			
+		} catch (IOException e) {
+			throw new FileInvalidException("Invalid Profile Upload", e);
+		}
+		
+	}
+
+	@Transactional
+	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
+	public ModificationResult<String> uploadApplicantResume(String username, String uploadPath, MultipartFile file) {
+		
+		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
 		
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
 		
 		try {
-		var profileImageName = getProfileImageName(username, file);
-		var profileImagePath = Path.of(uploadPath, profileImageName);
-
+			var resumeName = fileProvider.generateFileName(applicant.getAccount().getName(), file);
+			var resumePath = Path.of(uploadPath, resumeName);
 		
-		if(!Files.exists(profileImagePath)) {
-			 Files.createDirectories(profileImagePath);
+		if(!Files.exists(resumePath.getParent())) {
+				Files.createDirectories(resumePath.getParent());
+		}
+		
+		   Files.copy(file.getInputStream(), resumePath, StandardCopyOption.REPLACE_EXISTING);
+		   applicant.setResume(resumeName);
+		   
+		   return new ModificationResult<String>("Succesfully Uploaded Resume"+ resumeName);
+		   
+		}catch (IOException e) {
+			throw new FileInvalidException("Invalid Profile Upload", e);
 		}
 		
 		
-		//Save the file 
-		Files.copy(file.getInputStream(), profileImagePath, StandardCopyOption.REPLACE_EXISTING);
-		applicant.setProfilePhoto(profileImageName);
-		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		
-		return "uploaded succesfully";
-
+		
+		return null;
 	}
-
-	private String getProfileImageName(String username, MultipartFile file) {
-		
-		if(file.isEmpty()) {
-			 throw new BusinessException("File is empty");
-		}
-		
-		var fileName = file.getOriginalFilename(); //Retrieving original file name 
-		var array = fileName.split("\\."); //Split with .(dot) 
-		var extension = array[array.length -1]; //Retrieving latest extension(eg.jpg)
-		
-		return "%s.%s".formatted(username,extension);
-	} 
-
 	
 }

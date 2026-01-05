@@ -38,9 +38,7 @@ public class Applicant extends AbstractEntity{
 	@Column(columnDefinition = "TEXT")
 	private String professionalSummary;
 	
-	private String resume;
-	private String coverLetter;
-	
+	private String resume;	
 	private String profilePhoto;
 	
 	private String currentJob;
