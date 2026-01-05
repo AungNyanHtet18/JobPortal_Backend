@@ -1,7 +1,11 @@
 package com.dev.anh.job.api;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +40,7 @@ public class ApplicantController {
 		return service.findById(id);
 	}
 	
+	
 	@PostMapping
 	ModificationResult<Long> storeApplicantInfo(@RequestBody @Validated ApplicantForm form) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
@@ -60,12 +65,9 @@ public class ApplicantController {
 		 return service.uploadApplicantResume(username, uploadPath.concat("/resume"), file);
 	}
 	
+	@GetMapping("resume/{id}/download")
+	public ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
+		return service.downloadApplicantResume(id);
+	}
 	
-	
-	
-	
-
-
-	
-
 }

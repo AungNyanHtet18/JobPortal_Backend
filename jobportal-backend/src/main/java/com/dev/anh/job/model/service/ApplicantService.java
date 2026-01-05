@@ -1,18 +1,21 @@
 package com.dev.anh.job.model.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
-
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -142,14 +145,35 @@ public class ApplicantService {
 		   return new ModificationResult<String>("Succesfully Uploaded Resume"+ resumeName);
 		   
 		}catch (IOException e) {
-			throw new FileInvalidException("Invalid Profile Upload", e);
+			throw new FileInvalidException("Invalid Resume Upload", e);
+		}
+
+	}
+	
+	public ResponseEntity<Resource> downloadApplicantResume(Long id) throws IOException {
+		var applicant = applicantRepo.findById(id).orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+	
+		var filePath = Path.of("upload/resume",applicant.getResume());
+		var contentType = Files.probeContentType(filePath);
+		var fileName = Paths.get(applicant.getResume()).getFileName().toString();
+		
+		var resource = new FileSystemResource(filePath);
+
+		if(!resource.exists()) {
+			 throw new FileInvalidException("File Not Foundd");
 		}
 		
+		return ResponseEntity.ok()
+					.contentType(MediaType.parseMediaType(contentType))
+					.header(HttpHeaders.CONTENT_DISPOSITION, 
+					   "attachment; filename=\"" + fileName + "\"")
+					.body(resource);
 		
 		
-		
-		
-		return null;
 	}
+	
+
+	
+	
 	
 }
