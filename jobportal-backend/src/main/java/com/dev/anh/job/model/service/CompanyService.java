@@ -42,7 +42,7 @@ public class CompanyService {
 	}
 	 
 	@Transactional
-	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
+	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateCompanyInfo(Long id, CompanyForm form) {
 		
 		var account = accountRepo.findById(id)

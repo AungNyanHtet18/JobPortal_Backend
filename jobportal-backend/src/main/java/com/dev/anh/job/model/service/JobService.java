@@ -44,8 +44,8 @@ public class JobService {
 			
 			JobListItem.select(cq, root, company);
 			cq.where(jobSearch.where(cb, root, company));
-			
 			cq.orderBy(cb.desc(root.get(Job_.id)));
+			
 			return cq;
 		};
 	}
@@ -58,7 +58,7 @@ public class JobService {
 			 var company = root.join(Job_.company, JoinType.INNER);
 			 
 			 cq.select(cb.count(root.get(Job_.id)));
-			 cq.where(jobSearch.where(cb,root, company));
+			 cq.where(jobSearch.where(cb, root, company));
 			 
 			 return cq;
 		};

@@ -26,7 +26,7 @@ public record JobListItem(
 	
 	public static void select(CriteriaQuery<JobListItem> cq, Root<Job> root, Join<Job, Company> company) {
 		
-	   var account =  company.join(Company_.account,JoinType.INNER);
+	   var account =  company.join(Company_.account, JoinType.INNER);
 		
 		cq.multiselect(
 			root.get(Job_.id),

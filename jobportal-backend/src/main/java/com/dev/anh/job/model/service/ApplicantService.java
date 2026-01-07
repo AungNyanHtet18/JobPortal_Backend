@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.entity.Applicant;
+import com.dev.anh.job.model.entity.Applicant_;
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.input.ApplicantSearch;
 import com.dev.anh.job.model.output.ApplicantDetails;
@@ -49,22 +50,31 @@ public class ApplicantService {
 		return  accountRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
 	}
 	
-
 	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
 			 var cq = cb.createQuery(ApplicantListItem.class);
 			 var root = cq.from(Applicant.class);
 			 
 			 ApplicantListItem.select(cq, root);
+			 cq.where(applicantSearch.where(cb, root));
+			 cq.orderBy(cb.desc(root.get(Applicant_.id)));
 			 
+			return cq;
 		};
 	}
 
 
-
-	private Function countFunc(ApplicantSearch applicantSearch) {
-		// TODO Auto-generated method stub
-		return null;
+	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
+		return cb -> {
+			 var cq = cb.createQuery(Long.class);
+			 var root = cq.from(Applicant.class);
+			 
+			 cq.select(cb.count(root.get(Applicant_.id)));
+			 cq.where(applicantSearch.where(cb, root));
+			 
+			 return cq;
+			 
+		};
 	}
 
 
@@ -91,7 +101,7 @@ public class ApplicantService {
 	}
 
 	@Transactional
-	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
+	@PreAuthorize("hasAuthority('Applicant')")
 	public ModificationResult<Long> updateApplicantInfo(Long id, ApplicantForm form) {
 		
 		var account = accountRepo.findById(id)
