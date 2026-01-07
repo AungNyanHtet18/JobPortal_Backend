@@ -12,7 +12,6 @@ public record ApplicantDetails(
 	List<String> skills,
 	String  highestEducationalAttainment,
 	String professionalSummary,
-	String currentJob,
 	String contactDetail,
 	String address) {
 
@@ -23,8 +22,7 @@ public record ApplicantDetails(
 				entity.getGender(), 
 				List.of(entity.getSkills().split(",")), 
 				entity.getHighestEducationalAttainment(), 
-				entity.getProfessionalSummary(), 
-				entity.getCurrentJob(), 
+				entity.getProfessionalSummary(),
 				entity.getContactDetail(), 
 				entity.getAddress());
 	}	

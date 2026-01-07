@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,15 +18,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.input.ApplicantForm;
+import com.dev.anh.job.model.input.ApplicantSearch;
 import com.dev.anh.job.model.output.ApplicantDetails;
+import com.dev.anh.job.model.output.ApplicantListItem;
 import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
 import com.dev.anh.job.utils.exception.FileInvalidException;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,6 +45,30 @@ public class ApplicantService {
 	private final ApplicantRepo applicantRepo;
 	private final FileProvider fileProvider;
 	
+	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
+		return  accountRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
+	}
+	
+
+	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
+		return cb -> {
+			 var cq = cb.createQuery(ApplicantListItem.class);
+			 var root = cq.from(Applicant.class);
+			 
+			 ApplicantListItem.select(cq, root);
+			 
+		};
+	}
+
+
+
+	private Function countFunc(ApplicantSearch applicantSearch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form) {
@@ -81,7 +114,6 @@ public class ApplicantService {
 		applicant.setHighestEducationalAttainment(form.highestEducationalAttainment());
 		applicant.setResume(form.resume());
 		applicant.setSkills(skills);
-		applicant.setCurrentJob(form.currentJob());
 		applicant.setProfessionalSummary(form.professionalSummary());
 		applicant.setContactDetail(form.contactDetail());
 		applicant.setAddress(form.address());
@@ -168,12 +200,7 @@ public class ApplicantService {
 					.header(HttpHeaders.CONTENT_DISPOSITION, 
 					   "attachment; filename=\"" + fileName + "\"")
 					.body(resource);
-		
-		
 	}
-	
-
-	
 	
 	
 }

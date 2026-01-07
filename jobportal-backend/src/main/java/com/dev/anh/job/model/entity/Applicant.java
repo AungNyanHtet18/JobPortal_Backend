@@ -1,6 +1,5 @@
 package com.dev.anh.job.model.entity;
 
-
 import com.dev.anh.job.model.consts.Gender;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +40,6 @@ public class Applicant extends AbstractEntity{
 	private String resume;	
 	private String profilePhoto;
 	
-	private String currentJob;
 	private String highestEducationalAttainment;
 	
 	@Column(nullable = false)
@@ -52,5 +50,6 @@ public class Applicant extends AbstractEntity{
 	@Size(min = 10, max = 200, message = "Address must be between 10 and 200")
 	private String address;
 	
+	private boolean deleted = false;
 	
 }

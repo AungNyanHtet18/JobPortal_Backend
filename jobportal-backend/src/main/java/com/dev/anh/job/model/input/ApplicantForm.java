@@ -33,7 +33,6 @@ public record ApplicantForm(
 		applicant.setHighestEducationalAttainment(highestEducationalAttainment);;
 		applicant.setResume(resume);
 		applicant.setSkills(skills);
-		applicant.setCurrentJob(currentJob);
 		applicant.setProfessionalSummary(professionalSummary);
 		applicant.setContactDetail(contactDetail);
 		applicant.setAddress(address);
