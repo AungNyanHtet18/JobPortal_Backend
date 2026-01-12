@@ -1,5 +1,7 @@
 package com.dev.anh.job.model.entity;
 
+import java.util.List;
+
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 
@@ -11,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,4 +49,8 @@ public class Job extends AbstractEntity{
 	
 	@ManyToOne(optional = false)	
 	private Company company;
+	
+	@OneToMany(mappedBy = "job")
+	private List<JobApply> jobApply;
+	
 }

@@ -65,19 +65,19 @@ public class ApplicantController {
 	}
 	
 	@PatchMapping(value="uploadphoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<String> uploadApplicantProfile(@RequestParam MultipartFile file) {
+	ModificationResult<String> uploadApplicantProfile(MultipartFile file) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();		
 		return service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<String> uploadApplicantResume(@RequestParam MultipartFile file) {
+	ModificationResult<String> uploadApplicantResume(MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		 return service.uploadApplicantResume(username, uploadPath.concat("/resume"), file);
 	}
 	
 	@GetMapping("resume/{id}/download")
-	public ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
+	ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
 		return service.downloadApplicantResume(id);
 	}
 	

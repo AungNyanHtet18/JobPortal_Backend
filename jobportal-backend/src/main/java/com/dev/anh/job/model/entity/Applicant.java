@@ -1,5 +1,7 @@
 package com.dev.anh.job.model.entity;
 
+import java.util.List;
+
 import com.dev.anh.job.model.consts.Gender;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -51,5 +54,8 @@ public class Applicant extends AbstractEntity{
 	private String address;
 	
 	private boolean deleted = false;
+	
+	@OneToMany(mappedBy = "applicant")
+	private List<JobApply> jobApply;
 	
 }

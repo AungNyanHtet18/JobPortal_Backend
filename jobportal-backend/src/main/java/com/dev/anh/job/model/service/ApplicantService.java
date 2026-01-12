@@ -141,7 +141,7 @@ public class ApplicantService {
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<String> uploadApplicantProfile(String username, String uploadPath, MultipartFile file) {
 		
-		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg"));
+		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
 		
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
 			
@@ -177,7 +177,7 @@ public class ApplicantService {
 			var resumeName = fileProvider.generateFileName(applicant.getAccount().getName(), file);
 			var resumePath = Path.of(uploadPath, resumeName);
 		
-		if(!Files.exists(resumePath.getParent())) {
+		if(!Files.exists(resumePath.getParent())) { //resumePath.getParent() => C:upload/resume == return the parent directory of the file
 				Files.createDirectories(resumePath.getParent());
 		}
 		
@@ -195,7 +195,7 @@ public class ApplicantService {
 	public ResponseEntity<Resource> downloadApplicantResume(Long id) throws IOException {
 		var applicant = applicantRepo.findById(id).orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
 	
-		var filePath = Path.of("upload/resume",applicant.getResume());
+		var filePath = Path.of("C:/upload/resume",applicant.getResume());
 		var contentType = Files.probeContentType(filePath);
 		var fileName = Paths.get(applicant.getResume()).getFileName().toString();
 		

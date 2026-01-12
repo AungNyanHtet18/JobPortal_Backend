@@ -38,8 +38,8 @@ public class FileProvider {
 	public  String generateFileName(String username, MultipartFile file) {
 				
 		var fileName = file.getOriginalFilename(); //Retrieving original file name 
-		var array = fileName.split("\\."); //Split with .(dot) 
-		var extension = array[array.length -1]; //Retrieving latest extension(eg.jpg)
+		var array = fileName.split("\\."); //Split with .(dot) eg. ["john_resume", "pdf"]
+		var extension = array[array.length -1]; //Retrieving the last element ["john_resume","pdf"] from array and latest extension(eg.jpg)
 		
 		return "%s.%s".formatted(username.replace(" ",""),extension);    // username.replace(" ","") Removing space in username
 	} 

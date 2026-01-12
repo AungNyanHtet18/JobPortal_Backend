@@ -14,7 +14,8 @@ public class JobportalWebMvcConfig implements WebMvcConfigurer{
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/profile/**")
-				.addResourceLocations("file:///"+ uploadPath + "/");
+				.addResourceLocations("file:"+ uploadPath.concat("/profile") + "/");
+		
 	}
 	
 }
