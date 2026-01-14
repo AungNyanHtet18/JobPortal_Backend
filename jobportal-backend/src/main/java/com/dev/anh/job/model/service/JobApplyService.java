@@ -13,6 +13,7 @@ import com.dev.anh.job.model.entity.JobApply;
 import com.dev.anh.job.model.entity.JobApply_;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk_;
+import com.dev.anh.job.model.output.ApplicantAppliedJobListItem;
 import com.dev.anh.job.model.output.JobApplicationListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.ApplicantRepo;
@@ -34,13 +35,30 @@ public class JobApplyService {
 	private final JobRepo jobRepo;
 	private final JobApplyRepo jobApplyRepo;
 	
+	public ModificationResult<List<JobApplicationListItem>> checkingApplicantList(long jobId) {
+	    var jobApplicantList = jobRepo.search(queryFuncForApplicantList(jobId));
+		
+	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicantList);
+	}
+	
+	
+	@PreAuthorize("#username eq authentication.name")
+	public ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList(String username) {
+		
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
+		var appliedJobList = jobRepo.search(queryFuncForJobList(applicant.getId()));
+		
+		
+		return null;
+	}
+	
+	
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
-	public ModificationResult<String> apply(String username,  long jobId) {
+	public ModificationResult<String> applyJob(String username,  long jobId) {
 		
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
 		var job = jobRepo.findById(jobId).orElseThrow(() -> new BusinessException("This %s id  is not found".formatted(jobId)));
-		
 		
 		var jobApplyPk = new JobApplyPk(applicant.getId(), job.getId());
 		
@@ -58,22 +76,15 @@ public class JobApplyService {
 
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
-	public ModificationResult<String> cancel(String username, long jobId) {
+	public ModificationResult<String> cancelJob(String username, long jobId) {
 	   var jobApply = jobApplyRepo.findOneByApplicantandJob(username, jobId).orElseThrow(() -> new BusinessException("This %s id  is not found".formatted(jobId)));
 	   jobApplyRepo.delete(jobApply);
 	  
 	   return new ModificationResult<String>("You canceled applied job");
 	}
-
-	
-	public ModificationResult<List<JobApplicationListItem>> applyingApplicantInfo(long jobId) {
-	    var jobApplicationList    = jobRepo.search(queryFunc(jobId));
-		
-	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicationList);
-	}
 	
 	
-	private Function<CriteriaBuilder, CriteriaQuery<JobApplicationListItem>> queryFunc(Long jobId) {
+	private Function<CriteriaBuilder, CriteriaQuery<JobApplicationListItem>> queryFuncForApplicantList(Long jobId) {
 		 return cb -> {
 			  var cq = cb.createQuery(JobApplicationListItem.class);
 			  var root = cq.from(JobApply.class);
@@ -94,13 +105,23 @@ public class JobApplyService {
 	}
 	
 	
-	
-	
-	
-
-	
-
-	
-	
+	private Function<CriteriaBuilder, CriteriaQuery<ApplicantAppliedJobListItem>> queryFuncForJobList(Long applicantId) {
+		 return cb -> {
+			  var cq = cb.createQuery(ApplicantAppliedJobListItem.class);
+			  var root = cq.from(JobApply.class);
+			  
+			  ApplicantAppliedJobListItem.select(cq, root);
+			  var param = new ArrayList<Predicate>();
+			  
+			  if(null != applicantId) {
+				   param.add(cb.equal(root.get(JobApply_.id).get(JobApplyPk_.applicantId), applicantId));
+			  }
+			  
+			  cq.where(param.toArray(size -> new Predicate[size]));
+			  cq.orderBy(cb.asc(root.get(JobApply_.createAt)));
+			  
+			  return cq;
+		 };
+	}
 
 }

@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dev.anh.job.model.output.ApplicantListItem;
+import com.dev.anh.job.model.output.ApplicantAppliedJobListItem;
 import com.dev.anh.job.model.output.JobApplicationListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.service.JobApplyService;
@@ -25,22 +24,28 @@ public class JobApplyController {
     private final JobApplyService jobApplyService;
 	
     @GetMapping("applicantinfo/{jobid}")
-    @PreAuthorize("hasAuthority('CompanyAccount')")
-    ModificationResult<List<JobApplicationListItem>> applyingApplicantInfo(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
-    	 return jobApplyService.applyingApplicantInfo(jobId);
+    @PreAuthorize("hasAuthority('CompanyAccount')") //checking candidate lists
+    ModificationResult<List<JobApplicationListItem>> checkingApplicantList(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
+    	 return jobApplyService.checkingApplicantList(jobId);
+    }
+    
+    @GetMapping("jobinfo")
+    ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList() {
+    	var username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	return jobApplyService.checkingAppliedJobList(username);
     }
     
     
-	@GetMapping("position/{jobId}")
-	ModificationResult<String> applicantApplyJob(@PathVariable @NotNull(message = "Job Id is required") long jobId ) {
+	@GetMapping("position/{jobId}") //apply jobs
+	ModificationResult<String> applyJob(@PathVariable @NotNull(message = "Job Id is required") long jobId ) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return jobApplyService.apply(username, jobId);
+		return jobApplyService.applyJob(username, jobId);
 	}
 	
 	@DeleteMapping("cancel/{jobId}")
-	ModificationResult<String> applicantCancelJob(@PathVariable @NotNull(message = "Job Id is required") long jobId ) {
+	ModificationResult<String> cancelJob(@PathVariable @NotNull(message = "Job Id is required") long jobId ) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return jobApplyService.cancel(username, jobId);
+		return jobApplyService.cancelJob(username, jobId);
 	}
 	
 }
