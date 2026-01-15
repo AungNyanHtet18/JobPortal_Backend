@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JobApplyPk {
 
-	@Column(name = "job_applicant_id")
+	@Column(name = "applicant_id")
 	private Long applicantId;
-	@Column(name = "job_apply_id")
+	@Column(name = "job_id")
 	private Long jobId;
 	
 	public JobApplyPk(Long applicantId,Long jobId) {

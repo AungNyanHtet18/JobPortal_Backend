@@ -23,12 +23,12 @@ public class JobApply extends AbstractEntity{
 	@EmbeddedId
 	private JobApplyPk id;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name="applicant_id", insertable = false, updatable = false)
 	private Applicant applicant;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name="job_id", insertable = false, updatable = false)
+	@ManyToOne
+	@JoinColumn(name = "job_id", insertable = false, updatable = false)
 	private Job job;
 	
 	@Column(nullable = false)

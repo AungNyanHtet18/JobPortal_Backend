@@ -49,7 +49,7 @@ public class JobApplyService {
 		var appliedJobList = jobRepo.search(queryFuncForJobList(applicant.getId()));
 		
 		
-		return null;
+		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
 	}
 	
 	
