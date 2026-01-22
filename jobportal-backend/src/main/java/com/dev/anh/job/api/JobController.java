@@ -2,6 +2,7 @@ package com.dev.anh.job.api;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,5 +55,13 @@ public class JobController {
 						@RequestBody @Validated JobForm form) {
 		return service.updateJobInfo(id, form);
 	}
+	
+	@DeleteMapping("{id}")
+	ModificationResult<String> deleteJobInfo(@PathVariable Long id) {
+		 
+		return service.deleteJobInfo(id);
+	}
+	
+	
 	
 }

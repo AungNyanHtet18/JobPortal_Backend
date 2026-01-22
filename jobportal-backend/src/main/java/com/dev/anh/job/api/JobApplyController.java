@@ -23,7 +23,7 @@ public class JobApplyController {
 
     private final JobApplyService jobApplyService;
 	
-    @GetMapping("applicantinfo/{jobid}")
+    @GetMapping("applicantinfo/{jobId}")
     @PreAuthorize("hasAuthority('CompanyAccount')") //checking candidate lists
     ModificationResult<List<JobApplicationListItem>> checkingApplicantList(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
     	 return jobApplyService.checkingApplicantList(jobId);

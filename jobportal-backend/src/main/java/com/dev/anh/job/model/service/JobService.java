@@ -74,6 +74,11 @@ public class JobService {
 		return new ModificationResult<Long>(job.getId());
 	}
 	
+	public JobDetails findById(Long id) {
+		return jobRepo.findById(id).map(a -> JobDetails.from(a))
+					.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
+	}
+	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateJobInfo(Long id, JobForm form) {
@@ -92,9 +97,10 @@ public class JobService {
 		return new ModificationResult<Long>(id);
 	}
 	
-	
-	public JobDetails findById(Long id) {
-		return jobRepo.findById(id).map(a -> JobDetails.from(a))
-					.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
+	@Transactional
+	@PreAuthorize("hasAuthority('CompanyAccount')")
+	public ModificationResult<String> deleteJobInfo(Long id) {
+		jobRepo.deleteById(id);		
+		return new ModificationResult<String>("You successfully deleted job");
 	}
 }

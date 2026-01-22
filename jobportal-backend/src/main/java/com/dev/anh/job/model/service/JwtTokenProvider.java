@@ -4,9 +4,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Collectors;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.dev.anh.job.model.consts.TokenType;
 import com.dev.anh.job.utils.exception.TokenExpirationException;
 import com.dev.anh.job.utils.exception.TokenInvalidException;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -32,6 +29,7 @@ public class JwtTokenProvider {
 	private int accessLife;
 	@Value("${app.jwt.refresh-life}")
 	private int refreshLife;
+	
 	
 	public String generateAccessToken(Authentication authentication) {
 		return generate(authentication, TokenType.Access);

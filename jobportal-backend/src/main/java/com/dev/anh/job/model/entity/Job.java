@@ -5,6 +5,7 @@ import java.util.List;
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,7 +52,7 @@ public class Job extends AbstractEntity{
 	@ManyToOne(optional = false)	
 	private Company company;
 	
-	@OneToMany(mappedBy = "job")
+	@OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<JobApply> jobApply;
 	
 }
