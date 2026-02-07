@@ -3,6 +3,8 @@ package com.dev.anh.job.model.entity;
 import java.util.List;
 
 import com.dev.anh.job.model.consts.Gender;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,5 +59,9 @@ public class Applicant extends AbstractEntity{
 	
 	@OneToMany(mappedBy = "applicant")
 	private List<JobApply> jobApply;
+	
+	@OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Experience> experience;
+	
 	
 }

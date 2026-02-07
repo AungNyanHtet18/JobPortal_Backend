@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -21,14 +23,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
+import com.dev.anh.job.model.entity.Experience;
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.input.ApplicantSearch;
+import com.dev.anh.job.model.input.ExperienceForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
+import com.dev.anh.job.model.repo.ExperienceRepo;
 import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
 import com.dev.anh.job.utils.exception.FileInvalidException;
@@ -44,6 +49,7 @@ public class ApplicantService {
 
 	private final AccountRepo accountRepo;
 	private final ApplicantRepo applicantRepo;
+	private final ExperienceRepo experienceRepo;
 	private final FileProvider fileProvider;
 	
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
@@ -78,7 +84,6 @@ public class ApplicantService {
 	}
 
 
-
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form) {
@@ -88,16 +93,21 @@ public class ApplicantService {
 		
 			 if(StringUtils.hasLength(form.applicantName())) {
 				  account.setName(form.applicantName());
-				  accountRepo.saveAndFlush(account);
+				  accountRepo.saveAndFlush(account);  //changing account name
 			 }
-		
+					 			 
 			 //Convert Skill List to String
 			 String skills = String.join(",", form.skills());
 			  
-			 applicantRepo.save(form.entity(account, skills));
+		var applicant = applicantRepo.saveAndFlush(form.entity(account, skills));
+			 
+			 //Inserting Applicant's Job Experience
+			 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
+				List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+				experienceRepo.saveAll(experiences);
+			 }
+			 
 			return  new ModificationResult<Long>(account.getId());
-		
-		
 	}
 
 	@Transactional
@@ -211,6 +221,6 @@ public class ApplicantService {
 					   "attachment; filename=\"" + fileName + "\"")
 					.body(resource);
 	}
-	
+		
 	
 }

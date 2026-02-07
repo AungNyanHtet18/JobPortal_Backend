@@ -6,6 +6,7 @@ import com.dev.anh.job.model.consts.Gender;
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.entity.Applicant;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +25,8 @@ public record ApplicantForm(
 	 @NotBlank(message = "Please fill your contact detail.")
 	 String contactDetail,
 	 @NotBlank(message = "Please fill your address.")
-	 String address) {
+	 String address,
+	 List<@Valid ExperienceForm> experience) {
 
 	public Applicant entity(Account account,String skills) {
 		var applicant = new Applicant();
@@ -36,7 +38,7 @@ public record ApplicantForm(
 		applicant.setProfessionalSummary(professionalSummary);
 		applicant.setContactDetail(contactDetail);
 		applicant.setAddress(address);
-	
+		
 		return applicant;
 	}
 		

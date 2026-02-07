@@ -1,4 +1,4 @@
-package com.dev.anh.job.api;
+package com.dev.anh.job.controller;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
