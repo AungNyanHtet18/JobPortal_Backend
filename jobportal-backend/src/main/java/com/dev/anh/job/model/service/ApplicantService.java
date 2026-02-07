@@ -91,23 +91,24 @@ public class ApplicantService {
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
-			 if(StringUtils.hasLength(form.applicantName())) {
-				  account.setName(form.applicantName());
-				  accountRepo.saveAndFlush(account);  //changing account name
-			 }
-					 			 
-			 //Convert Skill List to String
-			 String skills = String.join(",", form.skills());
+		 if(StringUtils.hasLength(form.applicantName())) {
+			  account.setName(form.applicantName());
+			  accountRepo.saveAndFlush(account);  //changing account name
+		 }
+				 			 
+		 //Convert Skill List to String
+		 String skills = String.join(",", form.skills());
 			  
 		var applicant = applicantRepo.saveAndFlush(form.entity(account, skills));
 			 
-			 //Inserting Applicant's Job Experience
-			 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
-				List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
-				experienceRepo.saveAll(experiences);
-			 }
+		 //Inserting Applicant's Job Experience
+		 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
+						
+			List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+			experienceRepo.saveAll(experiences);
+		 }
 			 
-			return  new ModificationResult<Long>(account.getId());
+		return  new ModificationResult<Long>(account.getId());
 	}
 
 	@Transactional
@@ -139,6 +140,16 @@ public class ApplicantService {
 		applicant.setAddress(form.address());
 		
 	    applicantRepo.save(applicant);
+	     
+		 //Updating Applicant's Job Experiences
+		 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
+			
+			//Deleting Existing Records with Applicant
+			experienceRepo.deleteByApplicant(applicant);
+			 
+			List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+			experienceRepo.saveAll(experiences);
+		 } 
 
 		return new ModificationResult<Long>(id);
 	}
