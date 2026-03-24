@@ -17,23 +17,20 @@ public record ApplicantForm(
 	 @NotNull(message = "Please select gender")
 	 Gender gender,
 	 String highestEducationalAttainment,
-	 String resume,
 	 @NotEmpty(message = "Please fill your professional skills.")
 	 List<String> skills,
-	 String currentJob,
 	 String professionalSummary,
 	 @NotBlank(message = "Please fill your contact detail.")
 	 String contactDetail,
 	 @NotBlank(message = "Please fill your address.")
 	 String address,
-	 List<@Valid ExperienceForm> experience) {
+	 List<@Valid ExperienceForm> experiences) {
 
 	public Applicant entity(Account account,String skills) {
 		var applicant = new Applicant();
 		applicant.setAccount(account);
 		applicant.setGender(gender);
-		applicant.setHighestEducationalAttainment(highestEducationalAttainment);;
-		applicant.setResume(resume);
+		applicant.setHighestEducationalAttainment(highestEducationalAttainment);
 		applicant.setSkills(skills);
 		applicant.setProfessionalSummary(professionalSummary);
 		applicant.setContactDetail(contactDetail);

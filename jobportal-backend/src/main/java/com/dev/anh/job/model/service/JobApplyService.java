@@ -48,7 +48,6 @@ public class JobApplyService {
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
 		var appliedJobList = jobRepo.search(queryFuncForJobList(applicant.getId()));
 		
-		
 		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
 	}
 	

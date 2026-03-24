@@ -102,9 +102,9 @@ public class ApplicantService {
 		var applicant = applicantRepo.saveAndFlush(form.entity(account, skills));
 			 
 		 //Inserting Applicant's Job Experience
-		 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
+		 if(Optional.ofNullable(form.experiences()).isPresent() && form.experiences() != null) {
 						
-			List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
 			experienceRepo.saveAll(experiences);
 		 }
 			 
@@ -133,7 +133,6 @@ public class ApplicantService {
 		applicant.setAccount(account);
 		applicant.setGender(form.gender());
 		applicant.setHighestEducationalAttainment(form.highestEducationalAttainment());
-		applicant.setResume(form.resume());
 		applicant.setSkills(skills);
 		applicant.setProfessionalSummary(form.professionalSummary());
 		applicant.setContactDetail(form.contactDetail());
@@ -142,20 +141,20 @@ public class ApplicantService {
 	    applicantRepo.save(applicant);
 	     
 		 //Updating Applicant's Job Experiences
-		 if(Optional.ofNullable(form.experience()).isPresent() && form.experience() != null) {
+		 if(Optional.ofNullable(form.experiences()).isPresent() && form.experiences() != null) {
 			
 			//Deleting Existing Records with Applicant
 			experienceRepo.deleteByApplicant(applicant);
 			 
-			List<Experience> experiences = form.experience().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
 			experienceRepo.saveAll(experiences);
 		 } 
 
 		return new ModificationResult<Long>(id);
 	}
 
-	public ApplicantDetails findById(Long id) {
-		return applicantRepo.findById(id).map(a -> ApplicantDetails.from(a)).orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+	public ApplicantDetails findByName(String email) {
+		return applicantRepo.findByEmail(email).map(a -> ApplicantDetails.from(a)).orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(email)));
 	}
 
 	@Transactional

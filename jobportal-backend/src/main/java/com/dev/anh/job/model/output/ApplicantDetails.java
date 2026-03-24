@@ -10,17 +10,21 @@ public record ApplicantDetails(
 	String email,
 	Gender gender,
 	List<String> skills,
+	List<ApplicantExperienceDetails> experience,
 	String  highestEducationalAttainment,
 	String professionalSummary,
 	String contactDetail,
 	String address) {
 
 	public static ApplicantDetails from(Applicant entity) {
+		var experience = entity.getExperience().stream().map(ApplicantExperienceDetails:: from).toList();
+		
 		return new ApplicantDetails(
 				entity.getAccount().getName(), 
 				entity.getAccount().getEmail(), 
 				entity.getGender(), 
-				List.of(entity.getSkills().split(",")), 
+				List.of(entity.getSkills().split(",")),
+			    experience,
 				entity.getHighestEducationalAttainment(), 
 				entity.getProfessionalSummary(),
 				entity.getContactDetail(), 

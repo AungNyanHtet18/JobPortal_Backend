@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ public class ApplicantController {
 	private String uploadPath;
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('CompanyAccount')")
 	PageResult<ApplicantListItem> search(ApplicantSearch applicantSearch,
 		 			@RequestParam(required = false, defaultValue = "0") int page,
 		 			@RequestParam(required = false, defaultValue = "10") int size){
@@ -46,9 +48,9 @@ public class ApplicantController {
 	}
 	
 	
-	@GetMapping("{id}")
-	ApplicantDetails findById(@PathVariable Long id) {
-		return service.findById(id);
+	@GetMapping("{email}")
+	ApplicantDetails findByName(@PathVariable String email) {
+		return service.findByName(email);
 	}
 	
 	
