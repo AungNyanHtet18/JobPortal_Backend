@@ -6,6 +6,7 @@ import com.dev.anh.job.model.consts.Gender;
 import com.dev.anh.job.model.entity.Applicant;
 
 public record ApplicantDetails(
+	Long id,
 	String name,
 	String email,
 	Gender gender,
@@ -14,12 +15,15 @@ public record ApplicantDetails(
 	String  highestEducationalAttainment,
 	String professionalSummary,
 	String contactDetail,
-	String address) {
+	String address,
+	String profileImage,
+	String resume) {
 
 	public static ApplicantDetails from(Applicant entity) {
 		var experience = entity.getExperience().stream().map(ApplicantExperienceDetails:: from).toList();
 		
 		return new ApplicantDetails(
+				entity.getId(),			
 				entity.getAccount().getName(), 
 				entity.getAccount().getEmail(), 
 				entity.getGender(), 
@@ -28,6 +32,8 @@ public record ApplicantDetails(
 				entity.getHighestEducationalAttainment(), 
 				entity.getProfessionalSummary(),
 				entity.getContactDetail(), 
-				entity.getAddress());
-	}	
+				entity.getAddress(),
+				entity.getProfilePhoto(),
+				entity.getResume());
+				}	
 }

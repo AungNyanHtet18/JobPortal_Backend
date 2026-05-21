@@ -1,5 +1,9 @@
 package com.dev.anh.job.utils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -43,5 +47,18 @@ public class FileProvider {
 		
 		return "%s.%s".formatted(username.replace(" ",""),extension);    // username.replace(" ","") Removing space in username
 	} 
+
+	public String saveFile(String uploadPath, String ownerName, MultipartFile file) throws IOException {
+		var fileName = generateFileName(ownerName, file);
+		var filePath = Path.of(uploadPath, fileName);
+
+		if(!Files.exists(filePath.getParent())) {
+			Files.createDirectories(filePath.getParent());
+		}
+
+		Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+		return fileName;
+	}
 	
 }

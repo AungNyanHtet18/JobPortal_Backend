@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.dev.anh.job.model.input.ApplicantForm;
@@ -26,7 +26,6 @@ import com.dev.anh.job.model.output.ApplicantListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.service.ApplicantService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -49,27 +48,40 @@ public class ApplicantController {
 	
 	
 	@GetMapping("{email}")
-	ApplicantDetails findByName(@PathVariable String email) {
+    ApplicantDetails findByName(@PathVariable String email) {
 		return service.findByName(email);
 	}
 	
-	
-	@PostMapping
-	ModificationResult<Long> storeApplicantInfo(@RequestBody @Validated ApplicantForm form) {
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ModificationResult<Long> storeApplicantInfo(
+			        @RequestPart("form") @Validated ApplicantForm form,  
+					@RequestPart(value = "file", required = false) MultipartFile file) {
+		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		return service.storeApplicantInfo(username, form);
+		var result = service.storeApplicantInfo(username, form);
+		
+		if(file != null && !file.isEmpty()) {
+			//Saving the file
+			service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
+		}
+		
+		return result;
 	}
 	
-	@PutMapping("{id}")
-	ModificationResult<Long> updateApplicantInfo(@PathVariable Long id,
-					@RequestBody @Validated ApplicantForm form) {
-		return service.updateApplicantInfo(id, form);
-	}
-	
-	@PatchMapping(value="uploadphoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<String> uploadApplicantProfile(MultipartFile file) {
-		var username = SecurityContextHolder.getContext().getAuthentication().getName();		
-		return service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
+	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ModificationResult<Long> updateApplicantInfo(
+			          @PathVariable Long id,
+			          @RequestPart("form") @Validated ApplicantForm form,
+			          @RequestPart(value = "file", required = false) MultipartFile file) {
+		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
+		var result = service.updateApplicantInfo(id, form);
+		
+		if(file != null && !file.isEmpty()) {
+			//Saving the file
+			service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
+		}
+		
+		return result;
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -79,6 +91,7 @@ public class ApplicantController {
 	}
 	
 	@GetMapping("resume/{id}/download")
+	@PreAuthorize("hasAuthority('CompanyAccount')")
 	ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
 		return service.downloadApplicantResume(id);
 	}

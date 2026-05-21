@@ -154,7 +154,8 @@ public class ApplicantService {
 	}
 
 	public ApplicantDetails findByName(String email) {
-		return applicantRepo.findByEmail(email).map(a -> ApplicantDetails.from(a)).orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(email)));
+		var applicant =  applicantRepo.findByEmail(email).map(a -> ApplicantDetails.from(a)).orElse(null);
+		return applicant;
 	}
 
 	@Transactional
@@ -166,15 +167,7 @@ public class ApplicantService {
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
 			
 		try {
-			var profileImageName = fileProvider.generateFileName(applicant.getAccount().getName(), file); 
-			var profileImagePath = Path.of(uploadPath, profileImageName);
-		
-			if(!Files.exists(profileImagePath.getParent())) {
-				 Files.createDirectories(profileImagePath.getParent()); //Create directory to save the images
-			}
-			
-			//Save the file 
-			Files.copy(file.getInputStream(), profileImagePath, StandardCopyOption.REPLACE_EXISTING);
+			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getName(), file);
 			applicant.setProfilePhoto(profileImageName);
 			
 			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);

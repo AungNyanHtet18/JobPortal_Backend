@@ -1,9 +1,7 @@
 package com.dev.anh.job.model.entity;
 
 import java.util.List;
-
 import org.hibernate.validator.constraints.URL;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -49,4 +47,6 @@ public class Company extends AbstractEntity{
 	@OneToMany(mappedBy = "company")
 	private List<Job> jobs;
 
+	private String profilePhoto;
+	
 }

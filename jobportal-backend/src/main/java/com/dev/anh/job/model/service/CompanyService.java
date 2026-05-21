@@ -1,17 +1,23 @@
 package com.dev.anh.job.model.service;
 
 
+import java.io.IOException;
+import java.util.Set;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.input.CompanyForm;
 import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.CompanyRepo;
+import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
+import com.dev.anh.job.utils.exception.FileInvalidException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +28,7 @@ public class CompanyService {
 
 	private final AccountRepo accountRepo;
 	private final CompanyRepo companyRepo;
+	private final FileProvider fileProvider;
 	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
@@ -72,4 +79,24 @@ public class CompanyService {
 		 return companyRepo.findById(id)
 				 .map(a -> CompanyDetails.from(a)).orElseThrow(() -> new BusinessException("Company with %d is not found".formatted(id)));
 	}
+
+	@Transactional
+	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
+	public ModificationResult<String> uploadCompanyProfile(String username, String uploadPath, MultipartFile file) {
+		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
+
+		var company = companyRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill company information before uploading profile image "));
+
+		try {
+			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getName(), file);
+			company.setProfilePhoto(profileImageName);
+
+			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);
+
+		} catch (IOException e) {
+			throw new FileInvalidException("Invalid Profile Upload", e);
+		}
+	}
+	
+
 }
