@@ -1,5 +1,6 @@
 package com.dev.anh.job.model.service;
 
+import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,6 +80,10 @@ public class JobService {
 					.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
 	}
 	
+	public List<JobDetails> findByCompanyId(Long companyId) {
+		return jobRepo.findByCompanyId(companyId).stream().map(a -> JobDetails.from(a)).toList();
+	}
+	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateJobInfo(Long id, JobForm form) {
@@ -103,4 +108,5 @@ public class JobService {
 		jobRepo.deleteById(id);		
 		return new ModificationResult<String>("You successfully deleted job");
 	}
+   
 }

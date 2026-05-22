@@ -1,5 +1,7 @@
 package com.dev.anh.job.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,7 @@ import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.service.JobService;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,6 +45,12 @@ public class JobController {
 	JobDetails findById(@PathVariable Long id) {
 		return service.findById(id);
 	}
+	
+	@GetMapping("company/{companyId}")
+	List<JobDetails> findByCompanyId(@PathVariable @NotNull(message = "Company Id is requried") Long companyId ) {
+		 return service.findByCompanyId(companyId);
+	}
+	
 	
 	@PostMapping
 	ModificationResult<Long> storeJobInfo(@RequestBody @Validated JobForm form) {
