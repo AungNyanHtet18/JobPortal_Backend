@@ -75,9 +75,8 @@ public class CompanyService {
 		return new ModificationResult<Long>(id);
 	}
 	
-	public CompanyDetails findById(Long id) {
-		 return companyRepo.findById(id)
-				 .map(a -> CompanyDetails.from(a)).orElseThrow(() -> new BusinessException("Company with %d is not found".formatted(id)));
+	public CompanyDetails findByName(String email) {
+		 return companyRepo.findByEmail(email).map(a -> CompanyDetails.from(a)).orElse(null);
 	}
 
 	@Transactional

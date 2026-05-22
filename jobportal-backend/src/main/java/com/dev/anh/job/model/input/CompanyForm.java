@@ -5,7 +5,7 @@ import com.dev.anh.job.model.entity.Company;
 import jakarta.validation.constraints.NotBlank;
 
 public record CompanyForm(
-	
+	@NotBlank(message = "Please enter your company name.")
 	String companyName,
 	@NotBlank(message = "Please enter your company address.")
 	String location,

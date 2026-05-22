@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +30,9 @@ public class CompanyController {
 	@Value("${app.upload.path}")
 	private String uploadPath;
 	
-	@GetMapping("{id}")
-	CompanyDetails findById(@PathVariable Long id) {
-		 return service.findById(id);
+	@GetMapping("{email}")
+	CompanyDetails findByName(@PathVariable String email) {
+		 return service.findByName(email);
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -63,8 +62,6 @@ public class CompanyController {
 			  service.uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
 		 }		
 		
-		return result;
-		
-		 
+		return result;		 
 	}
 }

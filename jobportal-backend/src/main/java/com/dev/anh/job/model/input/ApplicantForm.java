@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record ApplicantForm(
-	
+	 @NotBlank(message = "Please enter your applicant name.")
 	 String applicantName,
 	 @NotNull(message = "Please select gender")
 	 Gender gender,

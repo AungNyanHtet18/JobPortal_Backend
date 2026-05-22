@@ -16,6 +16,9 @@ public class JobportalWebMvcConfig implements WebMvcConfigurer{
 		registry.addResourceHandler("/profile/**")
 				.addResourceLocations("file:"+ uploadPath.concat("/profile") + "/");
 		
+		registry.addResourceHandler("/companyprofile/**")
+		.addResourceLocations("file:"+ uploadPath.concat("/companyprofile") + "/");
+		
 	}
 	
 }
