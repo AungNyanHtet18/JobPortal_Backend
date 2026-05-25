@@ -1,6 +1,6 @@
 package com.dev.anh.job.model.entity;
 
-import com.dev.anh.job.model.consts.Status;
+import com.dev.anh.job.model.consts.ApplicantionStatus;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk;
 
 import jakarta.persistence.Column;
@@ -33,6 +33,8 @@ public class JobApply extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private Status status;
+	private ApplicantionStatus status;
+	
+	private String note;
 	
 }

@@ -36,10 +36,8 @@ public class JobController {
 	PageResult<JobListItem> search(JobSearch jobSearch,
 					@RequestParam(required = false,defaultValue = "0")int page,
 					@RequestParam(required = false,defaultValue = "10")int size) {
-		
 		return service.searchJob(jobSearch, page, size);
 	}
-	
 	
 	@GetMapping("{id}")
 	JobDetails findById(@PathVariable Long id) {
@@ -51,10 +49,8 @@ public class JobController {
 		 return service.findByCompanyId(companyId);
 	}
 	
-	
 	@PostMapping
 	ModificationResult<Long> storeJobInfo(@RequestBody @Validated JobForm form) {
-		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return service.storeJobInfo(username, form);
 	}
@@ -67,10 +63,7 @@ public class JobController {
 	
 	@DeleteMapping("{id}")
 	ModificationResult<String> deleteJobInfo(@PathVariable Long id) {
-		 
 		return service.deleteJobInfo(id);
 	}
-	
-	
 	
 }

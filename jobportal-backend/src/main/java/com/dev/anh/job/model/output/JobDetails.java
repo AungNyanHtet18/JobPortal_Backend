@@ -10,8 +10,10 @@ public record JobDetails(
 	String companyLocation,
 	String companyPhone,
 	String companyWebsite,
+	String companyImage,
 	String positionName,
-	String JobDescription,
+	String jobDescription,
+	Double salary,
 	JobLevel jobLevel,
 	JobType jobType) {
 
@@ -21,9 +23,11 @@ public record JobDetails(
 			entity.getCompany().getAccount().getName(),
 			entity.getCompany().getLocation(), 
 			entity.getCompany().getPhone(), 
-			entity.getCompany().getWebsiteUrl(), 
+			entity.getCompany().getWebsiteUrl(),
+			entity.getCompany().getProfilePhoto(),
 			entity.getPositionName(), 
 			entity.getJobDescription(), 
+			entity.getSalary(),
 			entity.getJobLevel(), 
 			entity.getJobType());
 	}

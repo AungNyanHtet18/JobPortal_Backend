@@ -28,6 +28,5 @@ public class AbstractEntity {
 	
 	@LastModifiedBy
 	private String updatedBy;
-	
-	
+
 }

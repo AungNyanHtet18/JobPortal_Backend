@@ -7,6 +7,7 @@ import com.dev.anh.job.model.entity.Job;
 public record UploadedJob(
 	String postionName,
 	Double salary,
+	Long jobId,
 	JobLevel jobLevel,
 	JobType jobType) {
 
@@ -14,6 +15,7 @@ public record UploadedJob(
 		 return new UploadedJob(
 				 job.getPositionName(), 
 				 job.getSalary(), 
+				 job.getId(),
 				 job.getJobLevel(), 
 				 job.getJobType());
 	}

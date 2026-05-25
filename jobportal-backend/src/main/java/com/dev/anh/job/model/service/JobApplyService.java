@@ -8,11 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dev.anh.job.model.consts.Status;
+import com.dev.anh.job.model.consts.ApplicantionStatus;
 import com.dev.anh.job.model.entity.JobApply;
 import com.dev.anh.job.model.entity.JobApply_;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk_;
+import com.dev.anh.job.model.input.ApplicationStatusForm;
 import com.dev.anh.job.model.output.ApplicantAppliedJobListItem;
 import com.dev.anh.job.model.output.JobApplicationListItem;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -41,6 +42,17 @@ public class JobApplyService {
 	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicantList);
 	}
 	
+		
+	public ModificationResult<Long> updateApplicationStatus(ApplicationStatusForm form) {
+		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), form.jobId()).orElseThrow(() -> new BusinessException("This applied job  is not found"));
+		jobApply.setNote(form.note());
+		jobApply.setStatus(form.status());
+		
+		jobApplyRepo.save(jobApply);		
+	    
+		return new ModificationResult<Long>(jobApply.getId().getJobId());
+	}
+	
 	
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList(String username) {
@@ -50,7 +62,7 @@ public class JobApplyService {
 		
 		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
 	}
-	
+
 	
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
@@ -65,10 +77,9 @@ public class JobApplyService {
 		jobApply.setId(jobApplyPk);
 		jobApply.setApplicant(applicant);
 		jobApply.setJob(job);
-		jobApply.setStatus(Status.Pending);
+		jobApply.setStatus(ApplicantionStatus.APPLIED);
 		
 		jobApplyRepo.save(jobApply);
-		
 		
 		return new ModificationResult<String>("You successfully applied job");
 	}
@@ -81,7 +92,6 @@ public class JobApplyService {
 	  
 	   return new ModificationResult<String>("You canceled applied job");
 	}
-	
 	
 	private Function<CriteriaBuilder, CriteriaQuery<JobApplicationListItem>> queryFuncForApplicantList(Long jobId) {
 		 return cb -> {
@@ -122,5 +132,8 @@ public class JobApplyService {
 			  return cq;
 		 };
 	}
+
+
+
 
 }
