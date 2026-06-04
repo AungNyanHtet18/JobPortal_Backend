@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +53,11 @@ public class ApplicantService {
 	private final ExperienceRepo experienceRepo;
 	private final FileProvider fileProvider;
 	
+	
+	@Value("${app.upload.path}")
+	private String uploadPath;
+	
+	
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
 		return  accountRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
 	}
@@ -86,7 +92,7 @@ public class ApplicantService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
-	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form) {
+	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -107,13 +113,22 @@ public class ApplicantService {
 			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
 			experienceRepo.saveAll(experiences);
 		 }
+		 
+		 
+		//Save the Applicant Profile Photo
+		if(file != null && !file.isEmpty()) {
+			//Saving the file
+			uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
+		}
+		 
+		 
 			 
 		return  new ModificationResult<Long>(account.getId());
 	}
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant')")
-	public ModificationResult<Long> updateApplicantInfo(Long id, ApplicantForm form) {
+	public ModificationResult<Long> updateApplicantInfo(Long id, ApplicantForm form, MultipartFile file) {
 		
 		var account = accountRepo.findById(id)
 						 .orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
@@ -148,13 +163,23 @@ public class ApplicantService {
 			 
 			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
 			experienceRepo.saveAll(experiences);
-		 } 
+		 }
+		 
+		if(file != null && !file.isEmpty()) {
+			//Saving the file
+			uploadApplicantProfile(account.getEmail(), uploadPath.concat("/profile"), file);
+		}
 
 		return new ModificationResult<Long>(id);
 	}
 
-	public ApplicantDetails findByName(String email) {
-		var applicant =  applicantRepo.findByEmail(email).map(a -> ApplicantDetails.from(a)).orElse(null);
+    public ApplicantDetails findByApplicantId(Long id) { 
+		 var applicant = applicantRepo.findById(id).map(ApplicantDetails::from) .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+		 return applicant;
+	}
+	
+	public ApplicantDetails findByApplicantName(String email) {
+		var applicant =  applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
 		return applicant;
 	}
 
@@ -180,7 +205,9 @@ public class ApplicantService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
-	public ModificationResult<String> uploadApplicantResume(String username, String uploadPath, MultipartFile file) {
+	public ModificationResult<String> uploadApplicantResume(String username, MultipartFile file) {
+		
+		String resumeUploadPath = uploadPath.concat("/resume");
 		
 		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
 		
@@ -188,7 +215,7 @@ public class ApplicantService {
 		
 		try {
 			var resumeName = fileProvider.generateFileName(applicant.getAccount().getName(), file);
-			var resumePath = Path.of(uploadPath, resumeName);
+			var resumePath = Path.of(resumeUploadPath, resumeName);
 		
 		if(!Files.exists(resumePath.getParent())) { //resumePath.getParent() => C:upload/resume == return the parent directory of the file
 				Files.createDirectories(resumePath.getParent());

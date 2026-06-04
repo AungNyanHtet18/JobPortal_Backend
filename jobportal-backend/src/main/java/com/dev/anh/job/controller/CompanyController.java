@@ -1,6 +1,5 @@
 package com.dev.anh.job.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -12,12 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.dev.anh.job.model.input.CompanyForm;
 import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.service.CompanyService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,10 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class CompanyController {
 
 	private final CompanyService service;
-	
-	@Value("${app.upload.path}")
-	private String uploadPath;
-	
+		
 	@GetMapping("{email}")
 	CompanyDetails findByName(@PathVariable String email) {
 		 return service.findByName(email);
@@ -40,13 +34,8 @@ public class CompanyController {
 						@RequestPart("form") @Validated CompanyForm form,
 						@RequestPart(value ="file", required = false) MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		 var result = service.storeCompanyInfo(username, form);
-		 
-		 if(file != null && !file.isEmpty()) {
-			  service.uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
-		 }		  
-		 
-		  return result;
+		 var result = service.storeCompanyInfo(username, form, file);
+		 return result;
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -55,13 +44,7 @@ public class CompanyController {
 			@RequestPart("form") @Validated CompanyForm form,
 			@RequestPart(value = "file", required = false) MultipartFile file) {
 		
-		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		var result = service.updateCompanyInfo(id, form);
-		
-		 if(file != null && !file.isEmpty()) {
-			  service.uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
-		 }		
-		
+		var result = service.updateCompanyInfo(id, form, file);		
 		return result;		 
 	}
 }

@@ -2,7 +2,6 @@ package com.dev.anh.job.controller;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,21 +34,24 @@ public class ApplicantController {
 
 	private final ApplicantService service;
 	
-	@Value("${app.upload.path}")
-	private String uploadPath;
-	
 	@GetMapping
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	PageResult<ApplicantListItem> search(ApplicantSearch applicantSearch,
+	PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch,
 		 			@RequestParam(required = false, defaultValue = "0") int page,
 		 			@RequestParam(required = false, defaultValue = "10") int size){
 		return service.searchApplicant(applicantSearch, page, size);
 	}
 	
 	
+	@GetMapping("id/{id}")
+	ApplicantDetails findByApplicantId(@PathVariable Long id) {
+		 return service.findByApplicantId(id);
+	}
+	
+	
 	@GetMapping("{email}")
-    ApplicantDetails findByName(@PathVariable String email) {
-		return service.findByName(email);
+    ApplicantDetails findByApplicantName(@PathVariable String email) {
+		return service.findByApplicantName(email);
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -58,12 +60,7 @@ public class ApplicantController {
 					@RequestPart(value = "file", required = false) MultipartFile file) {
 		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		var result = service.storeApplicantInfo(username, form);
-		
-		if(file != null && !file.isEmpty()) {
-			//Saving the file
-			service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
-		}
+		var result = service.storeApplicantInfo(username, form, file);
 		
 		return result;
 	}
@@ -73,21 +70,14 @@ public class ApplicantController {
 			          @PathVariable Long id,
 			          @RequestPart("form") @Validated ApplicantForm form,
 			          @RequestPart(value = "file", required = false) MultipartFile file) {
-		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		var result = service.updateApplicantInfo(id, form);
-		
-		if(file != null && !file.isEmpty()) {
-			//Saving the file
-			service.uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
-		}
-		
+		var result = service.updateApplicantInfo(id, form, file);
 		return result;
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ModificationResult<String> uploadApplicantResume(MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		 return service.uploadApplicantResume(username, uploadPath.concat("/resume"), file);
+		 return service.uploadApplicantResume(username, file);
 	}
 	
 	@GetMapping("resume/{id}/download")

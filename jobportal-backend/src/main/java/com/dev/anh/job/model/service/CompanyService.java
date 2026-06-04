@@ -3,7 +3,7 @@ package com.dev.anh.job.model.service;
 
 import java.io.IOException;
 import java.util.Set;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +30,13 @@ public class CompanyService {
 	private final CompanyRepo companyRepo;
 	private final FileProvider fileProvider;
 	
+	@Value("${app.upload.path}")
+	private String uploadPath;
+	
+	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
-	public ModificationResult<Long> storeCompanyInfo(String username, CompanyForm form) {
+	public ModificationResult<Long> storeCompanyInfo(String username, CompanyForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 							.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -45,12 +49,16 @@ public class CompanyService {
 		
 		companyRepo.save(form.entity(account));
 		
+		if(file != null && !file.isEmpty()) {
+			  uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
+		 }	
+			
 		return new ModificationResult<Long>(account.getId());
 	}
 	 
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<Long> updateCompanyInfo(Long id, CompanyForm form) {
+	public ModificationResult<Long> updateCompanyInfo(Long id, CompanyForm form, MultipartFile file) {
 		
 		var account = accountRepo.findById(id)
 							.orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
@@ -71,6 +79,10 @@ public class CompanyService {
 		company.setDescription(form.description());
 	
 		companyRepo.save(company);
+		
+		if(file != null && !file.isEmpty()) {
+			uploadCompanyProfile(account.getEmail(), uploadPath.concat("/companyprofile"), file);
+		 }	
 		
 		return new ModificationResult<Long>(id);
 	}
