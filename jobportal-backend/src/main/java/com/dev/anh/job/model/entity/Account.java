@@ -33,6 +33,7 @@ public class Account {
 	private String password;
 	
 	private Boolean active;
+	private Boolean roleStatus;
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)

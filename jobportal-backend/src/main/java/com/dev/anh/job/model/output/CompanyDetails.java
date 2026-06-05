@@ -6,6 +6,7 @@ import com.dev.anh.job.model.entity.Company;
 public record CompanyDetails(
 	Long id,
 	String companyName,
+	String companyEmail,
 	String location,
 	String phone,
 	String websiteUrl,
@@ -19,6 +20,7 @@ public record CompanyDetails(
 		return new CompanyDetails(
 				    entity.getId(),
 					entity.getAccount().getName(), 
+				    entity.getAccount().getEmail(),
 					entity.getLocation(), 
 					entity.getPhone(), 
 					entity.getWebsiteUrl(), 

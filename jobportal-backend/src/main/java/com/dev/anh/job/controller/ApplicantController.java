@@ -32,26 +32,24 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicantController {
 
-	private final ApplicantService service;
+	private final ApplicantService applicantService;
 	
 	@GetMapping
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch,
 		 			@RequestParam(required = false, defaultValue = "0") int page,
 		 			@RequestParam(required = false, defaultValue = "10") int size){
-		return service.searchApplicant(applicantSearch, page, size);
+		return applicantService.searchApplicant(applicantSearch, page, size);
 	}
-	
 	
 	@GetMapping("id/{id}")
 	ApplicantDetails findByApplicantId(@PathVariable Long id) {
-		 return service.findByApplicantId(id);
+		 return applicantService.findByApplicantId(id);
 	}
-	
 	
 	@GetMapping("{email}")
     ApplicantDetails findByApplicantName(@PathVariable String email) {
-		return service.findByApplicantName(email);
+		return applicantService.findByApplicantName(email);
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -60,9 +58,7 @@ public class ApplicantController {
 					@RequestPart(value = "file", required = false) MultipartFile file) {
 		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		var result = service.storeApplicantInfo(username, form, file);
-		
-		return result;
+		return applicantService.storeApplicantInfo(username, form, file);
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -70,20 +66,20 @@ public class ApplicantController {
 			          @PathVariable Long id,
 			          @RequestPart("form") @Validated ApplicantForm form,
 			          @RequestPart(value = "file", required = false) MultipartFile file) {
-		var result = service.updateApplicantInfo(id, form, file);
-		return result;
+		return applicantService.updateApplicantInfo(id, form, file);
+		
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ModificationResult<String> uploadApplicantResume(MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		 return service.uploadApplicantResume(username, file);
+		 return applicantService.uploadApplicantResume(username, file);
 	}
 	
 	@GetMapping("resume/{id}/download")
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
-		return service.downloadApplicantResume(id);
+		return applicantService.downloadApplicantResume(id);
 	}
 	
 }

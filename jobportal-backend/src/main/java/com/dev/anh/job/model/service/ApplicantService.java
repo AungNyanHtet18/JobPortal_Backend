@@ -97,7 +97,10 @@ public class ApplicantService {
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
-		 if(StringUtils.hasLength(form.applicantName())) {
+		//Specify active is true in order to display applicant profile
+		account.setRoleStatus(true);
+		
+		if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());
 			  accountRepo.saveAndFlush(account);  //changing account name
 		 }
@@ -120,9 +123,7 @@ public class ApplicantService {
 			//Saving the file
 			uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
 		}
-		 
-		 
-			 
+		 		 
 		return  new ModificationResult<Long>(account.getId());
 	}
 

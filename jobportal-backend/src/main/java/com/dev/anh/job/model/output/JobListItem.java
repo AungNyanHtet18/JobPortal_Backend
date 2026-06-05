@@ -20,6 +20,7 @@ public record JobListItem(
 	  JobLevel jobLevel,
 	  JobType jobType,
 	  String companyName,
+	  String profilePhoto,
 	  String location,
 	  LocalDateTime createAt) {
 
@@ -35,6 +36,7 @@ public record JobListItem(
 			root.get(Job_.jobLevel),
 			root.get(Job_.jobType),
 			account.get(Account_.name),
+			company.get(Company_.profilePhoto),
 			company.get(Company_.location),
 			root.get(Job_.createAt));
 	}

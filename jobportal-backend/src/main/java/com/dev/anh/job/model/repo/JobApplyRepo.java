@@ -12,9 +12,9 @@ import com.dev.anh.job.model.entity.embeddable.JobApplyPk;
 public interface JobApplyRepo extends BaseRepository<JobApply, JobApplyPk>{
 	
 	@Query("SELECT j FROM JobApply j WHERE j.applicant.account.email = :email AND j.id.jobId = :jobId")
-	Optional<JobApply> findOneByApplicantandJob(@Param("email")String email, @Param("jobId") Long jobId);
+	Optional<JobApply> findOneByApplicantandJob(@Param("email") String email, @Param("jobId") Long jobId);
 	
 	@Query("SELECT j FROM JobApply j WHERE j.id.applicantId = :applicantId AND j.id.jobId = :jobId")
-	Optional<JobApply> findByApplicantIdandJobId(@Param("applicantId")Long applicantId, @Param("jobId") Long jobId);
+	Optional<JobApply> findByApplicantIdandJobId(@Param("applicantId") Long applicantId, @Param("jobId") Long jobId);
 	
 }

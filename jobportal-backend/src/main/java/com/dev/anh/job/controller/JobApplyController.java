@@ -41,14 +41,13 @@ public class JobApplyController {
 		return jobApplyService.updateApplicationStatus(form);
 	}
     
-    @GetMapping("jobinfo")
+    @GetMapping("joblist")
     ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList() {
     	var username = SecurityContextHolder.getContext().getAuthentication().getName();
     	return jobApplyService.checkingAppliedJobList(username);
     }
     
-    
-	@GetMapping("position/{jobId}") //apply jobs
+	@GetMapping("position/{jobId}") 
 	ModificationResult<String> applyJob(@PathVariable @NotNull(message = "Job Id is required") long jobId ) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return jobApplyService.applyJob(username, jobId);
@@ -59,10 +58,5 @@ public class JobApplyController {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return jobApplyService.cancelJob(username, jobId);
 	}
-	
 
-	
-	
-	
-	
 }

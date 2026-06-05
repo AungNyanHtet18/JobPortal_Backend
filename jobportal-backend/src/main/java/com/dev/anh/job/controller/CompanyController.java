@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyController {
 
-	private final CompanyService service;
+	private final CompanyService companyService;
 		
 	@GetMapping("{email}")
 	CompanyDetails findByName(@PathVariable String email) {
-		 return service.findByName(email);
+		 return companyService.findByName(email);
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -34,8 +34,7 @@ public class CompanyController {
 						@RequestPart("form") @Validated CompanyForm form,
 						@RequestPart(value ="file", required = false) MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		 var result = service.storeCompanyInfo(username, form, file);
-		 return result;
+		 return companyService.storeCompanyInfo(username, form, file);
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -44,7 +43,6 @@ public class CompanyController {
 			@RequestPart("form") @Validated CompanyForm form,
 			@RequestPart(value = "file", required = false) MultipartFile file) {
 		
-		var result = service.updateCompanyInfo(id, form, file);		
-		return result;		 
+		return companyService.updateCompanyInfo(id, form, file);		
 	}
 }

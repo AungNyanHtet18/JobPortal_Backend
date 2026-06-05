@@ -16,6 +16,7 @@ import jakarta.persistence.criteria.Root;
 public record ApplicantAppliedJobListItem(
 	String positionName,
 	Double salary,
+	Long jobId,
 	JobType jobType,
 	JobLevel jobLevel,
 	String companyName,
@@ -29,12 +30,12 @@ public record ApplicantAppliedJobListItem(
 		cq.multiselect(
 			job.get(Job_.positionName),
 			job.get(Job_.salary),
+			job.get(Job_.id),
 			job.get(Job_.jobType),
 			job.get(Job_.jobLevel),
 			job.get(Job_.company).get(Company_.account).get(Account_.name),
 			job.get(Job_.company).get(Company_.websiteUrl),
 			root.get(JobApply_.status));
-		
 	}
 
 }

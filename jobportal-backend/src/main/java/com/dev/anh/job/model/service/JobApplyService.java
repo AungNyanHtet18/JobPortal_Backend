@@ -7,7 +7,6 @@ import java.util.function.Function;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.dev.anh.job.model.consts.ApplicantionStatus;
 import com.dev.anh.job.model.entity.JobApply;
 import com.dev.anh.job.model.entity.JobApply_;
@@ -21,7 +20,6 @@ import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.model.repo.JobApplyRepo;
 import com.dev.anh.job.model.repo.JobRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -37,13 +35,14 @@ public class JobApplyService {
 	private final JobApplyRepo jobApplyRepo;
 	
 	public ModificationResult<List<JobApplicationListItem>> checkingApplicantList(long jobId) {
-	    var jobApplicantList = jobRepo.search(queryFuncForApplicantList(jobId));
-		
+	    
+		var jobApplicantList = jobRepo.search(queryFuncForApplicantList(jobId));
 	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicantList);
 	}
 	
 		
 	public ModificationResult<Long> updateApplicationStatus(ApplicationStatusForm form) {
+		
 		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), form.jobId()).orElseThrow(() -> new BusinessException("This applied job  is not found"));
 		jobApply.setNote(form.note());
 		jobApply.setStatus(form.status());
@@ -57,7 +56,7 @@ public class JobApplyService {
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList(String username) {
 		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Username %s  is not found".formatted(username)));
 		var appliedJobList = jobRepo.search(queryFuncForJobList(applicant.getId()));
 		
 		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
@@ -66,14 +65,14 @@ public class JobApplyService {
 	
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
-	public ModificationResult<String> applyJob(String username,  long jobId) {
+	public ModificationResult<String> applyJob(String username, long jobId) {
 		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
-		var job = jobRepo.findById(jobId).orElseThrow(() -> new BusinessException("This %s id  is not found".formatted(jobId)));
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Username %s is not found".formatted(username)));
+		var job = jobRepo.findById(jobId).orElseThrow(() -> new BusinessException("Job with %s id  is not found".formatted(jobId)));
 		
 		var jobApplyPk = new JobApplyPk(applicant.getId(), job.getId());
-		
 		var jobApply = new JobApply();
+		
 		jobApply.setId(jobApplyPk);
 		jobApply.setApplicant(applicant);
 		jobApply.setJob(job);
@@ -87,10 +86,11 @@ public class JobApplyService {
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<String> cancelJob(String username, long jobId) {
-	   var jobApply = jobApplyRepo.findOneByApplicantandJob(username, jobId).orElseThrow(() -> new BusinessException("This %s id  is not found".formatted(jobId)));
+	  
+	   var jobApply = jobApplyRepo.findOneByApplicantandJob(username, jobId).orElseThrow(() -> new BusinessException("Job with %s id  is not found".formatted(jobId)));
 	   jobApplyRepo.delete(jobApply);
 	  
-	   return new ModificationResult<String>("You canceled applied job");
+	   return new ModificationResult<String>("You cancelled applied job");
 	}
 	
 	private Function<CriteriaBuilder, CriteriaQuery<JobApplicationListItem>> queryFuncForApplicantList(Long jobId) {
@@ -123,7 +123,7 @@ public class JobApplyService {
 			  var param = new ArrayList<Predicate>();
 			  
 			  if(null != applicantId) {
-				   param.add(cb.equal(root.get(JobApply_.id).get(JobApplyPk_.applicantId), applicantId));
+				  param.add(cb.equal(root.get(JobApply_.id).get(JobApplyPk_.applicantId), applicantId));
 			  }
 			  
 			  cq.where(param.toArray(size -> new Predicate[size]));
@@ -132,8 +132,5 @@ public class JobApplyService {
 			  return cq;
 		 };
 	}
-
-
-
 
 }

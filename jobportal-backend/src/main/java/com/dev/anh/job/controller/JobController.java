@@ -30,40 +30,40 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JobController {
 
-	private final JobService service;
+	private final JobService jobService;
 	
 	@GetMapping
 	PageResult<JobListItem> search(JobSearch jobSearch,
 					@RequestParam(required = false,defaultValue = "0")int page,
 					@RequestParam(required = false,defaultValue = "10")int size) {
-		return service.searchJob(jobSearch, page, size);
+		return jobService.searchJob(jobSearch, page, size);
 	}
 	
 	@GetMapping("{id}")
 	JobDetails findById(@PathVariable Long id) {
-		return service.findById(id);
+		return jobService.findById(id);
 	}
 	
 	@GetMapping("company/{companyId}")
 	List<JobDetails> findByCompanyId(@PathVariable @NotNull(message = "Company Id is requried") Long companyId ) {
-		 return service.findByCompanyId(companyId);
+		 return jobService.findByCompanyId(companyId);
 	}
 	
 	@PostMapping
 	ModificationResult<Long> storeJobInfo(@RequestBody @Validated JobForm form) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return service.storeJobInfo(username, form);
+		return jobService.storeJobInfo(username, form);
 	}
 	
 	@PutMapping("{id}")
 	ModificationResult<Long> updateJobInfo(@PathVariable Long id ,
 						@RequestBody @Validated JobForm form) {
-		return service.updateJobInfo(id, form);
+		return jobService.updateJobInfo(id, form);
 	}
 	
 	@DeleteMapping("{id}")
 	ModificationResult<String> deleteJobInfo(@PathVariable Long id) {
-		return service.deleteJobInfo(id);
+		return jobService.deleteJobInfo(id);
 	}
 	
 }

@@ -7,6 +7,5 @@ import com.dev.anh.job.model.entity.Account;
 
 public interface AccountRepo extends BaseRepository<Account, Long>{
 	
-	Optional<Account>findOneByEmail(String email);
-	
+	Optional<Account>findOneByEmail(String email);	
 }

@@ -28,6 +28,7 @@ public class SignUpForm {
 		account.setEmail(email);
 		account.setPassword(passwordEncoder.encode(password));
 		account.setActive(true);
+		account.setRoleStatus(false);
 		account.setRole(role);
 		account.setActivatedAt(LocalDateTime.now());
 		

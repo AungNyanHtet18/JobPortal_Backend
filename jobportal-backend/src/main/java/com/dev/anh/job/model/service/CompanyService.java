@@ -41,6 +41,8 @@ public class CompanyService {
 		var account = accountRepo.findOneByEmail(username)
 							.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
+		//Specify active is true in order to display applicant profile
+		account.setRoleStatus(true);
 		
 		if(StringUtils.hasLength(form.companyName())) {
 			 account.setName(form.companyName());
