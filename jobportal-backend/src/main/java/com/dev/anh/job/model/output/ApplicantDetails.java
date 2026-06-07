@@ -1,7 +1,6 @@
 package com.dev.anh.job.model.output;
 
 import java.util.List;
-
 import com.dev.anh.job.model.consts.Gender;
 import com.dev.anh.job.model.entity.Applicant;
 
@@ -10,30 +9,43 @@ public record ApplicantDetails(
 	String name,
 	String email,
 	Gender gender,
-	List<String> skills,
-	List<ApplicantExperienceDetails> experience,
-	String  highestEducationalAttainment,
 	String professionalSummary,
 	String contactDetail,
 	String address,
+	List<ApplicantExperienceDetails> experience,
+	List<ApplicantSocialLinkDetails> socialLink,
+	List<ApplicantEducationDetails> education,
+	List<ApplicantCareerRoleDetails> careerRole,
+	List<ApplicantSkillDetails> skill,
+	List<ApplicantLanguageDetails> language,
 	String profileImage,
-	String resume) {
+	String resume,
+	String cvForm) {
 
 	public static ApplicantDetails from(Applicant entity) {
-		var experience = entity.getExperience().stream().map(ApplicantExperienceDetails:: from).toList();
+		var experience = entity.getExperiences().stream().map(ApplicantExperienceDetails:: from).toList();
+		var link = entity.getLinks().stream().map(ApplicantSocialLinkDetails:: from).toList();
+		var education = entity.getEducations().stream().map(ApplicantEducationDetails:: from).toList();
+		var careerRole = entity.getCareerRoles().stream().map(ApplicantCareerRoleDetails:: from).toList();
+		var skill = entity.getSkills().stream().map(ApplicantSkillDetails:: from).toList();
+		var language = entity.getLanguages().stream().map(ApplicantLanguageDetails:: from).toList();
 		
 		return new ApplicantDetails(
 				entity.getId(),			
 				entity.getAccount().getName(), 
 				entity.getAccount().getEmail(), 
-				entity.getGender(), 
-				List.of(entity.getSkills().split(",")),
-			    experience,
-				entity.getHighestEducationalAttainment(), 
+				entity.getGender(),
 				entity.getProfessionalSummary(),
 				entity.getContactDetail(), 
 				entity.getAddress(),
+				experience,
+				link,
+				education,
+				careerRole,
+				skill,
+				language,
 				entity.getProfilePhoto(),
-				entity.getResume());
+				entity.getResume(),
+				entity.getCvForm());
 				}	
 }

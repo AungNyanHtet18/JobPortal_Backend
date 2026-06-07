@@ -47,12 +47,12 @@ public class Job extends AbstractEntity{
 	@Enumerated(EnumType.STRING)
 	private JobType jobType;
 	
-	private boolean deleted;
-	
 	@ManyToOne(optional = false)	
 	private Company company;
 	
 	@OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<JobApply> jobApply;
+	
+	private boolean deleted;
 	
 }

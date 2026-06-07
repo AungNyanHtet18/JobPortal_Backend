@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -24,17 +25,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
+import com.dev.anh.job.model.entity.CareerRole;
+import com.dev.anh.job.model.entity.Education;
 import com.dev.anh.job.model.entity.Experience;
+import com.dev.anh.job.model.entity.Language;
+import com.dev.anh.job.model.entity.Skill;
+import com.dev.anh.job.model.entity.SocialLink;
 import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.input.ApplicantSearch;
+import com.dev.anh.job.model.input.EducationForm;
 import com.dev.anh.job.model.input.ExperienceForm;
+import com.dev.anh.job.model.input.SocialLinkForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
+import com.dev.anh.job.model.repo.CareerRoleRepo;
+import com.dev.anh.job.model.repo.EducationRepo;
 import com.dev.anh.job.model.repo.ExperienceRepo;
+import com.dev.anh.job.model.repo.LanguageRepo;
+import com.dev.anh.job.model.repo.SkillRepo;
+import com.dev.anh.job.model.repo.SocialLinkRepo;
 import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
 import com.dev.anh.job.utils.exception.FileInvalidException;
@@ -51,6 +64,12 @@ public class ApplicantService {
 	private final AccountRepo accountRepo;
 	private final ApplicantRepo applicantRepo;
 	private final ExperienceRepo experienceRepo;
+	private final SocialLinkRepo socialLinkRepo;
+	private final EducationRepo educationRepo;
+	private final CareerRoleRepo careerRoleRepo;
+	private final SkillRepo skillRepo;
+	private final LanguageRepo languageRepo;
+	
 	private final FileProvider fileProvider;
 	
 	
@@ -89,7 +108,6 @@ public class ApplicantService {
 		};
 	}
 
-
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form, MultipartFile file) {
@@ -97,30 +115,81 @@ public class ApplicantService {
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 		
-		//Specify active is true in order to display applicant profile
+		//Specify active is true  to display applicant profile
 		account.setRoleStatus(true);
 		
 		if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());
-			  accountRepo.saveAndFlush(account);  //changing account name
+			  accountRepo.saveAndFlush(account);  
 		 }
-				 			 
-		 //Convert Skill List to String
-		 String skills = String.join(",", form.skills());
-			  
-		var applicant = applicantRepo.saveAndFlush(form.entity(account, skills));
-			 
-		 //Inserting Applicant's Job Experience
-		 if(Optional.ofNullable(form.experiences()).isPresent() && form.experiences() != null) {
-						
-			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
+		
+		var applicant = applicantRepo.saveAndFlush(form.entity(account));
+		 
+		 //Creating Applicant Job Experience
+		 if(!form.experiences().isEmpty() && form.experiences() != null) {
+			List<Experience> experiences = form.experiences().stream().map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
 			experienceRepo.saveAll(experiences);
 		 }
 		 
-		 
+		//Creating Applicant Job Social Link
+		if(!form.socialLinks().isEmpty() && form.socialLinks() != null) {
+			 List<SocialLink> socialLinks = form.socialLinks().stream().map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
+			 socialLinkRepo.saveAll(socialLinks);		 	 
+		}
+		
+		//Creating Applicant Education
+		if(!form.educations().isEmpty() && form.educations() != null ) {
+			 List<Education> educations = form.educations().stream().map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
+			 educationRepo.saveAll(educations);
+		}
+		
+		
+		//Creating Applicant Interested Career Roles
+		Set<CareerRole> carrerRoleSet = form.careerRoles().stream()
+				.map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
+				.orElseGet(() -> {
+					 var newCareerRole = new CareerRole();
+					 newCareerRole.setRoleName(careerForm.roleName());
+				return careerRoleRepo.save(newCareerRole);		 
+				})
+			).collect(Collectors.toSet());
+		
+		applicant.setCareerRoles(carrerRoleSet);
+		
+			
+		//Creating Applicant Job Skill
+		if(!form.skills().isEmpty() && form.skills() != null) {
+			
+		  Set<Skill> skillSet = form.skills().stream()
+				 .map(skillform -> skillRepo.findOneBySkillName(skillform.skillName())
+				 .orElseGet(() -> {
+						var newSkill = new Skill();
+						newSkill.setSkillName(skillform.skillName());
+						newSkill.setSkillType(skillform.skillType());
+					return skillRepo.save(newSkill);
+				 	})
+				 ).collect(Collectors.toSet());	
+		  
+		     applicant.setSkills(skillSet);
+		 }
+		
+		//Creating Applicant Skillful Languages
+		if(!form.languages().isEmpty() && form.languages() != null ) {
+			Set<Language> languageSet = form.languages().stream()
+				.map(languageform -> languageRepo.findOneByName(languageform.name())
+				.orElseGet(()-> {
+						 var newLanguage = new Language();
+						 newLanguage.setName(languageform.name());
+					return languageRepo.save(newLanguage);
+					})		
+				).collect(Collectors.toSet());
+						
+			applicant.setLanguages(languageSet);
+		}
+		
+		
 		//Save the Applicant Profile Photo
 		if(file != null && !file.isEmpty()) {
-			//Saving the file
 			uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
 		}
 		 		 
@@ -143,18 +212,14 @@ public class ApplicantService {
 			  accountRepo.saveAndFlush(account);
 		 }
 			
-		 //Convert Skill List to String
-		 String skills = String.join(",", form.skills());
 		 
-		applicant.setAccount(account);
-		applicant.setGender(form.gender());
-		applicant.setHighestEducationalAttainment(form.highestEducationalAttainment());
-		applicant.setSkills(skills);
-		applicant.setProfessionalSummary(form.professionalSummary());
-		applicant.setContactDetail(form.contactDetail());
-		applicant.setAddress(form.address());
-		
-	    applicantRepo.save(applicant);
+			applicant.setAccount(account);
+			applicant.setGender(form.gender());
+			applicant.setProfessionalSummary(form.professionalSummary());
+			applicant.setContactDetail(form.contactDetail());
+			applicant.setAddress(form.address());
+			
+		    applicantRepo.save(applicant);
 	     
 		 //Updating Applicant's Job Experiences
 		 if(Optional.ofNullable(form.experiences()).isPresent() && form.experiences() != null) {

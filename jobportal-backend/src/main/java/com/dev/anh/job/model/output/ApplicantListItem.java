@@ -8,22 +8,20 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
 public record ApplicantListItem(
+	String id,	
 	String name,
+	String email,
 	Gender gender,
-	String skills,
-	String highestEducationalAttainment,
 	String profilePhoto) {
 
 	public static void select(CriteriaQuery<ApplicantListItem> cq, Root<Applicant> root) {
 		
 		cq.multiselect(
+			root.get(Applicant_.id),
 			root.get(Applicant_.account).get(Account_.name),
+			root.get(Applicant_.account).get(Account_.email),
 			root.get(Applicant_.gender),
-			root.get(Applicant_.skills),
-			root.get(Applicant_.highestEducationalAttainment),
 			root.get(Applicant_.profilePhoto));
-		
-		
 	}
 
 }

@@ -1,0 +1,18 @@
+package com.dev.anh.job.model.consts;
+
+public enum QualificationType {
+	DOCTORATE,
+	PHD,
+	MASTER,
+	DEGREE,
+    DIPLOMA,
+    POSTGRADUATE_DIPLOMA,
+    HIGH_SCHOOL,
+    FOUNDATION_PROGRAM,
+    COURSE,
+    CERTIFICATE,
+    BOOTCAMP,
+    PROFESSIONAL_TRAINING,
+    VOCATIONAL,
+    TECHNICAL_CERTIFICATION
+}

@@ -1,7 +1,5 @@
 package com.dev.anh.job.model.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,26 +10,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Experience{
-	
+public class SocialLink {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false)
-	private String companyName;
+	private String platform;
 	
 	@Column(nullable = false)
-	private String position;
-	
-	@Column(nullable = false)
-	private LocalDate joinedDate;
-
-	private LocalDate leftDate;
-	
-	private boolean currentlyWorking;
-    
-	private String experienceDescription;
+	private String url;
 	
 	@ManyToOne(optional = false)
 	private Applicant applicant;
