@@ -14,6 +14,8 @@ public record EducationForm(
 	QualificationType qualificationType,	
 	@NotBlank(message = "Please fill your qualification name.")
 	String qualificationName,
+	@NotBlank(message = "Please fill institution name.")
+	String institutionName,
 	@NotNull(message = "Please enter completion date.")
 	LocalDate completionDate) {
 	
@@ -22,6 +24,7 @@ public record EducationForm(
 		 education.setApplicant(applicant);
 		 education.setQualificationType(form.qualificationType());
 		 education.setQualificationName(form.qualificationName());
+		 education.setInstitutionName(form.institutionName());
 		 education.setCompletionDate(form.completionDate());
 		 return education;
 	}

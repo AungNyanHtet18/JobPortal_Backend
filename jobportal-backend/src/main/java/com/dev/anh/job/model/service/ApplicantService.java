@@ -94,7 +94,6 @@ public class ApplicantService {
 		};
 	}
 
-
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
 			 var cq = cb.createQuery(Long.class);
@@ -143,7 +142,6 @@ public class ApplicantService {
 			 educationRepo.saveAll(educations);
 		}
 		
-		
 		//Creating Applicant Interested Career Roles
 		Set<CareerRole> carrerRoleSet = form.careerRoles().stream()
 				.map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
@@ -161,7 +159,7 @@ public class ApplicantService {
 		if(!form.skills().isEmpty() && form.skills() != null) {
 			
 		  Set<Skill> skillSet = form.skills().stream()
-				 .map(skillform -> skillRepo.findOneBySkillName(skillform.skillName())
+				 .map(skillform -> skillRepo.findOneBySkillNameAndSkillType(skillform.skillName(),skillform.skillType())
 				 .orElseGet(() -> {
 						var newSkill = new Skill();
 						newSkill.setSkillName(skillform.skillName());
@@ -176,11 +174,12 @@ public class ApplicantService {
 		//Creating Applicant Skillful Languages
 		if(!form.languages().isEmpty() && form.languages() != null ) {
 			Set<Language> languageSet = form.languages().stream()
-				.map(languageform -> languageRepo.findOneByName(languageform.name())
+				.map(languageform -> languageRepo.findOneByLanguageNameAndLanguageLevel(languageform.languageName(),languageform.languageLevel())
 				.orElseGet(()-> {
 						 var newLanguage = new Language();
-						 newLanguage.setName(languageform.name());
-					return languageRepo.save(newLanguage);
+						 newLanguage.setLanguageName(languageform.languageName());
+						 newLanguage.setLanguageLevel(languageform.languageLevel());
+						return languageRepo.save(newLanguage);
 					})		
 				).collect(Collectors.toSet());
 						

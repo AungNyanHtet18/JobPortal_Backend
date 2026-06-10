@@ -67,7 +67,6 @@ public class ApplicantController {
 			          @RequestPart("form") @Validated ApplicantForm form,
 			          @RequestPart(value = "file", required = false) MultipartFile file) {
 		return applicantService.updateApplicantInfo(id, form, file);
-		
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

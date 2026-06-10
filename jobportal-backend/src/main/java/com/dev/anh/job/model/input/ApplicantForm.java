@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record ApplicantForm(
-	 @NotBlank(message = "Please enter your applicant name.")
 	 String applicantName,
 	 @NotNull(message = "Please select gender")
 	 Gender gender,
@@ -26,7 +25,7 @@ public record ApplicantForm(
 	 @NotEmpty(message = "Please select at least one career role.")
 	 List<@Valid CareerRoleForm> careerRoles,
 	 List<@Valid SkillForm> skills,
-	 List<@Valid LanguageForm> languages ) {
+	 List<@Valid LanguageForm> languages) {
 
 	public Applicant entity(Account account) {
 		var applicant = new Applicant();

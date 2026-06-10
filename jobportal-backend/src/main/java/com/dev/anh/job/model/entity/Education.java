@@ -30,6 +30,9 @@ public class Education {
 	private String qualificationName;
 	
 	@Column(nullable = false)
+	private String institutionName;
+	
+	@Column(nullable = false)
 	private LocalDate completionDate;
 	
 	@ManyToOne(optional = false)
