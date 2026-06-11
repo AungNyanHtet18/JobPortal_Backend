@@ -124,25 +124,21 @@ public class ApplicantService {
 		
 		var applicant = applicantRepo.saveAndFlush(form.entity(account));
 		 
-		 //Creating Applicant Job Experience
 		 if(!form.experiences().isEmpty() && form.experiences() != null) {
 			List<Experience> experiences = form.experiences().stream().map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
 			experienceRepo.saveAll(experiences);
 		 }
 		 
-		//Creating Applicant Job Social Link
 		if(!form.socialLinks().isEmpty() && form.socialLinks() != null) {
 			 List<SocialLink> socialLinks = form.socialLinks().stream().map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
 			 socialLinkRepo.saveAll(socialLinks);		 	 
 		}
 		
-		//Creating Applicant Education
 		if(!form.educations().isEmpty() && form.educations() != null ) {
 			 List<Education> educations = form.educations().stream().map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
 			 educationRepo.saveAll(educations);
 		}
 		
-		//Creating Applicant Interested Career Roles
 		Set<CareerRole> carrerRoleSet = form.careerRoles().stream()
 				.map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
 				.orElseGet(() -> {
@@ -154,8 +150,6 @@ public class ApplicantService {
 		
 		applicant.setCareerRoles(carrerRoleSet);
 		
-			
-		//Creating Applicant Job Skill
 		if(!form.skills().isEmpty() && form.skills() != null) {
 			
 		  Set<Skill> skillSet = form.skills().stream()
@@ -171,7 +165,6 @@ public class ApplicantService {
 		     applicant.setSkills(skillSet);
 		 }
 		
-		//Creating Applicant Skillful Languages
 		if(!form.languages().isEmpty() && form.languages() != null ) {
 			Set<Language> languageSet = form.languages().stream()
 				.map(languageform -> languageRepo.findOneByLanguageNameAndLanguageLevel(languageform.languageName(),languageform.languageLevel())
@@ -185,7 +178,6 @@ public class ApplicantService {
 						
 			applicant.setLanguages(languageSet);
 		}
-		
 		
 		//Save the Applicant Profile Photo
 		if(file != null && !file.isEmpty()) {
@@ -204,36 +196,85 @@ public class ApplicantService {
 		
 		
 		var applicant = applicantRepo.findById(id)
-							.orElseThrow(() -> new BusinessException("Applicant with %s id is nod found".formatted(id)));
+							.orElseThrow(() -> new BusinessException("Applicant with %s id is not found".formatted(id)));
 		
 		 if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());
 			  accountRepo.saveAndFlush(account);
 		 }
 			
-		 
 			applicant.setAccount(account);
 			applicant.setGender(form.gender());
 			applicant.setProfessionalSummary(form.professionalSummary());
 			applicant.setContactDetail(form.contactDetail());
 			applicant.setAddress(form.address());
+						
+		   if(!form.experiences().isEmpty() && form.experiences()  != null) {
+			    experienceRepo.deleteByApplicant(applicant);
+			    
+			    List<Experience> experiences = form.experiences().stream().map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
+			    experienceRepo.saveAll(experiences);
+		   }
+		   
+		   if(!form.socialLinks().isEmpty() && form.socialLinks() != null) { 
+			   socialLinkRepo.deleteByApplicant(applicant);
+		   
+			   List<SocialLink> socialLinks = form.socialLinks().stream().map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
+			   socialLinkRepo.saveAll(socialLinks);
+		   }
+		    
+		   if(!form.educations().isEmpty() && form.educations() != null) {
+			    educationRepo.deleteByApplicant(applicant);
+		   
+			    List<Education> educations = form.educations().stream().map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
+			    educationRepo.saveAll(educations);
+		   }
+		   
+			   Set<CareerRole> careerRoleSet = form.careerRoles().stream()
+					   							 .map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
+					   							.orElseGet(() -> {
+					   								var newCareerRole = new CareerRole();
+					   								newCareerRole.setRoleName(careerForm.roleName());
+					   							return careerRoleRepo.save(newCareerRole);
+					   							  })
+					   						    ).collect(Collectors.toSet());
 			
-		    applicantRepo.save(applicant);
-	     
-		 //Updating Applicant's Job Experiences
-		 if(Optional.ofNullable(form.experiences()).isPresent() && form.experiences() != null) {
-			
-			//Deleting Existing Records with Applicant
-			experienceRepo.deleteByApplicant(applicant);
-			 
-			List<Experience> experiences = form.experiences().stream().map(a -> ExperienceForm.ApplicantJobExperience(applicant, a)).toList();
-			experienceRepo.saveAll(experiences);
-		 }
+			   applicant.setCareerRoles(careerRoleSet);	   							 
+		  
+		  if(!form.skills().isEmpty() && form.skills() != null) {
+			  
+			 Set<Skill> skillSet = form.skills().stream()
+					 				.map(skillform -> skillRepo.findOneBySkillNameAndSkillType(skillform.skillName(), skillform.skillType())
+					 				.orElseGet(() -> {
+						 					var newSkill = new Skill();
+						 					newSkill.setSkillName(skillform.skillName());
+						 					newSkill.setSkillType(skillform.skillType());					 					
+						 				return skillRepo.save(newSkill);
+					 					})
+					 				).collect(Collectors.toSet());
+			  
+			 applicant.setSkills(skillSet);			  
+		  }
+		  
+		  if(!form.languages().isEmpty() && form.languages() != null) {
+			  
+			  Set<Language> languageSet = form.languages().stream()
+					  					    .map(languageForm -> languageRepo.findOneByLanguageNameAndLanguageLevel(languageForm.languageName(), languageForm.languageLevel())
+					  					    .orElseGet(() -> {
+						  					    	var newLanguage = new Language();
+						  					    	newLanguage.setLanguageName(languageForm.languageName());
+						  					    	newLanguage.setLanguageLevel(languageForm.languageLevel());
+						  					    return languageRepo.save(newLanguage);
+					  					    	})		
+					  					    ).collect(Collectors.toSet());
+			 applicant.setLanguages(languageSet); 					    
+		  }
+		  
+		  	applicantRepo.save(applicant);
 		 
-		if(file != null && !file.isEmpty()) {
-			//Saving the file
-			uploadApplicantProfile(account.getEmail(), uploadPath.concat("/profile"), file);
-		}
+			if(file != null && !file.isEmpty()) {
+				uploadApplicantProfile(account.getEmail(), uploadPath.concat("/profile"), file);
+			}
 
 		return new ModificationResult<Long>(id);
 	}
