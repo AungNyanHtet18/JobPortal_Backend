@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,10 +71,8 @@ public class ApplicantService {
 	
 	private final FileProvider fileProvider;
 	
-	
 	@Value("${app.upload.path}")
 	private String uploadPath;
-	
 	
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
 		return  accountRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
@@ -298,7 +295,7 @@ public class ApplicantService {
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
 			
 		try {
-			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getName(), file);
+			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getEmail(), file);
 			applicant.setProfilePhoto(profileImageName);
 			
 			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);
@@ -317,10 +314,10 @@ public class ApplicantService {
 		
 		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
 		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s is not found.".formatted(username)));
 		
 		try {
-			var resumeName = fileProvider.generateFileName(applicant.getAccount().getName(), file);
+			var resumeName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
 			var resumePath = Path.of(resumeUploadPath, resumeName);
 		
 		if(!Files.exists(resumePath.getParent())) { //resumePath.getParent() => C:upload/resume == return the parent directory of the file
@@ -336,6 +333,36 @@ public class ApplicantService {
 			throw new FileInvalidException("Invalid Resume Upload", e);
 		}
 
+	}
+	
+	@Transactional
+	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
+	public ModificationResult<String> uploadApplicantCvForm(String username, MultipartFile file) {
+		
+		String cvFormUploadPath = uploadPath.concat("/cvform");
+		
+		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
+		
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
+		
+		try {
+				 var cvFormName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
+				 var cvFormPath = Path.of(cvFormUploadPath, cvFormName);
+				 
+			 if(!Files.exists(cvFormPath.getParent())) {
+				  Files.createDirectories(cvFormPath.getParent());
+			 }
+			 
+			 
+			  Files.copy(file.getInputStream(), cvFormPath, StandardCopyOption.REPLACE_EXISTING);
+			  applicant.setCvForm(cvFormName);
+			 
+			return new ModificationResult<String>("Sucessfully ");
+					 
+		}catch(IOException e) {
+			 throw new FileInvalidException("Invalid CV Form Upload.",e);
+		}
+				
 	}
 	
 	public ResponseEntity<Resource> downloadApplicantResume(Long id) throws IOException {
@@ -356,7 +383,5 @@ public class ApplicantService {
 					.header(HttpHeaders.CONTENT_DISPOSITION, 
 					   "attachment; filename=\"" + fileName + "\"")
 					.body(resource);
-	}
-		
-	
+	}	
 }

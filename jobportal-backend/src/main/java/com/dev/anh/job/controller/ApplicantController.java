@@ -75,10 +75,19 @@ public class ApplicantController {
 		 return applicantService.uploadApplicantResume(username, file);
 	}
 	
+
+	@PatchMapping(value="uploadcv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ModificationResult<String> uploadApplicantCvForm(MultipartFile file) {
+		var username = SecurityContextHolder.getContext().getAuthentication().getName();
+		return applicantService.uploadApplicantCvForm(username, file);
+	}
+	
+	
 	@GetMapping("resume/{id}/download")
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	ResponseEntity<Resource>  downloadApplicantResume(@PathVariable Long id) throws IOException {
 		return applicantService.downloadApplicantResume(id);
 	}
 	
+
 }

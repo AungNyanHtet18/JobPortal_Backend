@@ -39,13 +39,15 @@ public class FileProvider {
 		}
 	}
 	
-	public  String generateFileName(String username, MultipartFile file) {
+	public  String generateFileName(String email, MultipartFile file) {
 				
 		var fileName = file.getOriginalFilename(); //Retrieving original file name 
 		var array = fileName.split("\\."); //Split with .(dot) eg. ["john_resume", "pdf"]
 		var extension = array[array.length -1]; //Retrieving the last element ["john_resume","pdf"] from array and latest extension(eg.jpg)
 		
-		return "%s.%s".formatted(username.replace(" ",""),extension);    // username.replace(" ","") Removing space in username
+		var username = email.substring(0, email.indexOf('@')); //Retrieving aung123@gmail.com to aung@123
+		
+		return "%s.%s".formatted(username,extension);    // username.replace(" ","") Removing space in username
 	} 
 
 	public String saveFile(String uploadPath, String ownerName, MultipartFile file) throws IOException {
