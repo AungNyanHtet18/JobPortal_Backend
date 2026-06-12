@@ -1,11 +1,12 @@
 package com.dev.anh.job.model.consts;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LanguageLevel {
 	Beginner("Beginner"),
 	Elementary("Elementary"),
-	PreIntermediate("PreIntermediate"),
+	PreIntermediate("Pre Intermediate"),
 	Intermediate("Intermediate"),
 	UpperIntermediate("Upper Intermediate"),
 	Advanced("Advanced"),
@@ -21,6 +22,17 @@ public enum LanguageLevel {
 	@JsonValue
 	public String getReadableName() {
 		 return readableName;
+	}
+	
+	@JsonCreator //handle incoming JSON conversion safely
+	public static LanguageLevel fromString(String value) {
+		for(LanguageLevel type: LanguageLevel.values()){ 
+			if(type.readableName.equalsIgnoreCase(value) || type.name().equalsIgnoreCase(value)) {
+				 return type;
+			}
+		}
+		
+		throw new IllegalArgumentException("Unknown Language Level:"+ value);
 	}
 	
 	

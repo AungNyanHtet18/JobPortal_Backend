@@ -38,7 +38,7 @@ public class JobportalSecurityConfig {
 		 });
 		 
 		 http.authorizeHttpRequests(request -> { 
-			 request.requestMatchers("/token/**","/swagger-ui/**","/v3/api-docs/**","/profile/**","/resume/**","/companyprofile/**").permitAll();
+			 request.requestMatchers("/token/**","/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
 			 request.requestMatchers("/account/**").hasAnyAuthority("Applicant", "CompanyAccount");

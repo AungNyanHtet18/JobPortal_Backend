@@ -1,5 +1,6 @@
 package com.dev.anh.job.model.consts;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum QualificationType {
@@ -28,4 +29,16 @@ public enum QualificationType {
 	public String getReadableName() {
 		return readableName;
 	}
+	
+	@JsonCreator //handle incoming JSON conversion safely
+	public static QualificationType fromString(String value) {
+		for(QualificationType type: QualificationType.values()){ 
+			if(type.readableName.equalsIgnoreCase(value) || type.name().equalsIgnoreCase(value)) {
+				 return type;
+			}
+		}
+		throw new IllegalArgumentException("Unknown Qualification Type:"+ value);
+	}
+	
+	
 }
