@@ -8,12 +8,14 @@ import com.dev.anh.job.model.entity.Education;
 public record ApplicantEducationDetails(
 	QualificationType qualificationType,
 	String qualificationName,
+	String institutionName,
 	LocalDate completionDate) {
 
 	public static ApplicantEducationDetails from(Education education) {
 		return new ApplicantEducationDetails(
 				education.getQualificationType(), 
 				education.getQualificationName(), 
+				education.getInstitutionName(),
 				education.getCompletionDate());
 	}
 }
