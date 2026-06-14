@@ -1,12 +1,15 @@
 package com.dev.anh.job.model.output;
 
 import java.util.List;
+
+import com.dev.anh.job.model.consts.IndustryType;
 import com.dev.anh.job.model.entity.Company;
 
 public record CompanyDetails(
 	Long id,
 	String companyName,
 	String companyEmail,
+	IndustryType industryType,
 	String location,
 	String phone,
 	String websiteUrl,
@@ -21,6 +24,7 @@ public record CompanyDetails(
 				    entity.getId(),
 					entity.getAccount().getName(), 
 				    entity.getAccount().getEmail(),
+				    entity.getIndustryType(),
 					entity.getLocation(), 
 					entity.getPhone(), 
 					entity.getWebsiteUrl(), 
@@ -30,8 +34,4 @@ public record CompanyDetails(
 					uploadedJob);
 	}
 
-	
-	
-	
-	
 }

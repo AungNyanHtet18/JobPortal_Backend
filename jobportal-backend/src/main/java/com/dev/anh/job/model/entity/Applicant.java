@@ -79,7 +79,7 @@ public class Applicant extends AbstractEntity{
 			name="applicant_career_roles",
 			joinColumns = @JoinColumn(name = "applicant_id"),
 			inverseJoinColumns = @JoinColumn(name = "career_role_id"))
-	private Set<CareerRole> careerRoles;
+	private Set<Career> careerRoles;
 	
 	private String profilePhoto;
 	

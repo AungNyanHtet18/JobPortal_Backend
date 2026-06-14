@@ -13,7 +13,7 @@ public class AdminController {
 
 	@GetMapping
 	String hello() {
-		 return "admin hello";
+		 return "hello admin";
 	}
 	
 }

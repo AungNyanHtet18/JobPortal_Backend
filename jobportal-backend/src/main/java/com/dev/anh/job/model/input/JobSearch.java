@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 import com.dev.anh.job.model.entity.Account_;
+import com.dev.anh.job.model.entity.Career;
+import com.dev.anh.job.model.entity.Career_;
 import com.dev.anh.job.model.entity.Company;
 import com.dev.anh.job.model.entity.Company_;
 import com.dev.anh.job.model.entity.Job;
@@ -41,7 +43,7 @@ public record JobSearch(
 		
 		if(StringUtils.hasLength(keyword)) {
 			 param.add(cb.or(
-					cb.like(cb.lower(root.get(Job_.positionName)), keyword.toLowerCase().concat("%")),
+					cb.like(cb.lower(root.get(Job_.career).get(Career_.roleName)), keyword.toLowerCase().concat("%")),
 					cb.like(cb.lower(company.get(Company_.location)), keyword.toLowerCase().concat("%")),
 					cb.like(cb.lower(company.get(Company_.account).get(Account_.name)), keyword.toLowerCase().concat("%"))));
 		}

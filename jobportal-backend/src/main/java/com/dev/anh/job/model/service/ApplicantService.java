@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
-import com.dev.anh.job.model.entity.CareerRole;
+import com.dev.anh.job.model.entity.Career;
 import com.dev.anh.job.model.entity.Education;
 import com.dev.anh.job.model.entity.Experience;
 import com.dev.anh.job.model.entity.Language;
@@ -41,7 +41,7 @@ import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
-import com.dev.anh.job.model.repo.CareerRoleRepo;
+import com.dev.anh.job.model.repo.CareerRepo;
 import com.dev.anh.job.model.repo.EducationRepo;
 import com.dev.anh.job.model.repo.ExperienceRepo;
 import com.dev.anh.job.model.repo.LanguageRepo;
@@ -65,7 +65,7 @@ public class ApplicantService {
 	private final ExperienceRepo experienceRepo;
 	private final SocialLinkRepo socialLinkRepo;
 	private final EducationRepo educationRepo;
-	private final CareerRoleRepo careerRoleRepo;
+	private final CareerRepo careerRepo;
 	private final SkillRepo skillRepo;
 	private final LanguageRepo languageRepo;
 	
@@ -136,12 +136,12 @@ public class ApplicantService {
 			 educationRepo.saveAll(educations);
 		}
 		
-		Set<CareerRole> carrerRoleSet = form.careerRoles().stream()
-				.map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
+		Set<Career> carrerRoleSet = form.careerRoles().stream()
+				.map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName())
 				.orElseGet(() -> {
-					 var newCareerRole = new CareerRole();
-					 newCareerRole.setRoleName(careerForm.roleName());
-				return careerRoleRepo.save(newCareerRole);		 
+					 var newCareer = new Career();
+					 newCareer.setRoleName(careerForm.roleName());
+				return careerRepo.save(newCareer);		 
 				})
 			).collect(Collectors.toSet());
 		
@@ -227,16 +227,16 @@ public class ApplicantService {
 			    educationRepo.saveAll(educations);
 		   }
 		   
-			   Set<CareerRole> careerRoleSet = form.careerRoles().stream()
-					   							 .map(careerForm -> careerRoleRepo.findOneByRoleName(careerForm.roleName())
+			  Set<Career> careerRoleSet = form.careerRoles().stream()
+					   							 .map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName())
 					   							.orElseGet(() -> {
-					   								var newCareerRole = new CareerRole();
-					   								newCareerRole.setRoleName(careerForm.roleName());
-					   							return careerRoleRepo.save(newCareerRole);
+					   								var newCareer = new Career();
+					   								newCareer.setRoleName(careerForm.roleName());
+					   							return careerRepo.save(newCareer);
 					   							  })
 					   						    ).collect(Collectors.toSet());
 			
-			   applicant.setCareerRoles(careerRoleSet);	   							 
+			  applicant.setCareerRoles(careerRoleSet);	   							 
 		  
 		  if(!form.skills().isEmpty() && form.skills() != null) {
 			  
@@ -375,7 +375,27 @@ public class ApplicantService {
 		var resource = new FileSystemResource(filePath);
 
 		if(!resource.exists()) {
-			 throw new FileInvalidException("File Not Foundd");
+			 throw new FileInvalidException("File Not Found");
+		}
+		
+		return ResponseEntity.ok()
+					.contentType(MediaType.parseMediaType(contentType))
+					.header(HttpHeaders.CONTENT_DISPOSITION, 
+					   "attachment; filename=\"" + fileName + "\"")
+					.body(resource);
+	}	
+	
+	public ResponseEntity<Resource> downloadApplicantCvForm(Long id) throws IOException {
+		var applicant = applicantRepo.findById(id).orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+	
+		var filePath = Path.of("C:/upload/cvform",applicant.getCvForm());
+		var contentType = Files.probeContentType(filePath);
+		var fileName = Paths.get(applicant.getCvForm()).getFileName().toString();
+		
+		var resource = new FileSystemResource(filePath);
+
+		if(!resource.exists()) {
+			 throw new FileInvalidException("File Not Found");
 		}
 		
 		return ResponseEntity.ok()

@@ -87,4 +87,9 @@ public class ApplicantController {
 		return applicantService.downloadApplicantResume(id);
 	}
 	
+	@GetMapping("cvForm/{id}/download")
+	@PreAuthorize("hasAuthority('CompanyAccount')")
+	ResponseEntity<Resource>  downloadApplicantCvForm(@PathVariable Long id) throws IOException {
+		return applicantService.downloadApplicantCvForm(id);
+	}
 }

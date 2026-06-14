@@ -13,7 +13,7 @@ public record UploadedJob(
 
 	public static UploadedJob from(Job job) {
 		 return new UploadedJob(
-				 job.getPositionName(), 
+				 job.getCareer().getRoleName(), 
 				 job.getSalary(), 
 				 job.getId(),
 				 job.getJobLevel(), 

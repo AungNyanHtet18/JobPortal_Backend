@@ -75,6 +75,7 @@ public class CompanyService {
 		}
 		
 		company.setAccount(account);
+		company.setIndustryType(form.industryType());
 		company.setLocation(form.location());
 		company.setPhone(form.phone());
 		company.setWebsiteUrl(form.websiteUrl());
@@ -101,7 +102,7 @@ public class CompanyService {
 		var company = companyRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill company information before uploading profile image "));
 
 		try {
-			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getName(), file);
+			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getEmail(), file);
 			company.setProfilePhoto(profileImageName);
 
 			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);

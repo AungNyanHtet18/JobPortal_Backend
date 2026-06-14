@@ -6,7 +6,10 @@ import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,16 +33,28 @@ public class Job extends AbstractEntity{
 	@Column(name="job_id")
 	private Long id;
 	
-	@Column(nullable = false)
-	private String positionName;
+	@ManyToOne(optional = false)
+	@JoinColumn(name="position_name")
+	private Career career;
 	
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String JobDescription;
+	@ManyToOne(optional = false)	
+	private Company company;
 	
-	@Column(nullable = false)
-	@Positive(message = "Salary must be greater than 0")
-	private Double salary;
+	private Integer jobPost;
+	private String clientName;
 	
+	@ElementCollection
+    @CollectionTable(name = "job_descriptions", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(nullable = false,  columnDefinition = "TEXT")
+    @OrderColumn(name = "display_order") //display according to order
+    private List<String> jobDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "job_requirements", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(nullable =  false , columnDefinition = "TEXT")
+    @OrderColumn(name = "display_order")
+    private List<String> jobRequirements;
+		
 	@Column(nullable =  false)
 	@Enumerated(EnumType.STRING)
 	private JobLevel jobLevel;
@@ -47,9 +63,10 @@ public class Job extends AbstractEntity{
 	@Enumerated(EnumType.STRING)
 	private JobType jobType;
 	
-	@ManyToOne(optional = false)	
-	private Company company;
-	
+	@Column(nullable = false)
+	@Positive(message = "Salary must be greater than 0")
+	private Double salary;
+			
 	@OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<JobApply> jobApply;
 	

@@ -4,6 +4,8 @@ import com.dev.anh.job.model.consts.ApplicantionStatus;
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 import com.dev.anh.job.model.entity.Account_;
+import com.dev.anh.job.model.entity.Career;
+import com.dev.anh.job.model.entity.Career_;
 import com.dev.anh.job.model.entity.Company_;
 import com.dev.anh.job.model.entity.JobApply;
 import com.dev.anh.job.model.entity.JobApply_;
@@ -28,7 +30,7 @@ public record ApplicantAppliedJobListItem(
 		var job = root.join(JobApply_.job, JoinType.INNER);
 		
 		cq.multiselect(
-			job.get(Job_.positionName),
+			job.get(Job_.career).get(Career_.roleName),
 			job.get(Job_.salary),
 			job.get(Job_.id),
 			job.get(Job_.jobType),
