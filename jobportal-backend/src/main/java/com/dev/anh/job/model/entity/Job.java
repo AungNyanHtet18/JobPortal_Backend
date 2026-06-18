@@ -43,6 +43,9 @@ public class Job extends AbstractEntity{
 	private Integer jobPost;
 	private String clientName;
 	
+	@Column(nullable = false)
+	private String location;
+	
 	@ElementCollection
     @CollectionTable(name = "job_descriptions", joinColumns = @JoinColumn(name = "job_id"))
     @Column(nullable = false,  columnDefinition = "TEXT")
@@ -65,8 +68,12 @@ public class Job extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@Positive(message = "Salary must be greater than 0")
-	private Double salary;
-			
+	private Double maxSalaryRange;
+	
+	@Column(nullable = false)
+	@Positive(message = "Salary must be greater than 0")
+	private Double minSalaryRange;
+		
 	@OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<JobApply> jobApply;
 	

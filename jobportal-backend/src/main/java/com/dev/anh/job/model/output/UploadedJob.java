@@ -6,17 +6,21 @@ import com.dev.anh.job.model.entity.Job;
 
 public record UploadedJob(
 	String postionName,
-	Double salary,
+	Double maxSalary,
+	Double minSalary,
 	Long jobId,
 	JobLevel jobLevel,
-	JobType jobType) {
+	JobType jobType,
+	String jobLocation) {
 
 	public static UploadedJob from(Job job) {
 		 return new UploadedJob(
 				 job.getCareer().getRoleName(), 
-				 job.getSalary(), 
+				 job.getMaxSalaryRange(),
+				 job.getMinSalaryRange(),
 				 job.getId(),
 				 job.getJobLevel(), 
-				 job.getJobType());
+				 job.getJobType(),
+				 job.getLocation());
 	}
 }

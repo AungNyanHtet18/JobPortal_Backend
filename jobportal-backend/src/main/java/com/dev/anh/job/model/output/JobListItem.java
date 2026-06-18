@@ -17,14 +17,15 @@ import jakarta.persistence.criteria.Root;
 public record JobListItem(
 	  Long jobId,
 	  String positionName,
-	  Double salary,
+	  Double maxSalaryRange,
+	  Double minSalaryRange,
 	  JobLevel jobLevel,
 	  JobType jobType,
 	  String companyName,
+	  String clientName,
+	  String jobLocation,
 	  String profilePhoto,
-	  String location,
 	  LocalDateTime createAt) {
-
 	
 	public static void select(CriteriaQuery<JobListItem> cq, Root<Job> root, Join<Job, Company> company) {
 		
@@ -33,12 +34,14 @@ public record JobListItem(
 		cq.multiselect(
 			root.get(Job_.id),
 			root.get(Job_.career).get(Career_.roleName),
-			root.get(Job_.salary),
+			root.get(Job_.maxSalaryRange),
+			root.get(Job_.minSalaryRange),
 			root.get(Job_.jobLevel),
 			root.get(Job_.jobType),
 			account.get(Account_.name),
+			root.get(Job_.clientName),
+			root.get(Job_.location),
 			company.get(Company_.profilePhoto),
-			company.get(Company_.location),
 			root.get(Job_.createAt));
 	}
 

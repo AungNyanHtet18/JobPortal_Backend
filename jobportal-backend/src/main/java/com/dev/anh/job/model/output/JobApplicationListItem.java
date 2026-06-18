@@ -16,6 +16,8 @@ public record JobApplicationListItem(
 	Long applicantId,
 	String  applicantName,
 	String applicantEmail,
+	String applicantResume,
+    String applicantCVForm,
 	Gender gender,
     ApplicantionStatus status) {
 
@@ -27,9 +29,10 @@ public record JobApplicationListItem(
 			root.get(JobApply_.id).get(JobApplyPk_.applicantId),
 			applicant.get(Applicant_.account).get(Account_.name),
 			applicant.get(Applicant_.account).get(Account_.email),
+			applicant.get(Applicant_.resume),
+			applicant.get(Applicant_.cvForm),
 			applicant.get(Applicant_.gender),
 			root.get(JobApply_.status));
-		
 	}
 
 }

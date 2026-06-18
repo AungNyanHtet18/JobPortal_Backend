@@ -106,15 +106,16 @@ public class JobService {
 						});
 		
 		job.setCareer(career);
-		job.setJobPost(form.jobPost());		
+		job.setJobPost(form.jobPost());	
+		job.setClientName(form.clientName()); 
+		job.setLocation(form.location());
 		job.setJobDescriptions(form.jobDescriptions());
 		job.setJobRequirements(form.jobRequirements());
 		job.setJobLevel(form.jobLevel());
 		job.setJobType(form.jobType());
-		job.setSalary(form.salary());
-		job.setClientName(form.clientName()); 
+		job.setMinSalaryRange(form.minSalaryRange());
+		job.setMaxSalaryRange(form.maxSalaryRange());
 		job.setDeleted(form.deleted());
-		
 		
 		jobRepo.save(job);
 		return new ModificationResult<Long>(id);
