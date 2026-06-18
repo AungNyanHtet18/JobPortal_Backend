@@ -29,6 +29,12 @@ public class ExceptionHandlers {
 		 return List.of(e.getMessage());
 	}
 	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.EXPECTATION_FAILED)
+	List<String>hanlde(EmailInvalidException e) {
+		 return List.of(e.getMessage());
+	}
+	
 	
 	//Handle Invalid Enum Type
 	@ExceptionHandler

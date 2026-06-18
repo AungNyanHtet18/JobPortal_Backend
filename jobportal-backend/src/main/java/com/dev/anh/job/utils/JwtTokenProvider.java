@@ -1,4 +1,4 @@
-package com.dev.anh.job.model.service;
+package com.dev.anh.job.utils;
 
 import java.util.Arrays;
 import java.util.Calendar;

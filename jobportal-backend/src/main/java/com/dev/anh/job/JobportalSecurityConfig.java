@@ -21,7 +21,7 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import com.dev.anh.job.model.consts.Role;
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.repo.AccountRepo;
-import com.dev.anh.job.model.service.JwtTokenFilter;
+import com.dev.anh.job.utils.JwtTokenFilter;
 import com.dev.anh.job.utils.exception.SecurityExceptionHandler;
 
 @Configuration

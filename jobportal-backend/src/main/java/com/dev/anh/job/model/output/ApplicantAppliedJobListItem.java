@@ -1,6 +1,6 @@
 package com.dev.anh.job.model.output;
 
-import com.dev.anh.job.model.consts.ApplicantionStatus;
+import com.dev.anh.job.model.consts.ApplicationStatus;
 import com.dev.anh.job.model.consts.JobLevel;
 import com.dev.anh.job.model.consts.JobType;
 import com.dev.anh.job.model.entity.Account_;
@@ -25,7 +25,7 @@ public record ApplicantAppliedJobListItem(
 	String clientName,
 	String jobLocation,
 	String websiteUrl,
-	ApplicantionStatus status) {
+	ApplicationStatus status) {
 
 	public static void select(CriteriaQuery<ApplicantAppliedJobListItem> cq, Root<JobApply> root) {
 		

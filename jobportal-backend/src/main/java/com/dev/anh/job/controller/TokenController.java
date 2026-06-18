@@ -9,7 +9,7 @@ import com.dev.anh.job.model.input.RefreshForm;
 import com.dev.anh.job.model.input.SignInForm;
 import com.dev.anh.job.model.input.SignUpForm;
 import com.dev.anh.job.model.output.TokenResult;
-import com.dev.anh.job.model.service.TokenService;
+import com.dev.anh.job.utils.service.TokenService;
 
 import lombok.RequiredArgsConstructor;
 

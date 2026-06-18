@@ -1,6 +1,6 @@
 package com.dev.anh.job.model.consts;
 
-public enum ApplicantionStatus {
+public enum ApplicationStatus {
     APPLIED,
     REVIEWING,
     SHORTLISTED,

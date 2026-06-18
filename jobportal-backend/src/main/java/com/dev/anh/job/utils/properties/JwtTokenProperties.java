@@ -1,4 +1,4 @@
-package com.dev.anh.job.utils;
+package com.dev.anh.job.utils.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

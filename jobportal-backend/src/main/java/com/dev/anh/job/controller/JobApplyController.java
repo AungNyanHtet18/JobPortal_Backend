@@ -8,7 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,6 @@ import com.dev.anh.job.model.output.JobApplicationListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.service.JobApplyService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
@@ -35,10 +35,10 @@ public class JobApplyController {
     	 return jobApplyService.checkingApplicantList(jobId);
     }
     
-	@PostMapping("updatestatus/{jobId}")
+	@PutMapping("updatestatus/{jobId}")
     @PreAuthorize("hasAuthority('CompanyAccount')")
-	ModificationResult<Long> updateApplicationStatus(@RequestBody @Validated ApplicationStatusForm form) {
-		return jobApplyService.updateApplicationStatus(form);
+	ModificationResult<Long> updateApplicationStatus(@PathVariable  @NotNull(message = "Job Id is required") long jobId, @RequestBody @Validated ApplicationStatusForm form) {
+		return jobApplyService.updateApplicationStatus(jobId, form);
 	}
     
     @GetMapping("joblist")

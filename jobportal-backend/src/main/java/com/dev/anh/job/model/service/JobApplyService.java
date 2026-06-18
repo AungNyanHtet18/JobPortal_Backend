@@ -2,12 +2,16 @@ package com.dev.anh.job.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.dev.anh.job.model.consts.ApplicantionStatus;
+
+import com.dev.anh.job.event.JobApplicationEvent;
+import com.dev.anh.job.model.consts.ApplicationStatus;
 import com.dev.anh.job.model.entity.JobApply;
 import com.dev.anh.job.model.entity.JobApply_;
 import com.dev.anh.job.model.entity.embeddable.JobApplyPk;
@@ -24,6 +28,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class JobApplyService {
 	private final ApplicantRepo applicantRepo;
 	private final JobRepo jobRepo;
 	private final JobApplyRepo jobApplyRepo;
+	private final ApplicationEventPublisher eventPublisher;
 	
 	public ModificationResult<List<JobApplicationListItem>> checkingApplicantList(long jobId) {
 	    
@@ -40,18 +46,33 @@ public class JobApplyService {
 	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicantList);
 	}
 	
+	@Transactional
+	@PreAuthorize("hasAuthority('CompanyAccount')")
+	public ModificationResult<Long> updateApplicationStatus(long jobId, ApplicationStatusForm form) {
 		
-	public ModificationResult<Long> updateApplicationStatus(ApplicationStatusForm form) {
-		
-		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), form.jobId()).orElseThrow(() -> new BusinessException("This applied job  is not found"));
+		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), jobId).orElseThrow(() -> new BusinessException("The applied job Id with %s is not found".formatted(jobId)));
 		jobApply.setNote(form.note());
 		jobApply.setStatus(form.status());
 		
-		jobApplyRepo.save(jobApply);		
+		jobApplyRepo.save(jobApply);
+		
+		String companyName = Optional.ofNullable(jobApply.getJob().getClientName())
+		        .filter(name -> !name.isBlank())
+		        .orElse(jobApply.getJob().getCompany().getAccount().getName());
+		
+		eventPublisher.publishEvent(
+			new JobApplicationEvent(jobApply.getApplicant().getAccount().getEmail(),
+									jobApply.getApplicant().getAccount().getName(),
+									form.status(),
+									companyName,
+									jobApply.getJob().getCareer().getRoleName(),
+									jobApply.getCreateAt())	
+			);
+		
+		
 	    
 		return new ModificationResult<Long>(jobApply.getId().getJobId());
 	}
-	
 	
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList(String username) {
@@ -62,7 +83,6 @@ public class JobApplyService {
 		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
 	}
 
-	
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<String> applyJob(String username, long jobId) {
@@ -76,7 +96,7 @@ public class JobApplyService {
 		jobApply.setId(jobApplyPk);
 		jobApply.setApplicant(applicant);
 		jobApply.setJob(job);
-		jobApply.setStatus(ApplicantionStatus.APPLIED);
+		jobApply.setStatus(ApplicationStatus.APPLIED);
 		
 		jobApplyRepo.save(jobApply);
 		

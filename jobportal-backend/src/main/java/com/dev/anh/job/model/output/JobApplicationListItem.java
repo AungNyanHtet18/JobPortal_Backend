@@ -1,6 +1,6 @@
 package com.dev.anh.job.model.output;
 
-import com.dev.anh.job.model.consts.ApplicantionStatus;
+import com.dev.anh.job.model.consts.ApplicationStatus;
 import com.dev.anh.job.model.consts.Gender;
 import com.dev.anh.job.model.entity.Account_;
 import com.dev.anh.job.model.entity.Applicant_;
@@ -19,7 +19,7 @@ public record JobApplicationListItem(
 	String applicantResume,
     String applicantCVForm,
 	Gender gender,
-    ApplicantionStatus status) {
+    ApplicationStatus status) {
 
 	public static void select(CriteriaQuery<JobApplicationListItem> cq, Root<JobApply> root) {
 		

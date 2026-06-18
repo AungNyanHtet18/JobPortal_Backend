@@ -1,4 +1,4 @@
-package com.dev.anh.job.model.service;
+package com.dev.anh.job.utils.service;
 
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +14,7 @@ import com.dev.anh.job.model.input.SignInForm;
 import com.dev.anh.job.model.input.SignUpForm;
 import com.dev.anh.job.model.output.TokenResult;
 import com.dev.anh.job.model.repo.AccountRepo;
+import com.dev.anh.job.utils.JwtTokenProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;

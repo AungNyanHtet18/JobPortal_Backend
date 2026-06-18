@@ -24,6 +24,7 @@ public record JobListItem(
 	  String companyName,
 	  String clientName,
 	  String jobLocation,
+	  boolean deleted,
 	  String profilePhoto,
 	  LocalDateTime createAt) {
 	
@@ -41,6 +42,7 @@ public record JobListItem(
 			account.get(Account_.name),
 			root.get(Job_.clientName),
 			root.get(Job_.location),
+			root.get(Job_.deleted),
 			company.get(Company_.profilePhoto),
 			root.get(Job_.createAt));
 	}
