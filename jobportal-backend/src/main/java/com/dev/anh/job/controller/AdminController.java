@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
 	@GetMapping
-	String hello() {
-		 return "hello admin";
+	String MemberList() {
+		 return "Member List";
 	}
 	
 }
