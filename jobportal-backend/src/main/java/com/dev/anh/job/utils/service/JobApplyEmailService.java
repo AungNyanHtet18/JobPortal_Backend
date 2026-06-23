@@ -26,9 +26,9 @@ public class JobApplyEmailService {
 	private final JavaMailSender javaMailSender;
 	
 	public void sendEmail(String applicantEmail, String applicantName, ApplicationStatus status, 
-						  String companyName, String jobTitle, LocalDateTime appliedAt) {
+						  String note, String companyName, String jobTitle, LocalDateTime appliedAt) {
 		String subject = "Your application for " +jobTitle.concat("at ").concat(companyName);
-		String text = generateJobEmailContent(applicantName, status, companyName, jobTitle, appliedAt);
+		String text = generateJobEmailContent(applicantName, status, note, companyName, jobTitle, appliedAt);
 		sendEmail(applicantEmail, subject, text );
 	}
 	
@@ -50,9 +50,18 @@ public class JobApplyEmailService {
 		}
 	}
 	
-	private String generateJobEmailContent(String applicantName, ApplicationStatus status, String companyName, 
-										   String jobTitle, LocalDateTime appliedAt) {
-		 
+	private String generateJobEmailContent(String applicantName, ApplicationStatus status, String note,
+			                String companyName, String jobTitle, LocalDateTime appliedAt) {
+		
+		String noteSection = (note != null && !note.isBlank())
+                ? """
+		          <p><strong>Additional Note:</strong></p>
+		          <div style="background-color:#f8f9fa; padding:12px; border-left:4px solid #007bff; margin:10px 0;">
+		             %s
+		          </div>
+		          """.formatted(note)
+		        : "";
+		
 		String statusMessage = switch (status) {
 	
 		    case APPLIED ->
@@ -85,6 +94,8 @@ public class JobApplyEmailService {
 
 	                <p>%s</p>
 
+                    %s
+                    
 	                <p>
 	                    <strong>Application Details:</strong><br>
 	                    Applied on: %s
@@ -102,6 +113,7 @@ public class JobApplyEmailService {
 	            jobTitle,
 	            companyName,
 	            statusMessage,
+	            noteSection,
 	            appliedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
 	            companyName
 	    );

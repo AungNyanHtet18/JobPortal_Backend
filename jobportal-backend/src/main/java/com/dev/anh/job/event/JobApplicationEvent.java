@@ -14,6 +14,7 @@ public class JobApplicationEvent {
 	private String applicantEmail;
     private String applicantName;
     private ApplicationStatus status;
+    private String note;
     private String companyName;
     private String jobTitle;
     private LocalDateTime appliedAt;

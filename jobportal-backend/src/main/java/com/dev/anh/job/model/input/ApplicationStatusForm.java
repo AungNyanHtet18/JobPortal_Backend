@@ -10,5 +10,4 @@ public record ApplicationStatusForm(
 	@NotNull(message = "Please enter application status.")
 	ApplicationStatus status,
 	String note) {
-
 }

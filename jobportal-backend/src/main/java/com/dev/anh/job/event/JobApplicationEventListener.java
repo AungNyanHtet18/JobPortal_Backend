@@ -19,10 +19,11 @@ public class JobApplicationEventListener {
 	@Async
 	@EventListener
 	public void handleJobApplicationEvent(JobApplicationEvent event) {
-		log.info("Job Application Event: email={}, name={}, status={}, company={}, jobTitle={}, appliedAt={}",
+		log.info("Job Application Event: email={}, name={}, status={}, note={}, company={}, jobTitle={}, appliedAt={}",
 		        event.getApplicantEmail(),
 		        event.getApplicantName(),
 		        event.getStatus(),
+		        event.getNote(),
 		        event.getCompanyName(),
 		        event.getJobTitle(),
 		        event.getAppliedAt()
@@ -31,6 +32,7 @@ public class JobApplicationEventListener {
 		emailService.sendEmail(event.getApplicantEmail(), 
 				               event.getApplicantName(), 
 				               event.getStatus(), 
+				               event.getNote(),
 				               event.getCompanyName(), 
 				               event.getJobTitle(), 
 				               event.getAppliedAt());

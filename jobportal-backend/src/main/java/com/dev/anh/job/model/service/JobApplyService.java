@@ -28,7 +28,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -64,13 +63,12 @@ public class JobApplyService {
 			new JobApplicationEvent(jobApply.getApplicant().getAccount().getEmail(),
 									jobApply.getApplicant().getAccount().getName(),
 									form.status(),
+									form.note(),
 									companyName,
 									jobApply.getJob().getCareer().getRoleName(),
 									jobApply.getCreateAt())	
 			);
 		
-		
-	    
 		return new ModificationResult<Long>(jobApply.getId().getJobId());
 	}
 	
