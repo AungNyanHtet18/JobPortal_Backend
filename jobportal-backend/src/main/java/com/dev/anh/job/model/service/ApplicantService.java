@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -100,13 +99,22 @@ public class ApplicantService {
 			 cq.where(applicantSearch.where(cb, root));
 			 
 			 return cq;
-			 
 		};
+	}
+	
+    public ApplicantDetails findByApplicantId(Long id) { 
+		 var applicant = applicantRepo.findById(id).map(ApplicantDetails::from) .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+		 return applicant;
+	}
+	
+	public ApplicantDetails findByApplicantName(String email) {
+		var applicant =  applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
+		return applicant;
 	}
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
-	public ModificationResult<Long> storeApplicantInfo(String username, ApplicantForm form, MultipartFile file) {
+	public ModificationResult<Long> createApplicantInfo(String username, ApplicantForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -116,7 +124,7 @@ public class ApplicantService {
 		
 		if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());
-			  accountRepo.saveAndFlush(account);  
+			  accountRepo.save(account);  
 		 }
 		
 		var applicant = applicantRepo.saveAndFlush(form.entity(account));
@@ -197,7 +205,7 @@ public class ApplicantService {
 		
 		 if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());
-			  accountRepo.saveAndFlush(account);
+			  accountRepo.save(account);
 		 }
 			
 			applicant.setAccount(account);
@@ -275,33 +283,22 @@ public class ApplicantService {
 
 		return new ModificationResult<Long>(id);
 	}
-
-    public ApplicantDetails findByApplicantId(Long id) { 
-		 var applicant = applicantRepo.findById(id).map(ApplicantDetails::from) .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
-		 return applicant;
-	}
 	
-	public ApplicantDetails findByApplicantName(String email) {
-		var applicant =  applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
-		return applicant;
-	}
-
 	@Transactional
-	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<String> uploadApplicantProfile(String username, String uploadPath, MultipartFile file) {
 		
 		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
 		
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
-			
+
 		try {
 			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getEmail(), file);
 			applicant.setProfilePhoto(profileImageName);
+						
+			return new ModificationResult<String>("Profile is successfully uploaded" + profileImageName);
 			
-			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);
-			
-		} catch (IOException e) {
-			throw new FileInvalidException("Invalid Profile Upload", e);
+		} catch (IOException e) {	
+			throw new FileInvalidException("Profile upload failed", e);
 		}
 		
 	}
@@ -327,10 +324,10 @@ public class ApplicantService {
 		   Files.copy(file.getInputStream(), resumePath, StandardCopyOption.REPLACE_EXISTING);
 		   applicant.setResume(resumeName);
 		   
-		   return new ModificationResult<String>("Succesfully Uploaded Resume"+ resumeName);
+		   return new ModificationResult<String>("Resume is upload successfully"+ resumeName);
 		   
 		}catch (IOException e) {
-			throw new FileInvalidException("Invalid Resume Upload", e);
+			throw new FileInvalidException("Resume upload failed", e);
 		}
 
 	}
@@ -357,10 +354,10 @@ public class ApplicantService {
 			  Files.copy(file.getInputStream(), cvFormPath, StandardCopyOption.REPLACE_EXISTING);
 			  applicant.setCvForm(cvFormName);
 			 
-			return new ModificationResult<String>("Sucessfully ");
+			return new ModificationResult<String>("CV Form is sucessfully uploaded");
 					 
 		}catch(IOException e) {
-			 throw new FileInvalidException("Invalid CV Form Upload.",e);
+			 throw new FileInvalidException("CV Form upload failed",e);
 		}
 				
 	}
@@ -375,7 +372,7 @@ public class ApplicantService {
 		var resource = new FileSystemResource(filePath);
 
 		if(!resource.exists()) {
-			 throw new FileInvalidException("File Not Found");
+			 throw new FileInvalidException("File is not found");
 		}
 		
 		return ResponseEntity.ok()
@@ -395,7 +392,7 @@ public class ApplicantService {
 		var resource = new FileSystemResource(filePath);
 
 		if(!resource.exists()) {
-			 throw new FileInvalidException("File Not Found");
+			 throw new FileInvalidException("File is not found");
 		}
 		
 		return ResponseEntity.ok()

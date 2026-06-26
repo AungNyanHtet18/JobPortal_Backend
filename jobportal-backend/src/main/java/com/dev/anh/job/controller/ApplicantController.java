@@ -53,12 +53,12 @@ public class ApplicantController {
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<Long> storeApplicantInfo(
+	ModificationResult<Long> createApplicantInfo(
 			        @RequestPart("form") @Validated ApplicantForm form,  
 					@RequestPart(value = "file", required = false) MultipartFile file) {
 		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		return applicantService.storeApplicantInfo(username, form, file);
+		return applicantService.createApplicantInfo(username, form, file);
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -50,9 +50,9 @@ public class JobController {
 	}
 	
 	@PostMapping
-	ModificationResult<Long> storeJobInfo(@RequestBody @Validated JobForm form) {
+	ModificationResult<Long> createJobInfo(@RequestBody @Validated JobForm form) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return jobService.storeJobInfo(username, form);
+		return jobService.createJobInfo(username, form);
 	}
 	
 	@PutMapping("{id}")

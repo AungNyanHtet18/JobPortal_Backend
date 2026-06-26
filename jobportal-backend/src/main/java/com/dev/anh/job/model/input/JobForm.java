@@ -31,10 +31,10 @@ public record JobForm(
 	@NotEmpty(message = "Please provide at least one job requirement bullect point")
  	List<@Size(max=200, message = "You cannot add more than 20 requirement points.") @NotBlank(message = "Job requirement point cannt be blank.") String> jobRequirements,
  	 	
- 	@NotNull(message = "Please enter job level.")
+ 	@NotNull(message = "Please select job level.")
  	JobLevel jobLevel,
  	
- 	@NotNull(message = "Please enter job type.")
+ 	@NotNull(message = "Please select job type.")
  	JobType jobType,
 		
 	@NotNull(message = "Please enter minimum salary range.")

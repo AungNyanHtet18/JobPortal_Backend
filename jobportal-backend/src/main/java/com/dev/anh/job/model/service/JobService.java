@@ -79,7 +79,7 @@ public class JobService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<Long> storeJobInfo(String username, JobForm form) {
+	public ModificationResult<Long> createJobInfo(String username, JobForm form) {
 		
 		var company = companyRepo.findOneByCompanyName(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
 		var career = careerRepo.findOneByRoleName(form.positionName())

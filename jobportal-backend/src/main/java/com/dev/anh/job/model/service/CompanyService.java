@@ -1,6 +1,5 @@
 package com.dev.anh.job.model.service;
 
-
 import java.io.IOException;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,10 +32,9 @@ public class CompanyService {
 	@Value("${app.upload.path}")
 	private String uploadPath;
 	
-	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
-	public ModificationResult<Long> storeCompanyInfo(String username, CompanyForm form, MultipartFile file) {
+	public ModificationResult<Long> createCompanyInfo(String username, CompanyForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 							.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -46,7 +44,7 @@ public class CompanyService {
 		
 		if(StringUtils.hasLength(form.companyName())) {
 			 account.setName(form.companyName());
-			 accountRepo.saveAndFlush(account);
+			 accountRepo.save(account);
 		}
 		
 		companyRepo.save(form.entity(account));
@@ -71,7 +69,7 @@ public class CompanyService {
 		
 		if(StringUtils.hasLength(form.companyName())) {
 			account.setName(form.companyName()); 
-			accountRepo.saveAndFlush(account);
+			accountRepo.save(account);
 		}
 		
 		company.setAccount(account);
@@ -95,7 +93,6 @@ public class CompanyService {
 	}
 
 	@Transactional
-	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
 	public ModificationResult<String> uploadCompanyProfile(String username, String uploadPath, MultipartFile file) {
 		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
 
@@ -105,10 +102,10 @@ public class CompanyService {
 			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getEmail(), file);
 			company.setProfilePhoto(profileImageName);
 
-			return new ModificationResult<String>("Successfully Uploaded Profile Photo" + profileImageName);
+			return new ModificationResult<String>("Profile is successfully uploaded" + profileImageName);
 
 		} catch (IOException e) {
-			throw new FileInvalidException("Invalid Profile Upload", e);
+			throw new FileInvalidException("Profile upload failed", e);
 		}
 	}
 	
