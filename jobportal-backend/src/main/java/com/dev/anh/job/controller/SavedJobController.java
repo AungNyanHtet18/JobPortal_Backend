@@ -26,7 +26,6 @@ public class SavedJobController {
 		return savedJobService.savedJob(username, jobId);
 	}
 	
-	
 	@GetMapping("unsaved/{jobId}")
 	ModificationResult<Long> unsavedJob(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();

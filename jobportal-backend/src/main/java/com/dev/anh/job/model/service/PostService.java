@@ -1,5 +1,8 @@
 package com.dev.anh.job.model.service;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,12 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.anh.job.event.PostPhotoEvent;
 import com.dev.anh.job.model.entity.Post;
+import com.dev.anh.job.model.entity.Post_;
 import com.dev.anh.job.model.input.PostForm;
+import com.dev.anh.job.model.input.PostSearch;
 import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.output.PostListItem;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.PostRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,6 +32,24 @@ public class PostService {
 	private final AccountRepo accountRepo;
 	private final PostRepo postRepo;
 	private final ApplicationEventPublisher eventPublisher;
+	
+	public List<PostListItem> searchPost(PostSearch postSearch) {
+		return postRepo.search(queryFunc(postSearch));
+	} 
+	
+	private Function<CriteriaBuilder, CriteriaQuery<PostListItem>> queryFunc(PostSearch postSearch) {
+		 return cb -> {
+			var cq = cb.createQuery(PostListItem.class);
+			var root = cq.from(Post.class);
+			
+			var account = root.join(Post_.account, JoinType.INNER);
+			
+			PostListItem.select(account, cq, cb, root);
+			cq.where(postSearch.where(account,cb, root));
+			
+			return cq;
+		 };
+	}
 	
 	@Transactional
 	public ModificationResult<Long> createPost(String username, PostForm form, MultipartFile file) {
@@ -59,6 +86,5 @@ public class PostService {
 			}
 					
 			return new ModificationResult<Long>(id);
-	} 
-
+	}
 }

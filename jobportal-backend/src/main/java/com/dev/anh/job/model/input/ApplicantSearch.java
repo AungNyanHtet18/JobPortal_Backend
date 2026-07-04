@@ -21,7 +21,7 @@ public record ApplicantSearch(
 	Gender gender,
 	Boolean deleted) {
 
-	public  Predicate[]  where(CriteriaBuilder cb, Root<Applicant> root) {
+	public Predicate[] where(CriteriaBuilder cb, Root<Applicant> root) {
 		
 		var skill = root.join(Applicant_.skills,JoinType.LEFT);
 		var education = root.join(Applicant_.educations,JoinType.LEFT);
