@@ -38,13 +38,14 @@ public class JobportalSecurityConfig {
 		 });
 		 
 		 http.authorizeHttpRequests(request -> { 
-			 request.requestMatchers("/token/**","/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**").permitAll();
+			 request.requestMatchers("/token/**","/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
 			 request.requestMatchers("/account/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/job/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/apply/**").hasAnyAuthority("Applicant", "CompanyAccount");
+			 request.requestMatchers("/post/**").permitAll();
 			 request.anyRequest().authenticated();
 		 });
 

@@ -15,7 +15,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 
 public record PostListItem(
-	String id,
+	Long id,
 	String content,
 	String postPhoto,
 	String accountName,
