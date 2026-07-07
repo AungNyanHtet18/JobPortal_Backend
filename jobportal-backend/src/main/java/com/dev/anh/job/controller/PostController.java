@@ -28,7 +28,8 @@ public class PostController {
 	
 	@GetMapping
 	List<PostListItem> searchPost(PostSearch postSearch) {
-		 return postService.searchPost(postSearch);
+		 var post = postService.searchPost(postSearch);
+		 return post;
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

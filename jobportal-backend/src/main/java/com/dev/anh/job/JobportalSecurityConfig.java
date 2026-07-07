@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
-
 import com.dev.anh.job.model.consts.Role;
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.repo.AccountRepo;
@@ -38,14 +37,14 @@ public class JobportalSecurityConfig {
 		 });
 		 
 		 http.authorizeHttpRequests(request -> { 
-			 request.requestMatchers("/token/**","/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
+			 request.requestMatchers("/token/**", "/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
 			 request.requestMatchers("/account/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/job/**").hasAnyAuthority("Applicant", "CompanyAccount");
+			 request.requestMatchers("/post/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/apply/**").hasAnyAuthority("Applicant", "CompanyAccount");
-			 request.requestMatchers("/post/**").permitAll();
 			 request.anyRequest().authenticated();
 		 });
 
