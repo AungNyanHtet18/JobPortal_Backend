@@ -69,6 +69,7 @@ public record PostListItem(
 			    )));
 		
 		   userReacted = cb.isNotNull(userReactionJoin.get(PostReact_.id));
+		   
 		}else {
 			userReacted = cb.literal(false);
 		}
@@ -82,7 +83,6 @@ public record PostListItem(
 			reactionCount,
 			commentCount,
 			userReacted);
-		
 		
 		//Group By for Join Operations
 		List<Expression<?>> groups = new ArrayList<>();

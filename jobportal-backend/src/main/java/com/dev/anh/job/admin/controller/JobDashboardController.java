@@ -11,18 +11,18 @@ import com.dev.anh.job.admin.model.service.JobDashboardService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("admin/dashboard")
+@RequestMapping("admin")
 @RequiredArgsConstructor
 public class JobDashboardController {
 
 	private final JobDashboardService jobDashboardService;
 	
-	@GetMapping("job/years")
+	@GetMapping("dashboard/job/years")
 	List<Integer> getYears() {
 	   return jobDashboardService.getYear();
 	}
 	
-	@GetMapping("jobPostingsSummary")
+	@GetMapping("dashboard/jobPostingsSummary")
 	Map<LocalDate, Long> getJobPostings(YearMonthData data) {
 	   return jobDashboardService.getJobPostings(data);
 	}	

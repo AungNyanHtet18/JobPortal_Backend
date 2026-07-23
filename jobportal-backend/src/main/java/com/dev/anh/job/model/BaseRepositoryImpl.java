@@ -31,6 +31,18 @@ public class BaseRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> implem
 		
 		return query.getResultList();
 	}
+	
+	@Override
+	public <R> List<R> search(Function<CriteriaBuilder, CriteriaQuery<R>> queryFunc, int limit) {
+
+		var criteriaQuery = queryFunc.apply(entityManager.getCriteriaBuilder());
+		var query = entityManager.createQuery(criteriaQuery);
+		
+		return query.setMaxResults(limit)
+				    .getResultList();
+	}
+	
+	
 
 	@Override
 	public <R> PageResult<R> search(Function<CriteriaBuilder, CriteriaQuery<R>> queryFunc,
@@ -57,5 +69,4 @@ public class BaseRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> implem
 
 		return Optional.ofNullable(query.getSingleResult());
 	}
-
 }

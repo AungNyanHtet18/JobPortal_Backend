@@ -40,7 +40,6 @@ public class JobApplyService {
 	private final ApplicationEventPublisher eventPublisher;
 	
 	public ModificationResult<List<JobApplicationListItem>> checkingApplicantList(long jobId) {
-	    
 		var jobApplicantList = jobRepo.search(queryFuncForApplicantList(jobId));
 	    return new ModificationResult<List<JobApplicationListItem>>(jobApplicantList);
 	}
@@ -48,7 +47,6 @@ public class JobApplyService {
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateApplicationStatus(long jobId, ApplicationStatusForm form) {
-		
 		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), jobId).orElseThrow(() -> new BusinessException("The applied job Id with %s is not found".formatted(jobId)));
 		jobApply.setNote(form.note());
 		jobApply.setStatus(form.status());
@@ -66,8 +64,7 @@ public class JobApplyService {
 									form.note(),
 									companyName,
 									jobApply.getJob().getCareer().getRoleName(),
-									jobApply.getCreateAt())	
-			);
+									jobApply.getCreateAt()));
 		
 		return new ModificationResult<Long>(jobApply.getId().getJobId());
 	}
@@ -116,7 +113,7 @@ public class JobApplyService {
 			  var cq = cb.createQuery(JobApplicationListItem.class);
 			  var root = cq.from(JobApply.class);
 			  
-			  JobApplicationListItem.select(cq, root);;
+			  JobApplicationListItem.select(cq, root);
 			  
 			  var param = new ArrayList<Predicate>();
 			  
