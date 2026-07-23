@@ -21,13 +21,13 @@ public class SavedJobController {
 	private final SavedJobService savedJobService;
 	
 	@GetMapping("saved/{jobId}")
-	ModificationResult<Long> savedJob(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
+	ModificationResult<Long> savedJob(@PathVariable @NotNull(message = "Job Id is required") Long jobId) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return savedJobService.savedJob(username, jobId);
 	}
 	
 	@GetMapping("unsaved/{jobId}")
-	ModificationResult<Long> unsavedJob(@PathVariable @NotNull(message = "Job Id is required") long jobId) {
+	ModificationResult<Long> unsavedJob(@PathVariable @NotNull(message = "Job Id is required") Long jobId) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return savedJobService.unsavedJob(username, jobId);
 	}

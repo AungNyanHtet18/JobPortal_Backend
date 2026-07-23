@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum JobLevel {
 	Intern("Intern Level"),
 	Entry("Entry Level"),
-	Mid("Mid Level"),
 	Junior("Junior Level"),
+	Mid("Mid Level"),
 	Senior("Senior Level"),
 	Lead("Lead Level");
 	

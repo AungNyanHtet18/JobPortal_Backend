@@ -44,7 +44,7 @@ public class PostService {
 			
 			var account = root.join(Post_.account, JoinType.INNER);
 			
-			PostListItem.select(account, cq, cb, root);
+			PostListItem.select(account, cq, cb, root, postSearch.username());
 			cq.where(postSearch.where(account,cb, root));
 			
 			return cq;
@@ -86,5 +86,11 @@ public class PostService {
 			}
 					
 			return new ModificationResult<Long>(id);
+	}
+     
+	@Transactional
+	public ModificationResult<String> deletePost(Long id) {
+	    postRepo.deleteById(id);
+		return new ModificationResult<String>("You successfully deleted post.");
 	}
 }

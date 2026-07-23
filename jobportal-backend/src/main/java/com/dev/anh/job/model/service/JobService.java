@@ -126,6 +126,6 @@ public class JobService {
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<String> deleteJobInfo(Long id) {
 		jobRepo.deleteById(id);		
-		return new ModificationResult<String>("You successfully deleted job");
+		return new ModificationResult<String>("You successfully deleted job.");
 	}
 }

@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "JobApply")
+@Table(name = "Job_Apply")
 @EqualsAndHashCode(callSuper = false)
 public class JobApply extends AbstractEntity{
 

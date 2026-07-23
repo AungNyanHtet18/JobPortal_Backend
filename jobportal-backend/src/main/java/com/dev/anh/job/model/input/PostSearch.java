@@ -15,7 +15,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 public record PostSearch(
-	String keyword) {
+	String keyword,
+	String username) {
 
 	public Predicate[] where(Join<Post, Account> account, CriteriaBuilder cb, Root<Post> root) {
 		

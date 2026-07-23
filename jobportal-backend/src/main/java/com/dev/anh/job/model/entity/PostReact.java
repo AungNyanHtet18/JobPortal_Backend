@@ -1,6 +1,6 @@
 package com.dev.anh.job.model.entity;
 
-import com.dev.anh.job.model.entity.embeddable.SavedJobPk;
+import com.dev.anh.job.model.entity.embeddable.PostReactPk;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -12,20 +12,20 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "Saved_Job")
+@Table(name = "React_Post")
 @EqualsAndHashCode(callSuper = false)
-public class SavedJob extends AbstractEntity{
+public class PostReact extends AbstractEntity{
 
 	@EmbeddedId
-	private SavedJobPk id;
+	private PostReactPk id;
 	
 	@ManyToOne
-	@JoinColumn(name="applicant_id", insertable = false, updatable = false)
-	private Applicant applicant;
+	@JoinColumn(name="account_id", insertable = false, updatable = false)
+	private Account account;
 	
 	@ManyToOne
-	@JoinColumn(name = "job_id", insertable = false, updatable = false)
-	private Job job;
+	@JoinColumn(name = "post_id", insertable = false, updatable = false)
+	private Post post;
 	
-	private Boolean savedJob;
+	private Boolean reactPost;
 }
