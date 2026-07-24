@@ -3,12 +3,9 @@ package com.dev.anh.job.admin.model.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.dev.anh.job.admin.model.input.YearMonthData;
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.entity.Account_;
@@ -22,22 +19,6 @@ public class MemberDashboardService {
 
 	private final AccountRepo accountRepo;
 	
-	public List<Integer> getYear() {
-		var startYear = accountRepo.findFirstByOrderByCreateAt()
-				  .map(a -> a.getCreateAt().getYear())
-				  .orElse(LocalDateTime.now().getYear());
-		
-		var currentYear = LocalDateTime.now().getYear();
-		
-		if(startYear == currentYear) {
-			return List.of(startYear);
-		}
-
-		return IntStream.rangeClosed(startYear, currentYear)
-				 .boxed()
-				 .toList();
-	}
-
 	public Map<LocalDate, Long> getMemberSummary(YearMonthData data) {
 		
 		var result = new LinkedHashMap<LocalDate, Long>();

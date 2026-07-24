@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.dev.anh.job.admin.model.input.YearMonthData;
+import com.dev.anh.job.admin.model.output.DashboardStats;
 import com.dev.anh.job.admin.model.service.JobDashboardService;
+import com.dev.anh.job.model.output.ModificationResult;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -16,6 +19,11 @@ import lombok.RequiredArgsConstructor;
 public class JobDashboardController {
 
 	private final JobDashboardService jobDashboardService;
+	
+	@GetMapping("dashboard/stats")
+	ModificationResult<DashboardStats> getDashboardStats() {
+		return jobDashboardService.getDashboardStats();
+	}
 	
 	@GetMapping("dashboard/job/years")
 	List<Integer> getYears() {

@@ -6,14 +6,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.dev.anh.job.admin.model.input.YearMonthData;
+import com.dev.anh.job.admin.model.output.DashboardStats;
 import com.dev.anh.job.model.entity.Job;
 import com.dev.anh.job.model.entity.Job_;
+import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.repo.AccountRepo;
+import com.dev.anh.job.model.repo.JobApplyRepo;
 import com.dev.anh.job.model.repo.JobRepo;
+import com.dev.anh.job.model.repo.PostRepo;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,7 +25,18 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class JobDashboardService {
 
+	private final AccountRepo accountRepo;
 	private final JobRepo jobRepo;
+	private final JobApplyRepo jobApplyRepo;
+	private final PostRepo postRepo;
+	
+	public ModificationResult<DashboardStats> getDashboardStats() {
+		var totalUsers = accountRepo.count();
+		var totalJobs = jobRepo.count();
+		var totalApplications = jobApplyRepo.count();
+		var totalPosts = postRepo.count();
+		return new ModificationResult<DashboardStats>(new DashboardStats(totalUsers, totalJobs, totalApplications, totalPosts));
+	}
 	
 	public List<Integer> getYear() {
 		var startYear = jobRepo.findFirstByOrderByCreateAt()
@@ -71,7 +86,6 @@ public class JobDashboardService {
 			
 			 return cq;
 		 }).orElse(0L);
-	}
-	 
+	}	 
 }
 
