@@ -74,34 +74,9 @@ public class ApplicantService {
 	private String uploadPath;
 	
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
-		return  accountRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
+		return  applicantRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
 	}
-	
-	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
-		return cb -> {
-			 var cq = cb.createQuery(ApplicantListItem.class);
-			 var root = cq.from(Applicant.class);
-			 
-			 ApplicantListItem.select(cq, root);
-			 cq.where(applicantSearch.where(cb, root));
-			 cq.orderBy(cb.desc(root.get(Applicant_.id)));
-			 
-			return cq;
-		};
-	}
-
-	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
-		return cb -> {
-			 var cq = cb.createQuery(Long.class);
-			 var root = cq.from(Applicant.class);
-			 
-			 cq.select(cb.count(root.get(Applicant_.id)));
-			 cq.where(applicantSearch.where(cb, root));
-			 
-			 return cq;
-		};
-	}
-	
+		
     public ApplicantDetails findByApplicantId(Long id) { 
 		 var applicant = applicantRepo.findById(id).map(ApplicantDetails::from) .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
 		 return applicant;
@@ -401,4 +376,29 @@ public class ApplicantService {
 					   "attachment; filename=\"" + fileName + "\"")
 					.body(resource);
 	}	
+	
+	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
+		return cb -> {
+			 var cq = cb.createQuery(ApplicantListItem.class);
+			 var root = cq.from(Applicant.class);
+			 
+			 ApplicantListItem.select(cq, root);
+			 cq.where(applicantSearch.where(cb, root));
+			 cq.orderBy(cb.desc(root.get(Applicant_.id)));
+			 
+			return cq;
+		};
+	}
+
+	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
+		return cb -> {
+			 var cq = cb.createQuery(Long.class);
+			 var root = cq.from(Applicant.class);
+			 
+			 cq.select(cb.count(root.get(Applicant_.id)));
+			 cq.where(applicantSearch.where(cb, root));
+			 
+			 return cq;
+		};
+	}
 }

@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MemberDashboardService {
+public class AccountManagementDashboardService {
 
 	private final AccountRepo accountRepo;
 	
@@ -34,6 +34,11 @@ public class MemberDashboardService {
 		
 		return result;
 	}
+	
+	
+	
+	
+	
 	
 	private Long getCount(LocalDateTime start, LocalDateTime next) {
 		 return accountRepo.searchOne(cb -> {

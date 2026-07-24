@@ -10,7 +10,6 @@ import com.dev.anh.job.model.entity.Applicant_;
 import com.dev.anh.job.model.entity.Education_;
 import com.dev.anh.job.model.entity.Experience_;
 import com.dev.anh.job.model.entity.Skill_;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -35,7 +34,7 @@ public record ApplicantSearch(
 				   cb.like(cb.lower(education.get(Education_.qualificationName)), keyword.toLowerCase().concat("%")),
 				   cb.like(cb.lower(experience.get(Experience_.position)), keyword.toLowerCase().concat("%")),
 				   cb.like(cb.lower(root.get(Applicant_.address)), keyword.toLowerCase().concat("%"))
-				));
+		      ));
 			 
 		}
 		
