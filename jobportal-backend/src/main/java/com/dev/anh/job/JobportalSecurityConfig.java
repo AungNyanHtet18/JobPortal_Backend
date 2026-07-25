@@ -39,9 +39,9 @@ public class JobportalSecurityConfig {
 		 http.authorizeHttpRequests(request -> { 
 			 request.requestMatchers("/token/**", "/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
-			 request.requestMatchers("/company/**").hasAuthority("CompanyAccount");
-			 request.requestMatchers("/account/**").hasAnyAuthority("Applicant", "CompanyAccount");
-			 request.requestMatchers("/applicant/**").hasAnyAuthority("Applicant", "CompanyAccount");
+			 request.requestMatchers("/company/**").hasAnyAuthority("Admin", "CompanyAccount");
+			 request.requestMatchers("/account/**").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
+			 request.requestMatchers("/applicant/**").hasAnyAuthority("Admin","Applicant", "CompanyAccount");
 			 request.requestMatchers("/job/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/post/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/apply/**").hasAnyAuthority("Applicant", "CompanyAccount");
@@ -75,7 +75,6 @@ public class JobportalSecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 	
-	
 	@Bean
 	ApplicationRunner applicationRunner(AccountRepo repo) {
 		return args -> {
@@ -86,6 +85,7 @@ public class JobportalSecurityConfig {
 			    admin.setPassword(passwordEncoder().encode("admin"));
 			    admin.setRole(Role.Admin);
 			    admin.setActive(true);
+			    admin.setRoleStatus(true);
 			    admin.setActivatedAt(LocalDateTime.now());
 			    
 			    repo.save(admin);

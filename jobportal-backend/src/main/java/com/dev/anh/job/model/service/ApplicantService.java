@@ -78,13 +78,12 @@ public class ApplicantService {
 	}
 		
     public ApplicantDetails findByApplicantId(Long id) { 
-		 var applicant = applicantRepo.findById(id).map(ApplicantDetails::from) .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
-		 return applicant;
+		 return applicantRepo.findById(id).map(ApplicantDetails::from)
+				 .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
 	}
 	
 	public ApplicantDetails findByApplicantName(String email) {
-		var applicant =  applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
-		return applicant;
+		return applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
 	}
 
 	@Transactional

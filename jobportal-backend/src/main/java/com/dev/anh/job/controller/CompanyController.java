@@ -23,10 +23,15 @@ import lombok.RequiredArgsConstructor;
 public class CompanyController {
 
 	private final CompanyService companyService;
-		
+	
+	@GetMapping("id/{id}")
+	CompanyDetails findByCompanyId(@PathVariable Long id) {
+		 return companyService.findByCompanyId(id);
+	}
+	
 	@GetMapping("{email}")
-	CompanyDetails findByName(@PathVariable String email) {
-		 return companyService.findByName(email);
+	CompanyDetails findByCompanyName(@PathVariable String email) {
+		 return companyService.findByCompanyName(email);
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.dev.anh.job.model.input.CompanyForm;
 import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -31,6 +30,15 @@ public class CompanyService {
 	
 	@Value("${app.upload.path}")
 	private String uploadPath;
+	
+    public CompanyDetails findByCompanyId(Long id) { 
+		 return companyRepo.findById(id).map(CompanyDetails::from)
+				 .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+	}
+	
+	public CompanyDetails findByCompanyName(String email) {
+		 return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
+	}
 	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
@@ -88,10 +96,6 @@ public class CompanyService {
 		return new ModificationResult<Long>(id);
 	}
 	
-	public CompanyDetails findByName(String email) {
-		 return companyRepo.findByEmail(email).map(a -> CompanyDetails.from(a)).orElse(null);
-	}
-
 	@Transactional
 	public ModificationResult<String> uploadCompanyProfile(String username, String uploadPath, MultipartFile file) {
 		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
