@@ -74,7 +74,7 @@ public class JobService {
 	}
 	
 	public List<JobDetails> findByCompanyId(Long companyId) {
-		return jobRepo.findByCompanyId(companyId).stream().map(a -> JobDetails.from(a)).toList();
+		return jobRepo.findByCompanyId(companyId).stream().map(JobDetails::from).toList();
 	}
 
 	@Transactional

@@ -8,5 +8,5 @@ import com.dev.anh.job.model.entity.Job;
 
 public interface JobRepo extends BaseRepository<Job, Long>{
 	List<Job> findByCompanyId(Long companyId);
-	Optional<Job> findFirstByOrderByCreateAt();
+	Optional<Job> findFirstByOrderByCreatedAt();
 }

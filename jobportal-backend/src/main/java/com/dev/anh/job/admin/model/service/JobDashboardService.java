@@ -39,8 +39,8 @@ public class JobDashboardService {
 	}
 	
 	public List<Integer> getYear() {
-		var startYear = jobRepo.findFirstByOrderByCreateAt()
-				.map(a -> a.getCreateAt().getYear())
+		var startYear = jobRepo.findFirstByOrderByCreatedAt()
+				.map(a -> a.getCreatedAt().getYear())
 				.orElse(LocalDateTime.now().getYear());
 		
 		var currentYear = LocalDate.now().getYear();
@@ -80,11 +80,12 @@ public class JobDashboardService {
 			);
 			
 			cq.where(
-			   cb.greaterThanOrEqualTo(root.get(Job_.createAt), start),
-			   cb.lessThan(root.get(Job_.createAt) , next)
+			   cb.greaterThanOrEqualTo(root.get(Job_.createdAt), start),
+			   cb.lessThan(root.get(Job_.createdAt) , next)
 			);
 			
 			 return cq;
+			 
 		 }).orElse(0L);
 	}	 
 }

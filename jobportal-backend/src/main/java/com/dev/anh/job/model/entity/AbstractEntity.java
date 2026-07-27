@@ -18,7 +18,7 @@ import lombok.Data;
 public class AbstractEntity {
 
 	@CreatedDate
-	private LocalDateTime createAt;
+	private LocalDateTime createdAt;
 	
 	@CreatedBy
 	private String createdBy;

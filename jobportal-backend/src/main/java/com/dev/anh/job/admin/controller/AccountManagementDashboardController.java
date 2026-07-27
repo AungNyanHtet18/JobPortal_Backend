@@ -20,6 +20,4 @@ public class AccountManagementDashboardController {
 	Map<LocalDate, Long> getMemberSummary(YearMonthData data) {
 		return memberDashboardService.getMemberSummary(data);
 	}
-	
-	
 }

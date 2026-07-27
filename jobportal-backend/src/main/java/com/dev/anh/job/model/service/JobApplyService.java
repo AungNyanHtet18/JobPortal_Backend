@@ -64,7 +64,7 @@ public class JobApplyService {
 									form.note(),
 									companyName,
 									jobApply.getJob().getCareer().getRoleName(),
-									jobApply.getCreateAt()));
+									jobApply.getCreatedAt()));
 		
 		return new ModificationResult<Long>(jobApply.getId().getJobId());
 	}
@@ -122,7 +122,7 @@ public class JobApplyService {
 			  }
 			  
 			  cq.where(param.toArray(size -> new Predicate[size]));
-			  cq.orderBy(cb.asc(root.get(JobApply_.createAt)));
+			  cq.orderBy(cb.asc(root.get(JobApply_.createdAt)));
 			  
 			  return cq;
 		 };
@@ -142,7 +142,7 @@ public class JobApplyService {
 			  }
 			  
 			  cq.where(param.toArray(size -> new Predicate[size]));
-			  cq.orderBy(cb.asc(root.get(JobApply_.createAt)));
+			  cq.orderBy(cb.asc(root.get(JobApply_.createdAt)));
 			  
 			  return cq;
 		 };

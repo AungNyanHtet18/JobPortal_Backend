@@ -74,7 +74,6 @@ public class CompanyService {
 		var company = companyRepo.findById(id)
 							.orElseThrow(() -> new BusinessException("Company with %s id is not found".formatted(id)));
 		
-		
 		if(StringUtils.hasLength(form.companyName())) {
 			account.setName(form.companyName()); 
 			accountRepo.save(account);

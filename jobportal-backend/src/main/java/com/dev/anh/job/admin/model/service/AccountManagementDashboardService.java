@@ -20,7 +20,6 @@ public class AccountManagementDashboardService {
 	private final AccountRepo accountRepo;
 	
 	public Map<LocalDate, Long> getMemberSummary(YearMonthData data) {
-		
 		var result = new LinkedHashMap<LocalDate, Long>();
 		
 		var start = data.getStartDate();
@@ -35,11 +34,6 @@ public class AccountManagementDashboardService {
 		return result;
 	}
 	
-	
-	
-	
-	
-	
 	private Long getCount(LocalDateTime start, LocalDateTime next) {
 		 return accountRepo.searchOne(cb -> {
 			var cq = cb.createQuery(Long.class); 
@@ -50,14 +44,11 @@ public class AccountManagementDashboardService {
 			);
 	
 			cq.where(
-			  cb.greaterThanOrEqualTo(root.get(Account_.createAt), start),
-			  cb.lessThan(root.get(Account_.createAt), next)
+			  cb.greaterThanOrEqualTo(root.get(Account_.createdAt), start),
+			  cb.lessThan(root.get(Account_.createdAt), next)
 			);
 			
 			 return cq;
 		 }).orElse(0L);
 	}
-	
-	
-
 }

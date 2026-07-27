@@ -45,7 +45,7 @@ public class JobApplyDashboardService {
 			 
 			 ApplicationListItem.select(cq, root, job, applicant);
 			 cq.where(applicationSearch.where(cb, root, job, applicant));
-			 cq.orderBy(cb.asc(root.get(JobApply_.createAt)));
+			 cq.orderBy(cb.asc(root.get(JobApply_.createdAt)));
 			 
 			 return cq;
 		};
@@ -70,9 +70,11 @@ public class JobApplyDashboardService {
 		return cb -> {
 			 var cq = cb.createQuery(MostAppliedJobListItem.class);
 			 var root = cq.from(Job.class);
+			
 			 MostAppliedJobListItem.select(cq, cb, root);
+			 
 			 return cq;
-		 };
+		};
 	}	
 }
 

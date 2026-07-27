@@ -45,7 +45,7 @@ public class AccountManagementService {
 			var account = root.join(Applicant_.account, JoinType.INNER);
 			ApplicantListItem.select(cq, cb, root, account);
 			cq.where(applicantSearch.where(cb, root, account));
-			cq.orderBy(cb.desc(root.get(Applicant_.createAt)));
+			cq.orderBy(cb.desc(root.get(Applicant_.createdAt)));
 		   
 			return cq;
 		};
@@ -72,7 +72,7 @@ public class AccountManagementService {
 			var account = root.join(Company_.account, JoinType.INNER);
 			CompanyListItem.select(cq, cb, root, account);
 			cq.where(companySearch.where(cb, root, account));
-			cq.orderBy(cb.desc(root.get(Company_.createAt)));
+			cq.orderBy(cb.desc(root.get(Company_.createdAt)));
 			
 			return cq;
 		};

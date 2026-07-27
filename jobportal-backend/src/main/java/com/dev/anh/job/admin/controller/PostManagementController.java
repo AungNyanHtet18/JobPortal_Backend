@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.anh.job.admin.model.input.JobSearch;
-import com.dev.anh.job.admin.model.output.JobListItem;
-import com.dev.anh.job.admin.model.service.JobManagementService;
+import com.dev.anh.job.admin.model.input.PostSearch;
+import com.dev.anh.job.admin.model.output.PostListItem;
+import com.dev.anh.job.admin.model.service.PostManagementService;
 import com.dev.anh.job.model.output.PageResult;
 
 import lombok.RequiredArgsConstructor;
@@ -16,15 +16,17 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("admin")
 @RequiredArgsConstructor
-public class JobManagementController {
+public class PostManagementController {
 
-	private final JobManagementService jobManagementService;
+	private final PostManagementService postManagementService;
 	
-	@GetMapping("job")
+	@GetMapping("post")
 	@PreAuthorize("hasAuthority('Admin')")
-	PageResult<JobListItem> searchJob(JobSearch jobSearch,
+	PageResult<PostListItem> searchPost(PostSearch postSearch,
 			@RequestParam(required = false, defaultValue = "0") int page,
-			@RequestParam(required = false, defaultValue = "10") int size){
-	  return jobManagementService.searchJob(jobSearch, page, size);
-	}	
+			@RequestParam(required = false, defaultValue = "10") int size) {	 
+		return postManagementService.searchPost(postSearch, page, size);
+	}
+	
+	
 }

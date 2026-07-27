@@ -68,12 +68,12 @@ public class Job extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@Positive(message = "Salary must be greater than 0")
-	private Double maxSalaryRange;
+	private Double minSalaryRange;
 	
 	@Column(nullable = false)
 	@Positive(message = "Salary must be greater than 0")
-	private Double minSalaryRange;
-		
+	private Double maxSalaryRange;
+			
 	@OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<JobApply> jobApply;
 	

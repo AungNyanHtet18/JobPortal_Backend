@@ -26,7 +26,7 @@ public record JobListItem(
 	  String jobLocation,
 	  boolean deleted,
 	  String profilePhoto,
-	  LocalDateTime createAt) {
+	  LocalDateTime createdAt) {
 	
 	public static void select(CriteriaQuery<JobListItem> cq, Root<Job> root, Join<Job, Company> company) {
 		
@@ -44,7 +44,7 @@ public record JobListItem(
 			root.get(Job_.location),
 			root.get(Job_.deleted),
 			company.get(Company_.profilePhoto),
-			root.get(Job_.createAt));
+			root.get(Job_.createdAt));
 	}
 
 }
