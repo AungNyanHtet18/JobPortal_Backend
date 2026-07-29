@@ -1,5 +1,6 @@
 package com.dev.anh.job.model.output;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +28,12 @@ public record PostListItem(
 	String content,
 	String postPhoto,
 	String accountName,
+	String accountEmail,
 	String accountPhoto,
 	Long reactionCount,
 	Long commentCount,
-	boolean reacted) {
+	boolean reacted,
+	LocalDateTime createdTime) {
 
 	public static void select(Join<Post, Account> account, CriteriaQuery<PostListItem> cq, CriteriaBuilder cb, Root<Post> root, String username) {
 
@@ -79,10 +82,12 @@ public record PostListItem(
 			root.get(Post_.content),
 			root.get(Post_.postPhoto),
 			root.get(Post_.account).get(Account_.name),
+			root.get(Post_.account).get(Account_.email),
 			photo,
 			reactionCount,
 			commentCount,
-			userReacted);
+			userReacted,
+			root.get(Post_.createdAt));
 		
 		//Group By for Join Operations
 		List<Expression<?>> groups = new ArrayList<>();
@@ -90,7 +95,9 @@ public record PostListItem(
 		groups.add(root.get(Post_.content));
 		groups.add(root.get(Post_.postPhoto));
 		groups.add(root.get(Post_.account).get(Account_.name));
+		groups.add(root.get(Post_.account).get(Account_.email));
 		groups.add(photo);
+		groups.add(root.get(Post_.createdAt));
 
 		if (userReactionJoin != null) {
 		    groups.add(userReactionJoin.get(PostReact_.id));

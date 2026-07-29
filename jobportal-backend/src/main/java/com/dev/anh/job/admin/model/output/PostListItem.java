@@ -34,6 +34,12 @@ public record PostListItem(
 		 cb.count(reactJoin.get(PostReact_.id).get(PostReactPk_.postId)),
 		 cb.count(postJoin.get(PostComment_.id)),
 		 root.get(Post_.createdAt));
+		
+		cq.groupBy(
+		 root.get(Post_.id),
+		 root.get(Post_.account).get(Account_.name),
+		 root.get(Post_.content),
+		 root.get(Post_.createdAt));
 	}
 
 }
