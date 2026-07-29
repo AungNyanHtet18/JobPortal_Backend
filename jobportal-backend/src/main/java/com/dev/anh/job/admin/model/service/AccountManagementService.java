@@ -4,15 +4,21 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.dev.anh.job.admin.model.input.AccountSearch;
 import com.dev.anh.job.admin.model.input.ApplicantSearch;
 import com.dev.anh.job.admin.model.input.CompanySearch;
+import com.dev.anh.job.admin.model.output.AccountListItem;
 import com.dev.anh.job.admin.model.output.ApplicantListItem;
 import com.dev.anh.job.admin.model.output.CompanyListItem;
+import com.dev.anh.job.model.entity.Account;
+import com.dev.anh.job.model.entity.Account_;
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
 import com.dev.anh.job.model.entity.Company;
 import com.dev.anh.job.model.entity.Company_;
 import com.dev.anh.job.model.output.PageResult;
+import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.model.repo.CompanyRepo;
 
@@ -26,8 +32,13 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountManagementService {
 
+	private final AccountRepo accountRepo;
 	private final ApplicantRepo applicantRepo;
 	private final CompanyRepo companyRepo;
+	
+	public PageResult<AccountListItem> searchAccount(AccountSearch accountSearch, int page, int size) {
+		return accountRepo.search(queryFunc(accountSearch), countFunc(accountSearch), page, size);
+	}
 	
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
 		return applicantRepo.search(queryFunc(applicantSearch), countFunc(applicantSearch), page, size);
@@ -35,6 +46,31 @@ public class AccountManagementService {
 	
 	public PageResult<CompanyListItem> searchCompany(CompanySearch companySearch, int page, int size) {
 		return companyRepo.search(queryFunc(companySearch), countFunc(companySearch), page, size);
+	}
+	
+	private Function<CriteriaBuilder, CriteriaQuery<AccountListItem>> queryFunc(AccountSearch accountSearch) {
+		 return cb -> {
+			  var cq = cb.createQuery(AccountListItem.class);
+			  var root = cq.from(Account.class);
+			 
+			  AccountListItem.select(cq, root);
+			  cq.where(accountSearch.where(cb, root));
+			  cq.orderBy(cb.desc(root.get(Account_.createdAt)));
+			  
+			  return cq;
+		 };
+	}
+	
+	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(AccountSearch accountSearch) {
+	   return cb -> {
+		    var cq = cb.createQuery(Long.class);
+		    var root = cq.from(Account.class);
+		    
+		    cq.select(cb.count(root.get(Account_.id)));
+		    cq.where(accountSearch.where(cb, root));
+		    
+		    return cq;
+	   };
 	}
 	
 	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {

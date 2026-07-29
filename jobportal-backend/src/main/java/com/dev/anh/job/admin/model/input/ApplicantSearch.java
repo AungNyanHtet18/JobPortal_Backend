@@ -1,14 +1,11 @@
 package com.dev.anh.job.admin.model.input;
 
 import java.util.ArrayList;
-
 import org.springframework.util.StringUtils;
-
 import com.dev.anh.job.model.entity.Account;
 import com.dev.anh.job.model.entity.Account_;
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
