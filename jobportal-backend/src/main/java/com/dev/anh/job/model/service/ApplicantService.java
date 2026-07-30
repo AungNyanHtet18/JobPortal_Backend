@@ -79,7 +79,7 @@ public class ApplicantService {
 		
     public ApplicantDetails findByApplicantId(Long id) { 
 		 return applicantRepo.findById(id).map(ApplicantDetails::from)
-				 .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+				 .orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
 	}
 	
 	public ApplicantDetails findByApplicantName(String email) {
@@ -88,7 +88,7 @@ public class ApplicantService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
-	public ModificationResult<Long> createApplicantInfo(String username, ApplicantForm form, MultipartFile file) {
+	public ModificationResult<Long> createApplicant(String username, ApplicantForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -168,14 +168,14 @@ public class ApplicantService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant')")
-	public ModificationResult<Long> updateApplicantInfo(Long id, ApplicantForm form, MultipartFile file) {
+	public ModificationResult<Long> updateApplicant(Long id, ApplicantForm form, MultipartFile file) {
 		
 		var account = accountRepo.findById(id)
-						 .orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
+						 .orElseThrow(() -> new BusinessException("Account with ID %d was not found".formatted(id)));
 		
 		
 		var applicant = applicantRepo.findById(id)
-							.orElseThrow(() -> new BusinessException("Applicant with %s id is not found".formatted(id)));
+							.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
 		
 		 if(StringUtils.hasLength(form.applicantName())) {
 			  account.setName(form.applicantName());

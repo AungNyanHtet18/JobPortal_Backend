@@ -50,20 +50,20 @@ public class JobController {
 	}
 	
 	@PostMapping
-	ModificationResult<Long> createJobInfo(@RequestBody @Validated JobForm form) {
+	ModificationResult<Long> createJob(@RequestBody @Validated JobForm form) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		return jobService.createJobInfo(username, form);
+		return jobService.createJob(username, form);
 	}
 	
 	@PutMapping("{id}")
-	ModificationResult<Long> updateJobInfo(@PathVariable Long id ,
+	ModificationResult<Long> updateJob(@PathVariable Long id,
 						@RequestBody @Validated JobForm form) {
-		return jobService.updateJobInfo(id, form);
+		return jobService.updateJob(id, form);
 	}
 	
 	@DeleteMapping("{id}")
-	ModificationResult<String> deleteJobInfo(@PathVariable Long id) {
-		return jobService.deleteJobInfo(id);
+	ModificationResult<String> deleteJob(@PathVariable Long id) {
+		return jobService.deleteJob(id);
 	}
 	
 }

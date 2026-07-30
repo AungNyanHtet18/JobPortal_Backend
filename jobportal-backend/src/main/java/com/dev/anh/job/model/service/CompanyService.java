@@ -42,7 +42,7 @@ public class CompanyService {
 	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
-	public ModificationResult<Long> createCompanyInfo(String username, CompanyForm form, MultipartFile file) {
+	public ModificationResult<Long> createCompany(String username, CompanyForm form, MultipartFile file) {
 		
 		var account = accountRepo.findOneByEmail(username)
 							.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
@@ -66,7 +66,7 @@ public class CompanyService {
 	 
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<Long> updateCompanyInfo(Long id, CompanyForm form, MultipartFile file) {
+	public ModificationResult<Long> updateCompany(Long id, CompanyForm form, MultipartFile file) {
 		
 		var account = accountRepo.findById(id)
 							.orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
@@ -111,6 +111,4 @@ public class CompanyService {
 			throw new FileInvalidException("Profile upload failed", e);
 		}
 	}
-	
-
 }

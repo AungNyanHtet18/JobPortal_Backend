@@ -3,13 +3,14 @@ package com.dev.anh.job.model.consts;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum SkillType {
-	SoftSkill("Soft Skill"), 
-	HardSkill("Hard Skill");
+public enum QuestionType {
+	SingleChoice("Single Choice"),
+	MultipleChoice("Multiple Choice"),
+	FillInBlank("Fill In Blank");
 	
 	private final String readableName;
 	
-	private SkillType(String readableName) {
+	private QuestionType(String readableName) {
 		 this.readableName = readableName;
 	}
 	
@@ -19,13 +20,12 @@ public enum SkillType {
 	}
 	
 	@JsonCreator //handle incoming JSON conversion safely
-	public static SkillType fromString(String value) {
-		for(SkillType type: SkillType.values()){ 
+	public static QuestionType fromString(String value) {
+		for(QuestionType type: QuestionType.values()){ 
 			if(type.readableName.equalsIgnoreCase(value) || type.name().equalsIgnoreCase(value)) {
 				 return type;
 			}
 		}
-		throw new IllegalArgumentException("Unknown Skill Type:"+ value);
+		throw new IllegalArgumentException("Unknown Question Type:"+ value);
 	}
-
 }

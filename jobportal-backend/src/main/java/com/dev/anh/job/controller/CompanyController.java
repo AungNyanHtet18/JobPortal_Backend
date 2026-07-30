@@ -35,19 +35,19 @@ public class CompanyController {
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<Long>createCompanyInfo(
+	ModificationResult<Long>createCompany(
 						@RequestPart("form") @Validated CompanyForm form,
 						@RequestPart(value ="file", required = false) MultipartFile file) {
 		 var username = SecurityContextHolder.getContext().getAuthentication().getName();
-		 return companyService.createCompanyInfo(username, form, file);
+		 return companyService.createCompany(username, form, file);
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<Long>updateCompanyInfo(
+	ModificationResult<Long>updateCompany(
 			@PathVariable Long id,
 			@RequestPart("form") @Validated CompanyForm form,
 			@RequestPart(value = "file", required = false) MultipartFile file) {
 		
-		return companyService.updateCompanyInfo(id, form, file);		
+		return companyService.updateCompany(id, form, file);		
 	}
 }

@@ -53,20 +53,20 @@ public class ApplicantController {
 	}
 	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<Long> createApplicantInfo(
-			        @RequestPart("form") @Validated ApplicantForm form,  
+	ModificationResult<Long> createApplicant(
+				    @RequestPart("form") @Validated ApplicantForm form,  
 					@RequestPart(value = "file", required = false) MultipartFile file) {
 		
 		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		return applicantService.createApplicantInfo(username, form, file);
+		return applicantService.createApplicant(username, form, file);
 	}
 	
 	@PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ModificationResult<Long> updateApplicantInfo(
+	ModificationResult<Long> updateApplicant(
 			          @PathVariable Long id,
 			          @RequestPart("form") @Validated ApplicantForm form,
 			          @RequestPart(value = "file", required = false) MultipartFile file) {
-		return applicantService.updateApplicantInfo(id, form, file);
+		return applicantService.updateApplicant(id, form, file);
 	}
 	
 	@PatchMapping(value="uploadresume", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

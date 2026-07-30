@@ -79,7 +79,7 @@ public class JobService {
 
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<Long> createJobInfo(String username, JobForm form) {
+	public ModificationResult<Long> createJob(String username, JobForm form) {
 		
 		var company = companyRepo.findOneByCompanyName(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
 		var career = careerRepo.findOneByRoleName(form.positionName())
@@ -96,7 +96,7 @@ public class JobService {
 		
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<Long> updateJobInfo(Long id, JobForm form) {
+	public ModificationResult<Long> updateJob(Long id, JobForm form) {
 		var job = jobRepo.findById(id).orElseThrow(() -> new BusinessException("Job with %d  is not found".formatted(id)));
 		var career = careerRepo.findOneByRoleName(form.positionName())
 						.orElseGet(() -> {
@@ -124,7 +124,7 @@ public class JobService {
 	
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
-	public ModificationResult<String> deleteJobInfo(Long id) {
+	public ModificationResult<String> deleteJob(Long id) {
 		jobRepo.deleteById(id);		
 		return new ModificationResult<String>("You successfully deleted job.");
 	}

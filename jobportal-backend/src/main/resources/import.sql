@@ -1,0 +1,12 @@
+INSERT INTO career (role_name) VALUES ('Software Engineer');
+INSERT INTO career (role_name) VALUES ('Frontend Developer');
+INSERT INTO career (role_name) VALUES ('Backend Developer');
+INSERT INTO career (role_name) VALUES ('Full Stack Developer');
+INSERT INTO career (role_name) VALUES ('Mobile Application Developer');
+INSERT INTO career (role_name) VALUES ('DevOps Engineer');
+INSERT INTO career (role_name) VALUES ('Cloud Engineer');
+INSERT INTO career (role_name) VALUES ('Data Scientist');
+INSERT INTO career (role_name) VALUES ('Database Administrator');
+INSERT INTO career (role_name) VALUES ('UI/UX Designer');
+INSERT INTO career (role_name) VALUES ('Cyber Security Engineer');
+INSERT INTO career (role_name) VALUES ('Machine Learning Engineer');
