@@ -67,21 +67,21 @@ public class ApplicantService {
 	private final CareerRepo careerRepo;
 	private final SkillRepo skillRepo;
 	private final LanguageRepo languageRepo;
-	
+
 	private final FileProvider fileProvider;
-	
+
 	@Value("${app.upload.path}")
 	private String uploadPath;
-	
+
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
-		return  applicantRepo.search(queryFunc(applicantSearch) , countFunc(applicantSearch), page, size);
+		return applicantRepo.search(queryFunc(applicantSearch), countFunc(applicantSearch), page, size);
 	}
-		
-    public ApplicantDetails findByApplicantId(Long id) { 
-		 return applicantRepo.findById(id).map(ApplicantDetails::from)
-				 .orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
+
+	public ApplicantDetails findByApplicantId(Long id) {
+		return applicantRepo.findById(id).map(ApplicantDetails::from)
+				.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
 	}
-	
+
 	public ApplicantDetails findByApplicantName(String email) {
 		return applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
 	}
@@ -89,315 +89,309 @@ public class ApplicantService {
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<Long> createApplicant(String username, ApplicantForm form, MultipartFile file) {
-		
+
 		var account = accountRepo.findOneByEmail(username)
-						.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
-		
-		//Specify active is true  to display applicant profile
+				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+
+		// Specify active is true to display applicant profile
 		account.setRoleStatus(true);
-		
-		if(StringUtils.hasLength(form.applicantName())) {
-			  account.setName(form.applicantName());
-			  accountRepo.save(account);  
-		 }
-		
+
+		if (StringUtils.hasLength(form.applicantName())) {
+			account.setName(form.applicantName());
+			accountRepo.save(account);
+		}
+
 		var applicant = applicantRepo.saveAndFlush(form.entity(account));
-		 
-		 if(!form.experiences().isEmpty() && form.experiences() != null) {
-			List<Experience> experiences = form.experiences().stream().map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
+
+		if (!form.experiences().isEmpty() && form.experiences() != null) {
+			List<Experience> experiences = form.experiences().stream()
+					.map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
 			experienceRepo.saveAll(experiences);
-		 }
-		 
-		if(!form.socialLinks().isEmpty() && form.socialLinks() != null) {
-			 List<SocialLink> socialLinks = form.socialLinks().stream().map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
-			 socialLinkRepo.saveAll(socialLinks);		 	 
 		}
-		
-		if(!form.educations().isEmpty() && form.educations() != null ) {
-			 List<Education> educations = form.educations().stream().map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
-			 educationRepo.saveAll(educations);
+
+		if (!form.socialLinks().isEmpty() && form.socialLinks() != null) {
+			List<SocialLink> socialLinks = form.socialLinks().stream()
+					.map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
+			socialLinkRepo.saveAll(socialLinks);
 		}
-		
+
+		if (!form.educations().isEmpty() && form.educations() != null) {
+			List<Education> educations = form.educations().stream()
+					.map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
+			educationRepo.saveAll(educations);
+		}
+
 		Set<Career> carrerRoleSet = form.careerRoles().stream()
-				.map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName())
-				.orElseGet(() -> {
-					 var newCareer = new Career();
-					 newCareer.setRoleName(careerForm.roleName());
-				return careerRepo.save(newCareer);		 
-				})
-			).collect(Collectors.toSet());
-		
+				.map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName()).orElseGet(() -> {
+					var newCareer = new Career();
+					newCareer.setRoleName(careerForm.roleName());
+					return careerRepo.save(newCareer);
+				})).collect(Collectors.toSet());
+
 		applicant.setCareerRoles(carrerRoleSet);
-		
-		if(!form.skills().isEmpty() && form.skills() != null) {
-			
-		  Set<Skill> skillSet = form.skills().stream()
-				 .map(skillform -> skillRepo.findOneBySkillNameAndSkillType(skillform.skillName(),skillform.skillType())
-				 .orElseGet(() -> {
+
+		if (!form.skills().isEmpty() && form.skills() != null) {
+
+			Set<Skill> skillSet = form.skills().stream().map(skillform -> skillRepo
+					.findOneBySkillNameAndSkillType(skillform.skillName(), skillform.skillType()).orElseGet(() -> {
 						var newSkill = new Skill();
 						newSkill.setSkillName(skillform.skillName());
 						newSkill.setSkillType(skillform.skillType());
-					return skillRepo.save(newSkill);
-				 	})
-				 ).collect(Collectors.toSet());	
-		  
-		     applicant.setSkills(skillSet);
-		 }
-		
-		if(!form.languages().isEmpty() && form.languages() != null ) {
-			Set<Language> languageSet = form.languages().stream()
-				.map(languageform -> languageRepo.findOneByLanguageNameAndLanguageLevel(languageform.languageName(),languageform.languageLevel())
-				.orElseGet(()-> {
-						 var newLanguage = new Language();
-						 newLanguage.setLanguageName(languageform.languageName());
-						 newLanguage.setLanguageLevel(languageform.languageLevel());
+						return skillRepo.save(newSkill);
+					})).collect(Collectors.toSet());
+
+			applicant.setSkills(skillSet);
+		}
+
+		if (!form.languages().isEmpty() && form.languages() != null) {
+			Set<Language> languageSet = form.languages().stream().map(languageform -> languageRepo
+					.findOneByLanguageNameAndLanguageLevel(languageform.languageName(), languageform.languageLevel())
+					.orElseGet(() -> {
+						var newLanguage = new Language();
+						newLanguage.setLanguageName(languageform.languageName());
+						newLanguage.setLanguageLevel(languageform.languageLevel());
 						return languageRepo.save(newLanguage);
-					})		
-				).collect(Collectors.toSet());
-						
+					})).collect(Collectors.toSet());
+
 			applicant.setLanguages(languageSet);
 		}
-		
-		//Save the Applicant Profile Photo
-		if(file != null && !file.isEmpty()) {
+
+		// Save the Applicant Profile Photo
+		if (file != null && !file.isEmpty()) {
 			uploadApplicantProfile(username, uploadPath.concat("/profile"), file);
 		}
-		 		 
-		return  new ModificationResult<Long>(account.getId());
+
+		return new ModificationResult<Long>(account.getId());
 	}
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant')")
 	public ModificationResult<Long> updateApplicant(Long id, ApplicantForm form, MultipartFile file) {
-		
+
 		var account = accountRepo.findById(id)
-						 .orElseThrow(() -> new BusinessException("Account with ID %d was not found".formatted(id)));
-		
-		
+				.orElseThrow(() -> new BusinessException("Account with ID %d was not found".formatted(id)));
+
 		var applicant = applicantRepo.findById(id)
-							.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
-		
-		 if(StringUtils.hasLength(form.applicantName())) {
-			  account.setName(form.applicantName());
-			  accountRepo.save(account);
-		 }
-			
-			applicant.setAccount(account);
-			applicant.setGender(form.gender());
-			applicant.setProfessionalSummary(form.professionalSummary());
-			applicant.setContactDetail(form.contactDetail());
-			applicant.setAddress(form.address());
-						
-		   if(!form.experiences().isEmpty() && form.experiences()  != null) {
-			    experienceRepo.deleteByApplicant(applicant);
-			    
-			    List<Experience> experiences = form.experiences().stream().map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
-			    experienceRepo.saveAll(experiences);
-		   }
-		   
-		   if(!form.socialLinks().isEmpty() && form.socialLinks() != null) { 
-			   socialLinkRepo.deleteByApplicant(applicant);
-		   
-			   List<SocialLink> socialLinks = form.socialLinks().stream().map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
-			   socialLinkRepo.saveAll(socialLinks);
-		   }
-		    
-		   if(!form.educations().isEmpty() && form.educations() != null) {
-			    educationRepo.deleteByApplicant(applicant);
-		   
-			    List<Education> educations = form.educations().stream().map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
-			    educationRepo.saveAll(educations);
-		   }
-		   
-			  Set<Career> careerRoleSet = form.careerRoles().stream()
-					   							 .map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName())
-					   							.orElseGet(() -> {
-					   								var newCareer = new Career();
-					   								newCareer.setRoleName(careerForm.roleName());
-					   							return careerRepo.save(newCareer);
-					   							  })
-					   						    ).collect(Collectors.toSet());
-			
-			  applicant.setCareerRoles(careerRoleSet);	   							 
-		  
-		  if(!form.skills().isEmpty() && form.skills() != null) {
-			  
-			 Set<Skill> skillSet = form.skills().stream()
-					 				.map(skillform -> skillRepo.findOneBySkillNameAndSkillType(skillform.skillName(), skillform.skillType())
-					 				.orElseGet(() -> {
-						 					var newSkill = new Skill();
-						 					newSkill.setSkillName(skillform.skillName());
-						 					newSkill.setSkillType(skillform.skillType());					 					
-						 				return skillRepo.save(newSkill);
-					 					})
-					 				).collect(Collectors.toSet());
-			  
-			 applicant.setSkills(skillSet);			  
-		  }
-		  
-		  if(!form.languages().isEmpty() && form.languages() != null) {
-			  
-			  Set<Language> languageSet = form.languages().stream()
-					  					    .map(languageForm -> languageRepo.findOneByLanguageNameAndLanguageLevel(languageForm.languageName(), languageForm.languageLevel())
-					  					    .orElseGet(() -> {
-						  					    	var newLanguage = new Language();
-						  					    	newLanguage.setLanguageName(languageForm.languageName());
-						  					    	newLanguage.setLanguageLevel(languageForm.languageLevel());
-						  					    return languageRepo.save(newLanguage);
-					  					    	})		
-					  					    ).collect(Collectors.toSet());
-			 applicant.setLanguages(languageSet); 					    
-		  }
-		  
-		  	applicantRepo.save(applicant);
-		 
-			if(file != null && !file.isEmpty()) {
-				uploadApplicantProfile(account.getEmail(), uploadPath.concat("/profile"), file);
-			}
+				.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
+
+		if (StringUtils.hasLength(form.applicantName())) {
+			account.setName(form.applicantName());
+			accountRepo.save(account);
+		}
+
+		applicant.setAccount(account);
+		applicant.setGender(form.gender());
+		applicant.setProfessionalSummary(form.professionalSummary());
+		applicant.setContactDetail(form.contactDetail());
+		applicant.setAddress(form.address());
+
+		if (!form.experiences().isEmpty() && form.experiences() != null) {
+			experienceRepo.deleteByApplicant(applicant);
+
+			List<Experience> experiences = form.experiences().stream()
+					.map(experience -> ExperienceForm.ApplicantJobExperience(applicant, experience)).toList();
+			experienceRepo.saveAll(experiences);
+		}
+
+		if (!form.socialLinks().isEmpty() && form.socialLinks() != null) {
+			socialLinkRepo.deleteByApplicant(applicant);
+
+			List<SocialLink> socialLinks = form.socialLinks().stream()
+					.map(social -> SocialLinkForm.ApplicantSocialLink(applicant, social)).toList();
+			socialLinkRepo.saveAll(socialLinks);
+		}
+
+		if (!form.educations().isEmpty() && form.educations() != null) {
+			educationRepo.deleteByApplicant(applicant);
+
+			List<Education> educations = form.educations().stream()
+					.map(education -> EducationForm.ApplicantEducation(applicant, education)).toList();
+			educationRepo.saveAll(educations);
+		}
+
+		Set<Career> careerRoleSet = form.careerRoles().stream()
+				.map(careerForm -> careerRepo.findOneByRoleName(careerForm.roleName()).orElseGet(() -> {
+					var newCareer = new Career();
+					newCareer.setRoleName(careerForm.roleName());
+					return careerRepo.save(newCareer);
+				})).collect(Collectors.toSet());
+
+		applicant.setCareerRoles(careerRoleSet);
+
+		if (!form.skills().isEmpty() && form.skills() != null) {
+
+			Set<Skill> skillSet = form.skills().stream().map(skillform -> skillRepo
+					.findOneBySkillNameAndSkillType(skillform.skillName(), skillform.skillType()).orElseGet(() -> {
+						var newSkill = new Skill();
+						newSkill.setSkillName(skillform.skillName());
+						newSkill.setSkillType(skillform.skillType());
+						return skillRepo.save(newSkill);
+					})).collect(Collectors.toSet());
+
+			applicant.setSkills(skillSet);
+		}
+
+		if (!form.languages().isEmpty() && form.languages() != null) {
+
+			Set<Language> languageSet = form.languages().stream().map(languageForm -> languageRepo
+					.findOneByLanguageNameAndLanguageLevel(languageForm.languageName(), languageForm.languageLevel())
+					.orElseGet(() -> {
+						var newLanguage = new Language();
+						newLanguage.setLanguageName(languageForm.languageName());
+						newLanguage.setLanguageLevel(languageForm.languageLevel());
+						return languageRepo.save(newLanguage);
+					})).collect(Collectors.toSet());
+			applicant.setLanguages(languageSet);
+		}
+
+		applicantRepo.save(applicant);
+
+		if (file != null && !file.isEmpty()) {
+			uploadApplicantProfile(account.getEmail(), uploadPath.concat("/profile"), file);
+		}
 
 		return new ModificationResult<Long>(id);
 	}
-	
+
 	@Transactional
 	public ModificationResult<String> uploadApplicantProfile(String username, String uploadPath, MultipartFile file) {
-		
-		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
-		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
+
+		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); // validating file
+
+		var applicant = applicantRepo.findByEmail(username).orElseThrow(
+				() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
 
 		try {
 			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getEmail(), file);
 			applicant.setProfilePhoto(profileImageName);
-						
+
 			return new ModificationResult<String>("Profile is successfully uploaded" + profileImageName);
-			
-		} catch (IOException e) {	
+
+		} catch (IOException e) {
 			throw new FileInvalidException("Profile upload failed", e);
 		}
-		
+
 	}
 
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<String> uploadApplicantResume(String username, MultipartFile file) {
-		
+
 		String resumeUploadPath = uploadPath.concat("/resume");
-		
-		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
-		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s is not found.".formatted(username)));
-		
+
+		fileProvider.validateFile(file, Set.of("pdf", "doc", "docx"));
+
+		var applicant = applicantRepo.findByEmail(username)
+				.orElseThrow(() -> new BusinessException("%s is not found.".formatted(username)));
+
 		try {
 			var resumeName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
 			var resumePath = Path.of(resumeUploadPath, resumeName);
-		
-		if(!Files.exists(resumePath.getParent())) { //resumePath.getParent() => C:upload/resume == return the parent directory of the file
+
+			if (!Files.exists(resumePath.getParent())) { // resumePath.getParent() => C:upload/resume == return the
+															// parent directory of the file
 				Files.createDirectories(resumePath.getParent());
-		}
-		
-		   Files.copy(file.getInputStream(), resumePath, StandardCopyOption.REPLACE_EXISTING);
-		   applicant.setResume(resumeName);
-		   
-		   return new ModificationResult<String>("Resume is upload successfully"+ resumeName);
-		   
-		}catch (IOException e) {
+			}
+
+			Files.copy(file.getInputStream(), resumePath, StandardCopyOption.REPLACE_EXISTING);
+			applicant.setResume(resumeName);
+
+			return new ModificationResult<String>("Resume is upload successfully" + resumeName);
+
+		} catch (IOException e) {
 			throw new FileInvalidException("Resume upload failed", e);
 		}
 
 	}
-	
+
 	@Transactional
 	@PreAuthorize("hasAuthority('Applicant') and #username eq authentication.name")
 	public ModificationResult<String> uploadApplicantCvForm(String username, MultipartFile file) {
-		
+
 		String cvFormUploadPath = uploadPath.concat("/cvform");
-		
-		fileProvider.validateFile(file, Set.of("pdf","doc","docx"));
-		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
-		
+
+		fileProvider.validateFile(file, Set.of("pdf", "doc", "docx"));
+
+		var applicant = applicantRepo.findByEmail(username)
+				.orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
+
 		try {
-				 var cvFormName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
-				 var cvFormPath = Path.of(cvFormUploadPath, cvFormName);
-				 
-			 if(!Files.exists(cvFormPath.getParent())) {
-				  Files.createDirectories(cvFormPath.getParent());
-			 }
-			 
-			 
-			  Files.copy(file.getInputStream(), cvFormPath, StandardCopyOption.REPLACE_EXISTING);
-			  applicant.setCvForm(cvFormName);
-			 
+			var cvFormName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
+			var cvFormPath = Path.of(cvFormUploadPath, cvFormName);
+
+			if (!Files.exists(cvFormPath.getParent())) {
+				Files.createDirectories(cvFormPath.getParent());
+			}
+
+			Files.copy(file.getInputStream(), cvFormPath, StandardCopyOption.REPLACE_EXISTING);
+			applicant.setCvForm(cvFormName);
+
 			return new ModificationResult<String>("CV Form is sucessfully uploaded");
-					 
-		}catch(IOException e) {
-			 throw new FileInvalidException("CV Form upload failed",e);
+
+		} catch (IOException e) {
+			throw new FileInvalidException("CV Form upload failed", e);
 		}
-				
+
 	}
-	
+
 	public ResponseEntity<Resource> downloadApplicantResume(Long id) throws IOException {
-		var applicant = applicantRepo.findById(id).orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
-	
-		var filePath = Path.of("C:/upload/resume",applicant.getResume());
+		var applicant = applicantRepo.findById(id)
+				.orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+
+		var filePath = Path.of("C:/upload/resume", applicant.getResume());
 		var contentType = Files.probeContentType(filePath);
 		var fileName = Paths.get(applicant.getResume()).getFileName().toString();
-		
+
 		var resource = new FileSystemResource(filePath);
 
-		if(!resource.exists()) {
-			 throw new FileInvalidException("File is not found");
+		if (!resource.exists()) {
+			throw new FileInvalidException("File is not found");
 		}
-		
-		return ResponseEntity.ok()
-					.contentType(MediaType.parseMediaType(contentType))
-					.header(HttpHeaders.CONTENT_DISPOSITION, 
-					   "attachment; filename=\"" + fileName + "\"")
-					.body(resource);
-	}	
-	
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"").body(resource);
+	}
+
 	public ResponseEntity<Resource> downloadApplicantCvForm(Long id) throws IOException {
-		var applicant = applicantRepo.findById(id).orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
-	
-		var filePath = Path.of("C:/upload/cvform",applicant.getCvForm());
+		var applicant = applicantRepo.findById(id)
+				.orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+
+		var filePath = Path.of("C:/upload/cvform", applicant.getCvForm());
 		var contentType = Files.probeContentType(filePath);
 		var fileName = Paths.get(applicant.getCvForm()).getFileName().toString();
-		
+
 		var resource = new FileSystemResource(filePath);
 
-		if(!resource.exists()) {
-			 throw new FileInvalidException("File is not found");
+		if (!resource.exists()) {
+			throw new FileInvalidException("File is not found");
 		}
-		
-		return ResponseEntity.ok()
-					.contentType(MediaType.parseMediaType(contentType))
-					.header(HttpHeaders.CONTENT_DISPOSITION, 
-					   "attachment; filename=\"" + fileName + "\"")
-					.body(resource);
-	}	
-	
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"").body(resource);
+	}
+
 	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
-			 var cq = cb.createQuery(ApplicantListItem.class);
-			 var root = cq.from(Applicant.class);
-			 
-			 ApplicantListItem.select(cq, root);
-			 cq.where(applicantSearch.where(cb, root));
-			 cq.orderBy(cb.desc(root.get(Applicant_.id)));
-			 
+			var cq = cb.createQuery(ApplicantListItem.class);
+			var root = cq.from(Applicant.class);
+
+			ApplicantListItem.select(cq, root);
+			cq.where(applicantSearch.where(cb, root));
+			cq.orderBy(cb.desc(root.get(Applicant_.id)));
+
 			return cq;
 		};
 	}
 
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
-			 var cq = cb.createQuery(Long.class);
-			 var root = cq.from(Applicant.class);
-			 
-			 cq.select(cb.count(root.get(Applicant_.id)));
-			 cq.where(applicantSearch.where(cb, root));
-			 
-			 return cq;
+			var cq = cb.createQuery(Long.class);
+			var root = cq.from(Applicant.class);
+
+			cq.select(cb.count(root.get(Applicant_.id)));
+			cq.where(applicantSearch.where(cb, root));
+
+			return cq;
 		};
 	}
 }

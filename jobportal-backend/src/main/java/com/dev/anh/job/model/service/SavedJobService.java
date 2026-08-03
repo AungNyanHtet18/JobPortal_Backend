@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SavedJobService {
-	
+
 	private final ApplicantRepo applicantRepo;
 	private final JobRepo jobRepo;
 	private final SavedJobRepo savedJobRepo;
@@ -27,42 +27,44 @@ public class SavedJobService {
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<Long> savedJob(String username, Long jobId) {
-		
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
-		var job = jobRepo.findById(jobId).orElseThrow(() -> new BusinessException("Job with %d id is not found".formatted(jobId)));
-		
+
+		var applicant = applicantRepo.findByEmail(username)
+				.orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
+		var job = jobRepo.findById(jobId)
+				.orElseThrow(() -> new BusinessException("Job with %d id is not found".formatted(jobId)));
+
 		var savedJobPk = new SavedJobPk(applicant.getId(), job.getId());
 		var savedJob = new SavedJob();
-		
+
 		savedJob.setId(savedJobPk);
 		savedJob.setApplicant(applicant);
 		savedJob.setJob(job);
 		savedJob.setSavedJob(true);
-		
+
 		savedJobRepo.save(savedJob);
-		
+
 		return new ModificationResult<Long>(jobId);
 	}
-	
+
 	@Transactional
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<Long> unsavedJob(String username, Long jobId) {
 		var savedJob = savedJobRepo.findOneByApplicantandJob(username, jobId)
-				       .orElseThrow(() -> new BusinessException("No job found with ID %d.".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("No job found with ID %d.".formatted(jobId)));
 		savedJob.setSavedJob(false);
 		savedJobRepo.save(savedJob);
-		
+
 		return new ModificationResult<Long>(jobId);
 	}
-	
+
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<List<SavedJobListItem>> savedJobList(String username) {
-			
-		var applicant = applicantRepo.findByEmail(username).orElseThrow(() -> new BusinessException("%s  is not found".formatted(username)));
-		var savedJobLists = savedJobRepo.findJobIdsByApplicantandSavedJob(applicant.getId(),true)
-									.stream().map(a -> new SavedJobListItem(a)).toList();
-		
-		
+
+		var applicant = applicantRepo.findByEmail(username)
+				.orElseThrow(() -> new BusinessException("%s  is not found".formatted(username)));
+		var savedJobLists = savedJobRepo.findJobIdsByApplicantandSavedJob(applicant.getId(), true).stream()
+				.map(a -> new SavedJobListItem(a)).toList();
+
 		return new ModificationResult<List<SavedJobListItem>>(savedJobLists);
 	}
 

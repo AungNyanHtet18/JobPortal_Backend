@@ -17,34 +17,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class JobManagementService {
-	
+
 	private final JobRepo jobRepo;
-	
-	public PageResult<JobListItem> searchJob(JobSearch jobSearch, int page, int size) {	
+
+	public PageResult<JobListItem> searchJob(JobSearch jobSearch, int page, int size) {
 		return jobRepo.search(queryFunc(jobSearch), countFunc(jobSearch), page, size);
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<JobListItem>> queryFunc(JobSearch jobSearch) {
 		return cb -> {
 			var cq = cb.createQuery(JobListItem.class);
 			var root = cq.from(Job.class);
-			
+
 			JobListItem.select(cq, root);
 			cq.where(jobSearch.where(cb, root));
 			cq.orderBy(cb.asc(root.get(Job_.createdAt)));
-			
+
 			return cq;
 		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(JobSearch jobSearch) {
 		return cb -> {
-			 var cq = cb.createQuery(Long.class);
-			 var root = cq.from(Job.class);
-			 
-			 cq.select(cb.count(root.get(Job_.id)));
-			 cq.where(jobSearch.where(cb, root));
-			
+			var cq = cb.createQuery(Long.class);
+			var root = cq.from(Job.class);
+
+			cq.select(cb.count(root.get(Job_.id)));
+			cq.where(jobSearch.where(cb, root));
+
 			return cq;
 		};
 	}

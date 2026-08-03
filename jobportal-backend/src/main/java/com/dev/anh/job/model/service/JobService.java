@@ -30,49 +30,49 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class JobService {
-	
+
 	private final CompanyRepo companyRepo;
 	private final JobRepo jobRepo;
 	private final CareerRepo careerRepo;
-	
+
 	public PageResult<JobListItem> searchJob(JobSearch jobSearch, int page, int size) {
 		return jobRepo.search(queryFunc(jobSearch), countFunc(jobSearch), page, size);
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<JobListItem>> queryFunc(JobSearch jobSearch) {
 		return cb -> {
 			var cq = cb.createQuery(JobListItem.class);
 			var root = cq.from(Job.class);
-			
+
 			var company = root.join(Job_.company, JoinType.INNER);
-			
+
 			JobListItem.select(cq, root, company);
 			cq.where(jobSearch.where(cb, root, company));
 			cq.orderBy(cb.desc(root.get(Job_.id)));
-			
+
 			return cq;
 		};
 	}
 
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(JobSearch jobSearch) {
 		return cb -> {
-			 var cq = cb.createQuery(Long.class);
-			 var root = cq.from(Job.class);
-			 
-			 var company = root.join(Job_.company, JoinType.INNER);
-			 
-			 cq.select(cb.count(root.get(Job_.id)));
-			 cq.where(jobSearch.where(cb, root, company));
-			 
-			 return cq;
+			var cq = cb.createQuery(Long.class);
+			var root = cq.from(Job.class);
+
+			var company = root.join(Job_.company, JoinType.INNER);
+
+			cq.select(cb.count(root.get(Job_.id)));
+			cq.where(jobSearch.where(cb, root, company));
+
+			return cq;
 		};
 	}
-	
+
 	public JobDetails findById(Long id) {
 		return jobRepo.findById(id).map(a -> JobDetails.from(a))
-					.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
 	}
-	
+
 	public List<JobDetails> findByCompanyId(Long companyId) {
 		return jobRepo.findByCompanyId(companyId).stream().map(JobDetails::from).toList();
 	}
@@ -80,34 +80,34 @@ public class JobService {
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> createJob(String username, JobForm form) {
-		
-		var company = companyRepo.findOneByCompanyName(username).orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
-		var career = careerRepo.findOneByRoleName(form.positionName())
-						.orElseGet(() -> {
-							 var newCareer = new Career();
-							 newCareer.setRoleName(form.positionName());
-						return careerRepo.save(newCareer);	 
-						});
-		
+
+		var company = companyRepo.findOneByCompanyName(username)
+				.orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
+		var career = careerRepo.findOneByRoleName(form.positionName()).orElseGet(() -> {
+			var newCareer = new Career();
+			newCareer.setRoleName(form.positionName());
+			return careerRepo.save(newCareer);
+		});
+
 		var job = jobRepo.save(form.entity(company, career));
-		
+
 		return new ModificationResult<Long>(job.getId());
 	}
-		
+
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateJob(Long id, JobForm form) {
-		var job = jobRepo.findById(id).orElseThrow(() -> new BusinessException("Job with %d  is not found".formatted(id)));
-		var career = careerRepo.findOneByRoleName(form.positionName())
-						.orElseGet(() -> {
-							 var newCareer = new Career();
-							 newCareer.setRoleName(form.positionName());
-						return careerRepo.save(newCareer);	 
-						});
-		
+		var job = jobRepo.findById(id)
+				.orElseThrow(() -> new BusinessException("Job with %d  is not found".formatted(id)));
+		var career = careerRepo.findOneByRoleName(form.positionName()).orElseGet(() -> {
+			var newCareer = new Career();
+			newCareer.setRoleName(form.positionName());
+			return careerRepo.save(newCareer);
+		});
+
 		job.setCareer(career);
-		job.setJobPost(form.jobPost());	
-		job.setClientName(form.clientName()); 
+		job.setJobPost(form.jobPost());
+		job.setClientName(form.clientName());
 		job.setLocation(form.location());
 		job.setJobDescriptions(form.jobDescriptions());
 		job.setJobRequirements(form.jobRequirements());
@@ -116,16 +116,15 @@ public class JobService {
 		job.setMinSalaryRange(form.minSalaryRange());
 		job.setMaxSalaryRange(form.maxSalaryRange());
 		job.setDeleted(form.deleted());
-		
+
 		jobRepo.save(job);
 		return new ModificationResult<Long>(id);
 	}
-	
-	
+
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<String> deleteJob(Long id) {
-		jobRepo.deleteById(id);		
+		jobRepo.deleteById(id);
 		return new ModificationResult<String>("You successfully deleted job.");
 	}
 }

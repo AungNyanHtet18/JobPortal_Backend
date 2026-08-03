@@ -29,64 +29,57 @@ public class JobDashboardService {
 	private final JobRepo jobRepo;
 	private final JobApplyRepo jobApplyRepo;
 	private final PostRepo postRepo;
-	
+
 	public ModificationResult<DashboardStats> getDashboardStats() {
 		var totalUsers = accountRepo.count();
 		var totalJobs = jobRepo.count();
 		var totalApplications = jobApplyRepo.count();
 		var totalPosts = postRepo.count();
-		return new ModificationResult<DashboardStats>(new DashboardStats(totalUsers, totalJobs, totalApplications, totalPosts));
+		return new ModificationResult<DashboardStats>(
+				new DashboardStats(totalUsers, totalJobs, totalApplications, totalPosts));
 	}
-	
-	public List<Integer> getYear() {
-		var startYear = jobRepo.findFirstByOrderByCreatedAt()
-				.map(a -> a.getCreatedAt().getYear())
+
+	public List<Integer> getYears() {
+		var startYear = jobRepo.findFirstByOrderByCreatedAt().map(a -> a.getCreatedAt().getYear())
 				.orElse(LocalDateTime.now().getYear());
-		
+
 		var currentYear = LocalDate.now().getYear();
-		
-		if(startYear == currentYear) {
-		   return List.of(startYear);
+
+		if (startYear == currentYear) {
+			return List.of(startYear);
 		}
-		
-		return IntStream.rangeClosed(startYear, currentYear)
-				 .boxed()
-				 .toList();
+
+		return IntStream.rangeClosed(startYear, currentYear).boxed().toList();
 	}
 
 	public Map<LocalDate, Long> getJobPostings(YearMonthData data) {
-		
+
 		var result = new LinkedHashMap<LocalDate, Long>();
-		
+
 		var start = data.getStartDate();
 		var end = data.getEndDate();
-		
-		while(start.isBefore(end)) {
+
+		while (start.isBefore(end)) {
 			var next = data.next(start);
 			result.put(start.toLocalDate(), getCount(start, next));
-		    start = next;
+			start = next;
 		}
-		
+
 		return result;
 	}
-	
+
 	private Long getCount(LocalDateTime start, LocalDateTime next) {
-		 return jobRepo.searchOne(cb -> {
+		return jobRepo.searchOne(cb -> {
 			var cq = cb.createQuery(Long.class);
 			var root = cq.from(Job.class);
-			
-			cq.select(
-				cb.count(root.get(Job_.id))	
-			);
-			
-			cq.where(
-			   cb.greaterThanOrEqualTo(root.get(Job_.createdAt), start),
-			   cb.lessThan(root.get(Job_.createdAt) , next)
-			);
-			
-			 return cq;
-			 
-		 }).orElse(0L);
-	}	 
-}
 
+			cq.select(cb.count(root.get(Job_.id)));
+
+			cq.where(cb.greaterThanOrEqualTo(root.get(Job_.createdAt), start),
+					cb.lessThan(root.get(Job_.createdAt), next));
+
+			return cq;
+
+		}).orElse(0L);
+	}
+}

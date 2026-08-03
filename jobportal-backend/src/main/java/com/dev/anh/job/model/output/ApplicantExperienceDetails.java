@@ -10,8 +10,7 @@ public record ApplicantExperienceDetails(
 	LocalDate joinedDate,
 	LocalDate leftDate,
 	Boolean currentlyWorking,
-	String experienceDescription
-	) {
+	String experienceDescription) {
 
 	public static ApplicantExperienceDetails from(Experience experience) {
 		return new ApplicantExperienceDetails(

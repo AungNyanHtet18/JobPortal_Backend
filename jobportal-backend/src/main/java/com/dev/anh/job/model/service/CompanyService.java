@@ -27,79 +27,80 @@ public class CompanyService {
 	private final AccountRepo accountRepo;
 	private final CompanyRepo companyRepo;
 	private final FileProvider fileProvider;
-	
+
 	@Value("${app.upload.path}")
 	private String uploadPath;
-	
-    public CompanyDetails findByCompanyId(Long id) { 
-		 return companyRepo.findById(id).map(CompanyDetails::from)
-				 .orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
+
+	public CompanyDetails findByCompanyId(Long id) {
+		return companyRepo.findById(id).map(CompanyDetails::from)
+				.orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
 	}
-	
+
 	public CompanyDetails findByCompanyName(String email) {
-		 return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
+		return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
 	}
-	
+
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount') and #username eq authentication.name")
 	public ModificationResult<Long> createCompany(String username, CompanyForm form, MultipartFile file) {
-		
+
 		var account = accountRepo.findOneByEmail(username)
-							.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
-		
-		//Specify active is true in order to display applicant profile
+				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+
+		// Specify active is true in order to display applicant profile
 		account.setRoleStatus(true);
-		
-		if(StringUtils.hasLength(form.companyName())) {
-			 account.setName(form.companyName());
-			 accountRepo.save(account);
+
+		if (StringUtils.hasLength(form.companyName())) {
+			account.setName(form.companyName());
+			accountRepo.save(account);
 		}
-		
+
 		companyRepo.save(form.entity(account));
-		
-		if(file != null && !file.isEmpty()) {
-			  uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
-		 }	
-			
+
+		if (file != null && !file.isEmpty()) {
+			uploadCompanyProfile(username, uploadPath.concat("/companyprofile"), file);
+		}
+
 		return new ModificationResult<Long>(account.getId());
 	}
-	 
+
 	@Transactional
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateCompany(Long id, CompanyForm form, MultipartFile file) {
-		
+
 		var account = accountRepo.findById(id)
-							.orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
-							 
+				.orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
+
 		var company = companyRepo.findById(id)
-							.orElseThrow(() -> new BusinessException("Company with %s id is not found".formatted(id)));
-		
-		if(StringUtils.hasLength(form.companyName())) {
-			account.setName(form.companyName()); 
+				.orElseThrow(() -> new BusinessException("Company with %s id is not found".formatted(id)));
+
+		if (StringUtils.hasLength(form.companyName())) {
+			account.setName(form.companyName());
 			accountRepo.save(account);
 		}
-		
+
 		company.setAccount(account);
 		company.setIndustryType(form.industryType());
 		company.setLocation(form.location());
 		company.setPhone(form.phone());
 		company.setWebsiteUrl(form.websiteUrl());
 		company.setDescription(form.description());
-	
+
 		companyRepo.save(company);
-		
-		if(file != null && !file.isEmpty()) {
+
+		if (file != null && !file.isEmpty()) {
 			uploadCompanyProfile(account.getEmail(), uploadPath.concat("/companyprofile"), file);
-		 }	
-		
+		}
+
 		return new ModificationResult<Long>(id);
 	}
-	
+
 	@Transactional
 	public ModificationResult<String> uploadCompanyProfile(String username, String uploadPath, MultipartFile file) {
-		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); //validating file
+		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); // validating file
 
-		var company = companyRepo.findByEmail(username).orElseThrow(() -> new BusinessException("Firstly,fill company information before uploading profile image "));
+		var company = companyRepo.findByEmail(username).orElseThrow(
+				() -> new BusinessException("Firstly,fill company information before uploading profile image "));
 
 		try {
 			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getEmail(), file);

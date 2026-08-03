@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum QuestionType {
 	SingleChoice("Single Choice"),
-	MultipleChoice("Multiple Choice"),
-	FillInBlank("Fill In Blank");
+	MultipleChoice("Multiple Choice");
 	
 	private final String readableName;
 	

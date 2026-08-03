@@ -35,94 +35,94 @@ public class AccountManagementService {
 	private final AccountRepo accountRepo;
 	private final ApplicantRepo applicantRepo;
 	private final CompanyRepo companyRepo;
-	
+
 	public PageResult<AccountListItem> searchAccount(AccountSearch accountSearch, int page, int size) {
 		return accountRepo.search(queryFunc(accountSearch), countFunc(accountSearch), page, size);
 	}
-	
+
 	public PageResult<ApplicantListItem> searchApplicant(ApplicantSearch applicantSearch, int page, int size) {
 		return applicantRepo.search(queryFunc(applicantSearch), countFunc(applicantSearch), page, size);
 	}
-	
+
 	public PageResult<CompanyListItem> searchCompany(CompanySearch companySearch, int page, int size) {
 		return companyRepo.search(queryFunc(companySearch), countFunc(companySearch), page, size);
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<AccountListItem>> queryFunc(AccountSearch accountSearch) {
-		 return cb -> {
-			  var cq = cb.createQuery(AccountListItem.class);
-			  var root = cq.from(Account.class);
-			 
-			  AccountListItem.select(cq, root);
-			  cq.where(accountSearch.where(cb, root));
-			  cq.orderBy(cb.desc(root.get(Account_.createdAt)));
-			  
-			  return cq;
-		 };
+		return cb -> {
+			var cq = cb.createQuery(AccountListItem.class);
+			var root = cq.from(Account.class);
+
+			AccountListItem.select(cq, root);
+			cq.where(accountSearch.where(cb, root));
+			cq.orderBy(cb.desc(root.get(Account_.createdAt)));
+
+			return cq;
+		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(AccountSearch accountSearch) {
-	   return cb -> {
-		    var cq = cb.createQuery(Long.class);
-		    var root = cq.from(Account.class);
-		    
-		    cq.select(cb.count(root.get(Account_.id)));
-		    cq.where(accountSearch.where(cb, root));
-		    
-		    return cq;
-	   };
+		return cb -> {
+			var cq = cb.createQuery(Long.class);
+			var root = cq.from(Account.class);
+
+			cq.select(cb.count(root.get(Account_.id)));
+			cq.where(accountSearch.where(cb, root));
+
+			return cq;
+		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<ApplicantListItem>> queryFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
-		    var cq = cb.createQuery(ApplicantListItem.class);
+			var cq = cb.createQuery(ApplicantListItem.class);
 			var root = cq.from(Applicant.class);
-			
+
 			var account = root.join(Applicant_.account, JoinType.INNER);
 			ApplicantListItem.select(cq, cb, root, account);
 			cq.where(applicantSearch.where(cb, root, account));
 			cq.orderBy(cb.desc(root.get(Applicant_.createdAt)));
-		   
+
 			return cq;
 		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicantSearch applicantSearch) {
 		return cb -> {
 			var cq = cb.createQuery(Long.class);
-			var root = cq.from(Applicant.class); 
-			
+			var root = cq.from(Applicant.class);
+
 			var account = root.join(Applicant_.account, JoinType.INNER);
 			cq.select(cb.count(root.get(Applicant_.id)));
 			cq.where(applicantSearch.where(cb, root, account));
-			
-			return cq; 
+
+			return cq;
 		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<CompanyListItem>> queryFunc(CompanySearch companySearch) {
 		return cb -> {
 			var cq = cb.createQuery(CompanyListItem.class);
 			var root = cq.from(Company.class);
-			
+
 			var account = root.join(Company_.account, JoinType.INNER);
 			CompanyListItem.select(cq, cb, root, account);
 			cq.where(companySearch.where(cb, root, account));
 			cq.orderBy(cb.desc(root.get(Company_.createdAt)));
-			
+
 			return cq;
 		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(CompanySearch companySearch) {
 		return cb -> {
 			var cq = cb.createQuery(Long.class);
 			var root = cq.from(Company.class);
-			
+
 			var account = root.join(Company_.account, JoinType.INNER);
 			cq.select(cb.count(root.get(Company_.id)));
 			cq.where(companySearch.where(cb, root, account));
-			
+
 			return cq;
 		};
 	}

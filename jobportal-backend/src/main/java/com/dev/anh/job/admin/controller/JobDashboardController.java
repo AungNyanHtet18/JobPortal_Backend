@@ -27,7 +27,7 @@ public class JobDashboardController {
 	
 	@GetMapping("dashboard/job/years")
 	List<Integer> getYears() {
-	   return jobDashboardService.getYear();
+	   return jobDashboardService.getYears();
 	}
 	
 	@GetMapping("dashboard/jobPostingsSummary")

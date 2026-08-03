@@ -26,71 +26,71 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly =  true)
+@Transactional(readOnly = true)
 public class PostService {
 
 	private final AccountRepo accountRepo;
 	private final PostRepo postRepo;
 	private final ApplicationEventPublisher eventPublisher;
-	
+
 	public List<PostListItem> searchPost(PostSearch postSearch) {
 		return postRepo.search(queryFunc(postSearch));
-	} 
-	
+	}
+
 	private Function<CriteriaBuilder, CriteriaQuery<PostListItem>> queryFunc(PostSearch postSearch) {
-		 return cb -> {
+		return cb -> {
 			var cq = cb.createQuery(PostListItem.class);
 			var root = cq.from(Post.class);
-			
+
 			var account = root.join(Post_.account, JoinType.INNER);
-			
+
 			PostListItem.select(account, cq, cb, root, postSearch.username());
-			cq.where(postSearch.where(account,cb, root));
-			
+			cq.where(postSearch.where(account, cb, root));
+
 			return cq;
-		 };
+		};
 	}
-	
+
 	@Transactional
 	public ModificationResult<Long> createPost(String username, PostForm form, MultipartFile file) {
 
-			var account = accountRepo.findOneByEmail(username)
-					.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
-	
-			var post = new Post();
-			
-			post.setAccount(account);
-			post.setContent(form.content());
-			
-			postRepo.save(post);
-			
-			 // trigger file upload AFTER commit
-			if(file != null && !file.isEmpty()) {
-				eventPublisher.publishEvent(new PostPhotoEvent(post.getId(), username, file));
-			}
-			
-			return new ModificationResult<Long>(account.getId());
+		var account = accountRepo.findOneByEmail(username)
+				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+
+		var post = new Post();
+
+		post.setAccount(account);
+		post.setContent(form.content());
+
+		postRepo.save(post);
+
+		// trigger file upload AFTER commit
+		if (file != null && !file.isEmpty()) {
+			eventPublisher.publishEvent(new PostPhotoEvent(post.getId(), username, file));
+		}
+
+		return new ModificationResult<Long>(account.getId());
 	}
-		
+
 	@Transactional
 	public ModificationResult<Long> updatePost(String username, Long id, PostForm form, MultipartFile file) {
 
-			var post = postRepo.findById(id)
-					       .orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(id)));
-	
-			post.setContent(form.content());
-			
-			// trigger file upload AFTER commit
-			if(file != null && !file.isEmpty()) {
-				eventPublisher.publishEvent(new PostPhotoEvent(post.getId(), username, file));
-			}
-					
-			return new ModificationResult<Long>(id);
+		var post = postRepo.findById(id)
+				.orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(id)));
+
+		post.setContent(form.content());
+
+		// trigger file upload AFTER commit
+		if (file != null && !file.isEmpty()) {
+			eventPublisher.publishEvent(new PostPhotoEvent(post.getId(), username, file));
+		}
+
+		return new ModificationResult<Long>(id);
 	}
-     
+
 	@Transactional
 	public ModificationResult<String> deletePost(Long id) {
-	    postRepo.deleteById(id);
+		postRepo.deleteById(id);
 		return new ModificationResult<String>("You successfully deleted post.");
 	}
 }

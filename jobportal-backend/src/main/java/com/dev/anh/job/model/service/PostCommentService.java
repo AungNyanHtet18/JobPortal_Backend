@@ -24,31 +24,30 @@ public class PostCommentService {
 	private final AccountRepo accountRepo;
 	private final PostRepo postRepo;
 	private final PostCommentRepo postCommentRepo;
-		
+
 	@Transactional
-	public ModificationResult<Long> createCommentPost(String username, @NotNull(message = "Post Id is required") Long postId,
-			PostCommentForm form) {
-         
+	public ModificationResult<Long> createCommentPost(String username,
+			@NotNull(message = "Post Id is required") Long postId, PostCommentForm form) {
+
 		var account = accountRepo.findOneByEmail(username)
 				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 
 		var post = postRepo.findById(postId)
-			       .orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(postId)));
-		
+				.orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(postId)));
+
 		var postComment = new PostComment();
 		postComment.setAccount(account);
 		postComment.setPost(post);
 		postComment.setComment(form.comment());
-		
+
 		postCommentRepo.save(postComment);
 		return new ModificationResult<Long>(postId);
 	}
 
 	public List<CommentListItem> findCommentPost(Long postId) {
-		   return postCommentRepo.findCommentListByPostId(postId);
+		return postCommentRepo.findCommentListByPostId(postId);
 	}
-	
-	
+
 	@Transactional
 	public ModificationResult<String> deleteCommentPost(Long id) {
 		postCommentRepo.deleteById(id);

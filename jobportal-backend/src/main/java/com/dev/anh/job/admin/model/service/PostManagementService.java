@@ -20,32 +20,32 @@ import lombok.RequiredArgsConstructor;
 public class PostManagementService {
 
 	private final PostRepo postRepo;
-	
+
 	public PageResult<PostListItem> searchPost(PostSearch postSearch, int page, int size) {
 		return postRepo.search(queryFunc(postSearch), countFunc(postSearch), page, size);
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<PostListItem>> queryFunc(PostSearch postSearch) {
-		 return cb -> {
+		return cb -> {
 			var cq = cb.createQuery(PostListItem.class);
 			var root = cq.from(Post.class);
-			
+
 			PostListItem.select(cq, cb, root);
-			cq.where(postSearch.where(cb, root)); 
+			cq.where(postSearch.where(cb, root));
 			cq.orderBy(cb.desc(root.get(Post_.createdAt)));
-			
+
 			return cq;
-		 };
+		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(PostSearch postSearch) {
 		return cb -> {
 			var cq = cb.createQuery(Long.class);
 			var root = cq.from(Post.class);
-			
+
 			cq.select(cb.count(root.get(Post_.id)));
 			cq.where(postSearch.where(cb, root));
-			
+
 			return cq;
 		};
 	}

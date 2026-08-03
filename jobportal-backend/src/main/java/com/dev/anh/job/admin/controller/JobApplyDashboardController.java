@@ -22,14 +22,15 @@ public class JobApplyDashboardController {
 	private final JobApplyDashboardService jobApplyDashboardService;
 
 	@GetMapping("applicationList")
-	PageResult<ApplicationListItem> searchApplication(ApplicationSearch applicationSearch, 
-			  @RequestParam(required = false, defaultValue = "0") int page) {
-		return jobApplyDashboardService.searchApplications(applicationSearch, page, 10); //Specify fixed size to show applicant rows
+	PageResult<ApplicationListItem> searchApplication(ApplicationSearch applicationSearch,
+			@RequestParam(required = false, defaultValue = "0") int page) {
+		return jobApplyDashboardService.searchApplications(applicationSearch, page, 10); // Specify fixed size to show
+																							// applicant rows
 	}
-	
+
 	@GetMapping("mostAppliedJobs")
 	List<MostAppliedJobListItem> getMostAppliedJobs() {
-		 return jobApplyDashboardService.getMostAppliedJobs();
+		return jobApplyDashboardService.getMostAppliedJobs();
 	}
-	
+
 }

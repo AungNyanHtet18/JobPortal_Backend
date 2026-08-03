@@ -26,55 +26,55 @@ public class JobApplyDashboardService {
 
 	private final JobRepo jobRepo;
 	private final JobApplyRepo jobApplyRepo;
-	
+
 	public PageResult<ApplicationListItem> searchApplications(ApplicationSearch applicationSearch, int page, int size) {
-		return jobApplyRepo.search(queryFunc(applicationSearch), countFunc(applicationSearch) , page, size);
+		return jobApplyRepo.search(queryFunc(applicationSearch), countFunc(applicationSearch), page, size);
 	}
-	
+
 	public List<MostAppliedJobListItem> getMostAppliedJobs() {
 		return jobRepo.search(queryFuncForMostAppliedJobList(), 5);
 	}
-	
-	private Function<CriteriaBuilder, CriteriaQuery<ApplicationListItem>> queryFunc(ApplicationSearch applicationSearch) {
+
+	private Function<CriteriaBuilder, CriteriaQuery<ApplicationListItem>> queryFunc(
+			ApplicationSearch applicationSearch) {
 		return cb -> {
-			 var cq = cb.createQuery(ApplicationListItem.class);
-			 var root = cq.from(JobApply.class);
-			 
-			 var job = root.join(JobApply_.job);
-			 var applicant = root.join(JobApply_.applicant);
-			 
-			 ApplicationListItem.select(cq, root, job, applicant);
-			 cq.where(applicationSearch.where(cb, root, job, applicant));
-			 cq.orderBy(cb.asc(root.get(JobApply_.createdAt)));
-			 
-			 return cq;
+			var cq = cb.createQuery(ApplicationListItem.class);
+			var root = cq.from(JobApply.class);
+
+			var job = root.join(JobApply_.job);
+			var applicant = root.join(JobApply_.applicant);
+
+			ApplicationListItem.select(cq, root, job, applicant);
+			cq.where(applicationSearch.where(cb, root, job, applicant));
+			cq.orderBy(cb.asc(root.get(JobApply_.createdAt)));
+
+			return cq;
 		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<Long>> countFunc(ApplicationSearch applicantSearch) {
-		 return cb -> {
-			 var cq = cb.createQuery(Long.class);
-			 var root = cq.from(JobApply.class);
-			 
-			 var job = root.join(JobApply_.job);
-			 var applicant = root.join(JobApply_.applicant);
-			 
-			cq.select(cb.count(root)); //SELECT COUNT(*) FROM job_apply;
-			cq.where(applicantSearch.where(cb, root, job, applicant));			 
-			
+		return cb -> {
+			var cq = cb.createQuery(Long.class);
+			var root = cq.from(JobApply.class);
+
+			var job = root.join(JobApply_.job);
+			var applicant = root.join(JobApply_.applicant);
+
+			cq.select(cb.count(root)); // SELECT COUNT(*) FROM job_apply;
+			cq.where(applicantSearch.where(cb, root, job, applicant));
+
 			return cq;
-		 };
+		};
 	}
-	
+
 	private Function<CriteriaBuilder, CriteriaQuery<MostAppliedJobListItem>> queryFuncForMostAppliedJobList() {
 		return cb -> {
-			 var cq = cb.createQuery(MostAppliedJobListItem.class);
-			 var root = cq.from(Job.class);
-			
-			 MostAppliedJobListItem.select(cq, cb, root);
-			 
-			 return cq;
-		};
-	}	
-}
+			var cq = cb.createQuery(MostAppliedJobListItem.class);
+			var root = cq.from(Job.class);
 
+			MostAppliedJobListItem.select(cq, cb, root);
+
+			return cq;
+		};
+	}
+}

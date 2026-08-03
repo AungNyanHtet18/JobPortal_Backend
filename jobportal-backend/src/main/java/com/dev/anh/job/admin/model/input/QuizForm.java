@@ -19,7 +19,7 @@ public record QuizForm(
 	@NotNull(message = "Please fill passing score for quiz.")
 	Integer passingScore,
 	@NotEmpty(message = "Please select at least one quiz.")
-	List<@Valid InterviewQuizQuestionForm> interviewQuizQuestionForms) {
+	List<@Valid InterviewQuizQuestionForm> interviewQuizQuestions) {
 
 	public Quiz entity(Account account, Career career) {
 		var quiz = new Quiz();

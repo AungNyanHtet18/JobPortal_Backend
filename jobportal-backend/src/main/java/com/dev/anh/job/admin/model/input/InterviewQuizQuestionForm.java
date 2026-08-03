@@ -21,7 +21,7 @@ public record InterviewQuizQuestionForm(
 	@Min(value = 1, message = "Marks must be greater than 0.")
 	Integer marks,
 	@NotEmpty(message = "Please select at least one quiz option.")
-	List<@Valid InterviewQuizOptionForm> interviewQuizOptionForms) {
+	List<@Valid InterviewQuizOptionForm> interviewQuizOptions) {
 
 	public static QuizQuestion entity(Quiz quiz, InterviewQuizQuestionForm form) {
 		var quizQuestion = new QuizQuestion(); 

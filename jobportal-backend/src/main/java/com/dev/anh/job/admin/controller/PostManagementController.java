@@ -35,6 +35,4 @@ public class PostManagementController {
 	ModificationResult<String> deletePost(@PathVariable Long id) {
 		 return postManagementService.deletePost(id);
 	}
-	
-	
 }
