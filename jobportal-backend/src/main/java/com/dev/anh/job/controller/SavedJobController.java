@@ -32,7 +32,6 @@ public class SavedJobController {
 		return savedJobService.unsavedJob(username, jobId);
 	}
 	
-	
 	@GetMapping("savedjoblist")
 	ModificationResult<List<SavedJobListItem>> savedJobList() {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();

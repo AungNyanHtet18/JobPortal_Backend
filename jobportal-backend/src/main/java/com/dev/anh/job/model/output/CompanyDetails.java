@@ -19,7 +19,7 @@ public record CompanyDetails(
 	List<UploadedJob> uploadedJob){
 
 	public static CompanyDetails from(Company entity) {
-		var uploadedJob = entity.getJobs().stream().map(UploadedJob::from).toList();		
+		var uploadedJobs = entity.getJobs().stream().map(UploadedJob::from).toList();		
 		return new CompanyDetails(
 				    entity.getId(),
 					entity.getAccount().getName(), 
@@ -31,7 +31,7 @@ public record CompanyDetails(
 					entity.getDescription(),
 					entity.getProfilePhoto(),
 					entity.getJobs().size(),				
-					uploadedJob);
+					uploadedJobs);
 	}
 
 }

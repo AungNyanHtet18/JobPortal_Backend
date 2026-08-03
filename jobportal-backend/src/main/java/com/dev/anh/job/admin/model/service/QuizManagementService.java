@@ -10,6 +10,7 @@ import com.dev.anh.job.admin.model.input.InterviewQuizOptionForm;
 import com.dev.anh.job.admin.model.input.InterviewQuizQuestionForm;
 import com.dev.anh.job.admin.model.input.QuizForm;
 import com.dev.anh.job.admin.model.input.QuizSearch;
+import com.dev.anh.job.admin.model.output.QuizDetails;
 import com.dev.anh.job.admin.model.output.QuizListItem;
 import com.dev.anh.job.model.entity.QuestionOption;
 import com.dev.anh.job.model.entity.QuizQuestion;
@@ -37,6 +38,11 @@ public class QuizManagementService {
 
 	public PageResult<QuizListItem> searchQuiz(QuizSearch quizSearch, int page, int size) {
 		return quizRepo.search(queryFunc(quizSearch), countFunc(quizSearch), page, size);
+	}
+	
+	public QuizDetails findById(Long id) {
+		return quizRepo.findById(id).map(QuizDetails::from)
+				 .orElseThrow(() -> new BusinessException("Quiz with %d is not found".formatted(id)));
 	}
 
 	@Transactional
@@ -100,6 +106,12 @@ public class QuizManagementService {
 		return new ModificationResult<Long>(id);
 	}
 
+	@Transactional
+	public ModificationResult<String> deletePost(Long id) {
+		quizRepo.deleteById(id);
+		return new ModificationResult<String>("You successfully deleted quiz.");
+	}
+	
 	private Function<CriteriaBuilder, CriteriaQuery<QuizListItem>> queryFunc(QuizSearch quizSearch) {
 		return cb -> {
 			var cq = cb.createQuery(QuizListItem.class);

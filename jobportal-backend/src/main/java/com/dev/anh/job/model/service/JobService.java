@@ -69,7 +69,7 @@ public class JobService {
 	}
 
 	public JobDetails findById(Long id) {
-		return jobRepo.findById(id).map(a -> JobDetails.from(a))
+		return jobRepo.findById(id).map(JobDetails::from)
 				.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
 	}
 

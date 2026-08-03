@@ -3,6 +3,7 @@ package com.dev.anh.job.admin.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.dev.anh.job.admin.model.input.QuizForm;
 import com.dev.anh.job.admin.model.input.QuizSearch;
+import com.dev.anh.job.admin.model.output.QuizDetails;
 import com.dev.anh.job.admin.model.output.QuizListItem;
 import com.dev.anh.job.admin.model.service.QuizManagementService;
 import com.dev.anh.job.model.output.ModificationResult;
@@ -35,6 +37,11 @@ public class QuizManagementController {
 		return quizManagementService.searchQuiz(quizSearch, page, size);
 	}
 
+	@GetMapping("quiz/{id}")
+	QuizDetails findQuizById(@PathVariable Long id) {
+		return quizManagementService.findById(id);
+	}
+
 	@PostMapping("quiz")
 	ModificationResult<Long> createQuiz(@RequestBody @Validated QuizForm form) {
 		var username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -44,5 +51,10 @@ public class QuizManagementController {
 	@PutMapping("quiz/{id}")
 	ModificationResult<Long> updateQuiz(@PathVariable Long id, @RequestBody @Validated QuizForm form) {
 		return quizManagementService.updateQuiz(id, form);
+	}
+
+	@DeleteMapping("quiz/{id}")
+	ModificationResult<String> deleteQuiz(@PathVariable Long id) {
+		return quizManagementService.deletePost(id);
 	}
 }

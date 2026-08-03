@@ -40,7 +40,7 @@ public class JobController {
 	}
 	
 	@GetMapping("{id}")
-	JobDetails findById(@PathVariable Long id) {
+	JobDetails findJobById(@PathVariable Long id) {
 		return jobService.findById(id);
 	}
 	
