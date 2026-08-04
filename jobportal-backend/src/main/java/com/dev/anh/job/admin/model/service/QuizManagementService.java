@@ -10,7 +10,6 @@ import com.dev.anh.job.admin.model.input.InterviewQuizOptionForm;
 import com.dev.anh.job.admin.model.input.InterviewQuizQuestionForm;
 import com.dev.anh.job.admin.model.input.QuizForm;
 import com.dev.anh.job.admin.model.input.QuizSearch;
-import com.dev.anh.job.admin.model.output.QuizDetails;
 import com.dev.anh.job.admin.model.output.QuizListItem;
 import com.dev.anh.job.model.entity.QuestionOption;
 import com.dev.anh.job.model.entity.QuizQuestion;
@@ -21,7 +20,6 @@ import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.CareerRepo;
 import com.dev.anh.job.model.repo.QuizRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.JoinType;
@@ -40,11 +38,6 @@ public class QuizManagementService {
 		return quizRepo.search(queryFunc(quizSearch), countFunc(quizSearch), page, size);
 	}
 	
-	public QuizDetails findById(Long id) {
-		return quizRepo.findById(id).map(QuizDetails::from)
-				 .orElseThrow(() -> new BusinessException("Quiz with %d is not found".formatted(id)));
-	}
-
 	@Transactional
 	@PreAuthorize("hasAuthority('Admin') and #username eq authentication.name")
 	public ModificationResult<Long> createQuiz(String username, QuizForm form) {

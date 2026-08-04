@@ -1,4 +1,4 @@
-package com.dev.anh.job.admin.model.output;
+package com.dev.anh.job.model.output;
 
 import java.util.List;
 

@@ -45,6 +45,7 @@ public class JobportalSecurityConfig {
 			 request.requestMatchers("/job/**").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
 			 request.requestMatchers("/post/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/apply/**").hasAnyAuthority("Applicant", "CompanyAccount");
+			 request.requestMatchers("/quiz/**").hasAnyAuthority("Admin","Applicant");
 			 request.anyRequest().authenticated();
 		 });
 

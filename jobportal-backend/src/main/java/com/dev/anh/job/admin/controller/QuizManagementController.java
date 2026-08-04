@@ -14,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.dev.anh.job.admin.model.input.QuizForm;
 import com.dev.anh.job.admin.model.input.QuizSearch;
-import com.dev.anh.job.admin.model.output.QuizDetails;
 import com.dev.anh.job.admin.model.output.QuizListItem;
 import com.dev.anh.job.admin.model.service.QuizManagementService;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,11 +33,6 @@ public class QuizManagementController {
 			@RequestParam(required = false, defaultValue = "0") int page,
 			@RequestParam(required = false, defaultValue = "10") int size) {
 		return quizManagementService.searchQuiz(quizSearch, page, size);
-	}
-
-	@GetMapping("quiz/{id}")
-	QuizDetails findQuizById(@PathVariable Long id) {
-		return quizManagementService.findById(id);
 	}
 
 	@PostMapping("quiz")
