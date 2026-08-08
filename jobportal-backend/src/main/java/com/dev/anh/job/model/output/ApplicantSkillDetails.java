@@ -8,10 +8,7 @@ public record ApplicantSkillDetails(
 	String skillName) {
 
 	public static ApplicantSkillDetails from(Skill skill) {
-		 return new ApplicantSkillDetails(
-				 skill.getSkillType(), 
-				 skill.getSkillName());
-	
+		 return new ApplicantSkillDetails(skill.getSkillType(), skill.getSkillName());
 	}
 	
 }

@@ -30,7 +30,7 @@ public class JobApplyDashboardService {
 	public PageResult<ApplicationListItem> searchApplications(ApplicationSearch applicationSearch, int page, int size) {
 		return jobApplyRepo.search(queryFunc(applicationSearch), countFunc(applicationSearch), page, size);
 	}
-
+	
 	public List<MostAppliedJobListItem> getMostAppliedJobs() {
 		return jobRepo.search(queryFuncForMostAppliedJobList(), 5);
 	}

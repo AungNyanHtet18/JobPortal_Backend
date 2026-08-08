@@ -56,7 +56,6 @@ public class JobportalSecurityConfig {
 			exception.accessDeniedHandler(securityExceptionHandler()); 
 		 });
 		 
-		 
 		 return http.build();
 	}
 	
@@ -69,7 +68,6 @@ public class JobportalSecurityConfig {
 	JwtTokenFilter jwtTokenFilter() {
 		 return new JwtTokenFilter();
 	}
-	
 	
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
