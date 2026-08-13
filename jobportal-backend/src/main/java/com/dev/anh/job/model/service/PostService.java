@@ -55,7 +55,7 @@ public class PostService {
 	public ModificationResult<Long> createPost(String username, PostForm form, MultipartFile file) {
 
 		var account = accountRepo.findOneByEmail(username)
-				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Account with username: %s is not found".formatted(username)));
 
 		var post = new Post();
 
@@ -76,7 +76,7 @@ public class PostService {
 	public ModificationResult<Long> updatePost(String username, Long id, PostForm form, MultipartFile file) {
 
 		var post = postRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Post ID: %d is not found".formatted(id)));
 
 		post.setContent(form.content());
 

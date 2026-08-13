@@ -2,7 +2,6 @@ package com.dev.anh.job.model.service;
 
 import java.util.List;
 import java.util.function.Function;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.dev.anh.job.model.entity.QuestionOption;
@@ -37,7 +36,7 @@ public class QuizService {
 	public ModificationResult<Integer> answerQuiz(QuizAnswerForm form) {
 
 		var quiz = quizRepo.findById(form.quizId())
-				.orElseThrow(() -> new BusinessException("Quiz Id with %d was not found".formatted(form.quizId())));
+				.orElseThrow(() -> new BusinessException("Quiz ID: %d was not found".formatted(form.quizId())));
 
 		List<QuizQuestion> quizQuestions = quiz.getQuizQuestions();
 
@@ -72,7 +71,7 @@ public class QuizService {
 
 	public QuizDetails findByQuizId(Long id) {
 		return quizRepo.findById(id).map(QuizDetails::from)
-				.orElseThrow(() -> new BusinessException("Quiz with %d is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Quiz ID: %d is not found".formatted(id)));
 	}
 	
 	private Function<CriteriaBuilder, CriteriaQuery<QuizTitleListItem>> queryFunc() {

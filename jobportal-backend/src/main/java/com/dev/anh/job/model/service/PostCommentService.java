@@ -12,8 +12,6 @@ import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.PostCommentRepo;
 import com.dev.anh.job.model.repo.PostRepo;
 import com.dev.anh.job.utils.exception.BusinessException;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,14 +24,13 @@ public class PostCommentService {
 	private final PostCommentRepo postCommentRepo;
 
 	@Transactional
-	public ModificationResult<Long> createCommentPost(String username,
-			@NotNull(message = "Post Id is required") Long postId, PostCommentForm form) {
+	public ModificationResult<Long> createCommentPost(String username, Long postId, PostCommentForm form) {
 
 		var account = accountRepo.findOneByEmail(username)
 				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
 
 		var post = postRepo.findById(postId)
-				.orElseThrow(() -> new BusinessException("Post with %d is not found".formatted(postId)));
+				.orElseThrow(() -> new BusinessException("Post with ID: %d is not found".formatted(postId)));
 
 		var postComment = new PostComment();
 		postComment.setAccount(account);

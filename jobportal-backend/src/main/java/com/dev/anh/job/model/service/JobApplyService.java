@@ -48,7 +48,7 @@ public class JobApplyService {
 	@PreAuthorize("hasAuthority('CompanyAccount')")
 	public ModificationResult<Long> updateApplicationStatus(long jobId, ApplicationStatusForm form) {
 		var jobApply = jobApplyRepo.findByApplicantIdandJobId(form.applicantId(), jobId)
-				.orElseThrow(() -> new BusinessException("The applied job Id with %s is not found".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("Applied Job Id: %s is not found".formatted(jobId)));
 		jobApply.setNote(form.note());
 		jobApply.setStatus(form.status());
 
@@ -68,7 +68,7 @@ public class JobApplyService {
 	public ModificationResult<List<ApplicantAppliedJobListItem>> checkingAppliedJobList(String username) {
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("Username %s  is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Username: %s is not found".formatted(username)));
 		var appliedJobList = jobRepo.search(queryFuncForJobList(applicant.getId()));
 
 		return new ModificationResult<List<ApplicantAppliedJobListItem>>(appliedJobList);
@@ -79,9 +79,9 @@ public class JobApplyService {
 	public ModificationResult<String> applyJob(String username, long jobId) {
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("Username %s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Applicant with username: %s is not found".formatted(username)));
 		var job = jobRepo.findById(jobId)
-				.orElseThrow(() -> new BusinessException("Job with %s id  is not found".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("Job ID: %s is not found".formatted(jobId)));
 
 		var jobApplyPk = new JobApplyPk(applicant.getId(), job.getId());
 		var jobApply = new JobApply();
@@ -101,10 +101,10 @@ public class JobApplyService {
 	public ModificationResult<String> cancelJob(String username, long jobId) {
 
 		var jobApply = jobApplyRepo.findOneByApplicantandJob(username, jobId)
-				.orElseThrow(() -> new BusinessException("Job with %s id  is not found".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("Job ID: %s is not found".formatted(jobId)));
 		jobApplyRepo.delete(jobApply);
 
-		return new ModificationResult<String>("You cancelled applied job");
+		return new ModificationResult<String>("You cancelled the applied job");
 	}
 
 	private Function<CriteriaBuilder, CriteriaQuery<JobApplicationListItem>> queryFuncForApplicantList(Long jobId) {

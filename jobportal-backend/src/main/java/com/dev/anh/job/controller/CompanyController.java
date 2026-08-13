@@ -24,11 +24,6 @@ public class CompanyController {
 
 	private final CompanyService companyService;
 	
-	@GetMapping("id/{id}")
-	CompanyDetails findByCompanyId(@PathVariable Long id) {
-		 return companyService.findByCompanyId(id);
-	}
-	
 	@GetMapping("{email}")
 	CompanyDetails findByCompanyName(@PathVariable String email) {
 		 return companyService.findByCompanyName(email);

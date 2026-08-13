@@ -36,11 +36,13 @@ import com.dev.anh.job.model.input.ExperienceForm;
 import com.dev.anh.job.model.input.SocialLinkForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
+import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.model.repo.CareerRepo;
+import com.dev.anh.job.model.repo.CompanyRepo;
 import com.dev.anh.job.model.repo.EducationRepo;
 import com.dev.anh.job.model.repo.ExperienceRepo;
 import com.dev.anh.job.model.repo.LanguageRepo;
@@ -60,6 +62,7 @@ import lombok.RequiredArgsConstructor;
 public class ApplicantService {
 
 	private final AccountRepo accountRepo;
+	private final CompanyRepo companyRepo;
 	private final ApplicantRepo applicantRepo;
 	private final ExperienceRepo experienceRepo;
 	private final SocialLinkRepo socialLinkRepo;
@@ -79,7 +82,12 @@ public class ApplicantService {
 
 	public ApplicantDetails findByApplicantId(Long id) {
 		return applicantRepo.findById(id).map(ApplicantDetails::from)
-				.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
+			   .orElseThrow(() -> new BusinessException("Applicant ID: %d was not found".formatted(id)));
+	}
+	
+	public CompanyDetails findByCompanyId(Long id) {
+		return companyRepo.findById(id).map(CompanyDetails::from)
+				.orElseThrow(() -> new BusinessException("Company ID: %d was not found".formatted(id)));
 	}
 
 	public ApplicantDetails findByApplicantName(String email) {
@@ -91,7 +99,7 @@ public class ApplicantService {
 	public ModificationResult<Long> createApplicant(String username, ApplicantForm form, MultipartFile file) {
 
 		var account = accountRepo.findOneByEmail(username)
-				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Account with username: %s is not found".formatted(username)));
 
 		// Specify active is true to display applicant profile
 		account.setRoleStatus(true);
@@ -169,10 +177,10 @@ public class ApplicantService {
 	public ModificationResult<Long> updateApplicant(Long id, ApplicantForm form, MultipartFile file) {
 
 		var account = accountRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Account with ID %d was not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Account ID: %d is not found".formatted(id)));
 
 		var applicant = applicantRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Applicant with ID %d was not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Applicant ID: %d is not found".formatted(id)));
 
 		if (StringUtils.hasLength(form.applicantName())) {
 			account.setName(form.applicantName());
@@ -259,7 +267,7 @@ public class ApplicantService {
 		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); // validating file
 
 		var applicant = applicantRepo.findByEmail(username).orElseThrow(
-				() -> new BusinessException("Firstly,fill applicant infomation before uploading profile image "));
+				() -> new BusinessException("Firstly, fill applicant infomation before uploading profile image."));
 
 		try {
 			var profileImageName = fileProvider.saveFile(uploadPath, applicant.getAccount().getEmail(), file);
@@ -282,7 +290,7 @@ public class ApplicantService {
 		fileProvider.validateFile(file, Set.of("pdf", "doc", "docx"));
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("%s is not found.".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Applicant with username: %s is not found.".formatted(username)));
 
 		try {
 			var resumeName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
@@ -296,10 +304,10 @@ public class ApplicantService {
 			Files.copy(file.getInputStream(), resumePath, StandardCopyOption.REPLACE_EXISTING);
 			applicant.setResume(resumeName);
 
-			return new ModificationResult<String>("Resume is upload successfully" + resumeName);
+			return new ModificationResult<String>("Resume is upload successfully." + resumeName);
 
 		} catch (IOException e) {
-			throw new FileInvalidException("Resume upload failed", e);
+			throw new FileInvalidException("Uploading Resume failed.", e);
 		}
 
 	}
@@ -313,7 +321,7 @@ public class ApplicantService {
 		fileProvider.validateFile(file, Set.of("pdf", "doc", "docx"));
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Applicant with username: %s is not found.".formatted(username)));
 
 		try {
 			var cvFormName = fileProvider.generateFileName(applicant.getAccount().getEmail(), file);
@@ -326,17 +334,17 @@ public class ApplicantService {
 			Files.copy(file.getInputStream(), cvFormPath, StandardCopyOption.REPLACE_EXISTING);
 			applicant.setCvForm(cvFormName);
 
-			return new ModificationResult<String>("CV Form is sucessfully uploaded");
+			return new ModificationResult<String>("CV Form is sucessfully uploaded.");
 
 		} catch (IOException e) {
-			throw new FileInvalidException("CV Form upload failed", e);
+			throw new FileInvalidException("Uploading CV Form failed.", e);
 		}
 
 	}
 
 	public ResponseEntity<Resource> downloadApplicantResume(Long id) throws IOException {
 		var applicant = applicantRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Applicant ID: %id is not found".formatted(id)));
 
 		var filePath = Path.of("C:/upload/resume", applicant.getResume());
 		var contentType = Files.probeContentType(filePath);
@@ -354,7 +362,7 @@ public class ApplicantService {
 
 	public ResponseEntity<Resource> downloadApplicantCvForm(Long id) throws IOException {
 		var applicant = applicantRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Applicant with %id is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Applicant ID: %id is not found".formatted(id)));
 
 		var filePath = Path.of("C:/upload/cvform", applicant.getCvForm());
 		var contentType = Files.probeContentType(filePath);

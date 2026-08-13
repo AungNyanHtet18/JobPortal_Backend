@@ -67,11 +67,10 @@ public class TokenService {
 						   jwtTokenProvider.generateRefreshToken(authentication));
 	}
 	
-	
 	private void checkingEmail(String email) {
 		accountRepo.findOneByEmail(email)
 			.ifPresent((a) -> { 
-				throw new BusinessException("%s account exisited.Choose another gmail".formatted(a.getEmail()));
+				throw new BusinessException("%s account already existed.Choose another gmail account".formatted(a.getEmail()));
 			});
 	}
 	

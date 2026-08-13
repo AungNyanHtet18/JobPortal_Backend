@@ -31,11 +31,6 @@ public class CompanyService {
 	@Value("${app.upload.path}")
 	private String uploadPath;
 
-	public CompanyDetails findByCompanyId(Long id) {
-		return companyRepo.findById(id).map(CompanyDetails::from)
-				.orElseThrow(() -> new BusinessException("Applicant with %d is not found".formatted(id)));
-	}
-
 	public CompanyDetails findByCompanyName(String email) {
 		return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
 	}
@@ -45,7 +40,7 @@ public class CompanyService {
 	public ModificationResult<Long> createCompany(String username, CompanyForm form, MultipartFile file) {
 
 		var account = accountRepo.findOneByEmail(username)
-				.orElseThrow(() -> new BusinessException("Account with %s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Account with username: %s is not found".formatted(username)));
 
 		// Specify active is true in order to display applicant profile
 		account.setRoleStatus(true);
@@ -69,10 +64,10 @@ public class CompanyService {
 	public ModificationResult<Long> updateCompany(Long id, CompanyForm form, MultipartFile file) {
 
 		var account = accountRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Account with %s id is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Account with ID: %d is not found".formatted(id)));
 
 		var company = companyRepo.findById(id)
-				.orElseThrow(() -> new BusinessException("Company with %s id is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Company with ID: %d is not found".formatted(id)));
 
 		if (StringUtils.hasLength(form.companyName())) {
 			account.setName(form.companyName());
@@ -100,7 +95,7 @@ public class CompanyService {
 		fileProvider.validateFile(file, Set.of("png", "jpg", "jpeg")); // validating file
 
 		var company = companyRepo.findByEmail(username).orElseThrow(
-				() -> new BusinessException("Firstly,fill company information before uploading profile image "));
+				() -> new BusinessException("Firstly, fill company information before uploading profile image "));
 
 		try {
 			var profileImageName = fileProvider.saveFile(uploadPath, company.getAccount().getEmail(), file);

@@ -29,9 +29,9 @@ public class SavedJobService {
 	public ModificationResult<Long> savedJob(String username, Long jobId) {
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("%s is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Applicant ID: %s is not found".formatted(username)));
 		var job = jobRepo.findById(jobId)
-				.orElseThrow(() -> new BusinessException("Job with %d id is not found".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("Job ID: %d is not found".formatted(jobId)));
 
 		var savedJobPk = new SavedJobPk(applicant.getId(), job.getId());
 		var savedJob = new SavedJob();
@@ -50,7 +50,7 @@ public class SavedJobService {
 	@PreAuthorize("#username eq authentication.name")
 	public ModificationResult<Long> unsavedJob(String username, Long jobId) {
 		var savedJob = savedJobRepo.findOneByApplicantandJob(username, jobId)
-				.orElseThrow(() -> new BusinessException("No job found with ID %d.".formatted(jobId)));
+				.orElseThrow(() -> new BusinessException("Job ID: %d is not found.".formatted(jobId)));
 		savedJob.setSavedJob(false);
 		savedJobRepo.save(savedJob);
 
@@ -61,7 +61,7 @@ public class SavedJobService {
 	public ModificationResult<List<SavedJobListItem>> savedJobList(String username) {
 
 		var applicant = applicantRepo.findByEmail(username)
-				.orElseThrow(() -> new BusinessException("%s  is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Applicant ID: %s is not found".formatted(username)));
 		var savedJobLists = savedJobRepo.findJobIdsByApplicantandSavedJob(applicant.getId(), true).stream()
 				.map(a -> new SavedJobListItem(a)).toList();
 

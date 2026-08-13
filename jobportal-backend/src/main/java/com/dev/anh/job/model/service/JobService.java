@@ -70,7 +70,7 @@ public class JobService {
 
 	public JobDetails findById(Long id) {
 		return jobRepo.findById(id).map(JobDetails::from)
-				.orElseThrow(() -> new BusinessException("Job with %d is not found".formatted(id)));
+				.orElseThrow(() -> new BusinessException("Job ID: %d is not found".formatted(id)));
 	}
 
 	public List<JobDetails> findByCompanyId(Long companyId) {
@@ -82,7 +82,7 @@ public class JobService {
 	public ModificationResult<Long> createJob(String username, JobForm form) {
 
 		var company = companyRepo.findOneByCompanyName(username)
-				.orElseThrow(() -> new BusinessException("%s name is not found".formatted(username)));
+				.orElseThrow(() -> new BusinessException("Company with username: %s is not found".formatted(username)));
 		var career = careerRepo.findOneByRoleName(form.positionName()).orElseGet(() -> {
 			var newCareer = new Career();
 			newCareer.setRoleName(form.positionName());
