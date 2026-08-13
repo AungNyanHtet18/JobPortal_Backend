@@ -22,7 +22,6 @@ import com.dev.anh.job.model.input.ApplicantForm;
 import com.dev.anh.job.model.input.ApplicantSearch;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
-import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.service.ApplicantService;
@@ -47,12 +46,7 @@ public class ApplicantController {
 	ApplicantDetails findByApplicantId(@PathVariable Long id) {
 		 return applicantService.findByApplicantId(id);
 	}
-	
-	@GetMapping("companyId/{id}")
-	CompanyDetails findByCompanyId(@PathVariable Long id) {
-		 return applicantService.findByCompanyId(id);
-	}
-	
+		
 	@GetMapping("{email}")
     ApplicantDetails findByApplicantName(@PathVariable String email) {
 		return applicantService.findByApplicantName(email);

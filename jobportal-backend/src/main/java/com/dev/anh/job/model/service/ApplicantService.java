@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.dev.anh.job.model.entity.Applicant;
 import com.dev.anh.job.model.entity.Applicant_;
 import com.dev.anh.job.model.entity.Career;
@@ -36,13 +35,11 @@ import com.dev.anh.job.model.input.ExperienceForm;
 import com.dev.anh.job.model.input.SocialLinkForm;
 import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
-import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.model.repo.CareerRepo;
-import com.dev.anh.job.model.repo.CompanyRepo;
 import com.dev.anh.job.model.repo.EducationRepo;
 import com.dev.anh.job.model.repo.ExperienceRepo;
 import com.dev.anh.job.model.repo.LanguageRepo;
@@ -51,7 +48,6 @@ import com.dev.anh.job.model.repo.SocialLinkRepo;
 import com.dev.anh.job.utils.FileProvider;
 import com.dev.anh.job.utils.exception.BusinessException;
 import com.dev.anh.job.utils.exception.FileInvalidException;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +58,6 @@ import lombok.RequiredArgsConstructor;
 public class ApplicantService {
 
 	private final AccountRepo accountRepo;
-	private final CompanyRepo companyRepo;
 	private final ApplicantRepo applicantRepo;
 	private final ExperienceRepo experienceRepo;
 	private final SocialLinkRepo socialLinkRepo;
@@ -85,11 +80,6 @@ public class ApplicantService {
 			   .orElseThrow(() -> new BusinessException("Applicant ID: %d was not found".formatted(id)));
 	}
 	
-	public CompanyDetails findByCompanyId(Long id) {
-		return companyRepo.findById(id).map(CompanyDetails::from)
-				.orElseThrow(() -> new BusinessException("Company ID: %d was not found".formatted(id)));
-	}
-
 	public ApplicantDetails findByApplicantName(String email) {
 		return applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
 	}

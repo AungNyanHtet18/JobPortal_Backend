@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -39,6 +40,7 @@ public class JobportalSecurityConfig {
 		 http.authorizeHttpRequests(request -> { 
 			 request.requestMatchers("/token/**", "/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
+			 request.requestMatchers(HttpMethod.GET, "/company/companyId/{id}").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
 			 request.requestMatchers("/company/**").hasAnyAuthority("Admin", "CompanyAccount");
 			 request.requestMatchers("/account/**").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
 			 request.requestMatchers("/applicant/**").hasAnyAuthority("Admin","Applicant", "CompanyAccount");

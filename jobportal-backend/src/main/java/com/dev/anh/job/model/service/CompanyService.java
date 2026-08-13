@@ -30,6 +30,11 @@ public class CompanyService {
 
 	@Value("${app.upload.path}")
 	private String uploadPath;
+	
+	public CompanyDetails findByCompanyId(Long id) {
+		return companyRepo.findById(id).map(CompanyDetails::from)
+				.orElseThrow(() -> new BusinessException("Company ID: %d was not found".formatted(id)));
+	}
 
 	public CompanyDetails findByCompanyName(String email) {
 		return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
