@@ -12,4 +12,6 @@ public interface ApplicantRepo extends BaseRepository<Applicant, Long>{
 	@Query("SELECT a FROM Applicant a JOIN a.account c WHERE c.email =:email")
 	Optional<Applicant> findByEmail(@Param("email") String email);
 	
+	@Query("SELECT a.id FROM Applicant a JOIN a.account c WHERE c.email =:email")
+	Optional<Long> findIdByAccountEmail(String email);
 }

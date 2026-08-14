@@ -37,6 +37,7 @@ import com.dev.anh.job.model.output.ApplicantDetails;
 import com.dev.anh.job.model.output.ApplicantListItem;
 import com.dev.anh.job.model.output.ModificationResult;
 import com.dev.anh.job.model.output.PageResult;
+import com.dev.anh.job.model.repo.AccountFollowRepo;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ApplicantRepo;
 import com.dev.anh.job.model.repo.CareerRepo;
@@ -65,6 +66,7 @@ public class ApplicantService {
 	private final CareerRepo careerRepo;
 	private final SkillRepo skillRepo;
 	private final LanguageRepo languageRepo;
+	private final AccountFollowRepo accountFollowRepo;
 
 	private final FileProvider fileProvider;
 
@@ -76,12 +78,22 @@ public class ApplicantService {
 	}
 
 	public ApplicantDetails findByApplicantId(Long id) {
-		return applicantRepo.findById(id).map(ApplicantDetails::from)
+		var followerCount = accountFollowRepo.countByFollowerId(id);
+		var followingCount = accountFollowRepo.countByFollowingId(id);
+		return applicantRepo.findById(id).map(applicant -> ApplicantDetails.from(applicant, followerCount, followingCount))
 			   .orElseThrow(() -> new BusinessException("Applicant ID: %d was not found".formatted(id)));
 	}
 	
 	public ApplicantDetails findByApplicantName(String email) {
-		return applicantRepo.findByEmail(email).map(ApplicantDetails::from).orElse(null);
+		var applicant = applicantRepo.findByEmail(email).orElseThrow(() -> new BusinessException("Applicant Username: %s is not found".formatted(email)));
+		var followerCount = accountFollowRepo.countByFollowerId(applicant.getId());
+		var followingCount = accountFollowRepo.countByFollowingId(applicant.getId());
+		return ApplicantDetails.from(applicant, followerCount, followingCount);
+	}
+	
+	public ModificationResult<Long> findApplicantExists(String email) {
+		var applicantId = applicantRepo.findIdByAccountEmail(email).orElse(0L);
+		return new ModificationResult<Long>(applicantId);  
 	}
 
 	@Transactional

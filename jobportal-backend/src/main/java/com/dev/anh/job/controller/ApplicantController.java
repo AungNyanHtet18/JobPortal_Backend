@@ -52,6 +52,11 @@ public class ApplicantController {
 		return applicantService.findByApplicantName(email);
 	}
 	
+	@GetMapping("applicantExists/{email}")
+	ModificationResult<Long> findApplicantExists(@PathVariable String email) {
+		return applicantService.findApplicantExists(email);
+	}
+	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ModificationResult<Long> createApplicant(
 				    @RequestPart("form") @Validated ApplicantForm form,  
@@ -92,4 +97,6 @@ public class ApplicantController {
 	ResponseEntity<Resource>  downloadApplicantCvForm(@PathVariable Long id) throws IOException {
 		return applicantService.downloadApplicantCvForm(id);
 	}
+	
+	
 }

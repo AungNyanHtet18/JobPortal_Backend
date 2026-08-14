@@ -1,15 +1,18 @@
 package com.dev.anh.job.model.entity;
 
 import java.time.LocalDateTime;
-
+import java.util.HashSet;
+import java.util.Set;
 import com.dev.anh.job.model.consts.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
@@ -48,4 +51,10 @@ public class Account extends AbstractEntity{
 	private Company company;
 	
 	private LocalDateTime activatedAt;
+	
+	@OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
+	private Set<AccountFollow> following = new HashSet<>();
+
+	@OneToMany(mappedBy = "following", fetch = FetchType.LAZY)
+	private Set<AccountFollow> followers = new HashSet<>();
 }

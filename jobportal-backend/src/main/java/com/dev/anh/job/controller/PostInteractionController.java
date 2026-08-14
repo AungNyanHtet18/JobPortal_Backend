@@ -30,5 +30,4 @@ public class PostInteractionController {
 	    var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
 	    return postInteractionService.unreactPost(username, postId);
 	}
-	
 }

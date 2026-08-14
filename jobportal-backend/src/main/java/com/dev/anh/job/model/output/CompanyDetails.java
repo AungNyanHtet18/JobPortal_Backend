@@ -9,6 +9,8 @@ public record CompanyDetails(
 	Long id,
 	String companyName,
 	String companyEmail,
+	Long followerCount,
+	Long followingCount,
 	IndustryType industryType,
 	String location,
 	String phone,
@@ -18,12 +20,14 @@ public record CompanyDetails(
 	Integer totalPostedJobs,
 	List<UploadedJob> uploadedJob){
 
-	public static CompanyDetails from(Company entity) {
+	public static CompanyDetails from(Company entity, Long followerCount, Long followingCount) {
 		var uploadedJobs = entity.getJobs().stream().map(UploadedJob::from).toList();		
 		return new CompanyDetails(
 				    entity.getId(),
 					entity.getAccount().getName(), 
 				    entity.getAccount().getEmail(),
+				    followerCount,
+				    followingCount,
 				    entity.getIndustryType(),
 					entity.getLocation(), 
 					entity.getPhone(), 

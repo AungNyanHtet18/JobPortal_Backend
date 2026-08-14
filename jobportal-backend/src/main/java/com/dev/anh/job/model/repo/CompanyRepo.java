@@ -16,4 +16,6 @@ public interface CompanyRepo extends BaseRepository<Company, Long>{
 	@Query("select c from Company c where c.account.email = :email")
 	Optional<Company> findByEmail(@Param("email") String email);
 	
+	@Query("SELECT c.id FROM Company c JOIN c.account a WHERE a.email =:email")
+	Optional<Long> findIdByAccountEmail(String email);
 }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class ExceptionHandlers {
 
@@ -25,16 +27,27 @@ public class ExceptionHandlers {
 	
 	@ExceptionHandler
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	List<String> handle(IllegalStateException e) {
+		 return List.of(e.getMessage());
+	}
+	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.NOT_FOUND)
+	List<String>handle(EntityNotFoundException e) {
+		 return List.of(e.getMessage());
+	}
+	
+	@ExceptionHandler
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	List<String>handle(FileInvalidException e) {
 		 return List.of(e.getMessage());
 	}
 	
 	@ExceptionHandler
 	@ResponseStatus(code = HttpStatus.EXPECTATION_FAILED)
-	List<String>hanlde(EmailInvalidException e) {
+	List<String>handle(EmailInvalidException e) {
 		 return List.of(e.getMessage());
 	}
-	
 	
 	//Handle Invalid Enum Type
 	@ExceptionHandler

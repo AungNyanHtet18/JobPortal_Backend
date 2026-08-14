@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dev.anh.job.model.input.CompanyForm;
 import com.dev.anh.job.model.output.CompanyDetails;
 import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.repo.AccountFollowRepo;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.CompanyRepo;
 import com.dev.anh.job.utils.FileProvider;
@@ -26,18 +27,29 @@ public class CompanyService {
 
 	private final AccountRepo accountRepo;
 	private final CompanyRepo companyRepo;
+	private final AccountFollowRepo accountFollowRepo;
 	private final FileProvider fileProvider;
-
+	
 	@Value("${app.upload.path}")
 	private String uploadPath;
 	
 	public CompanyDetails findByCompanyId(Long id) {
-		return companyRepo.findById(id).map(CompanyDetails::from)
+		long followerCount = accountFollowRepo.countByFollowerId(id);
+		long followingCount = accountFollowRepo.countByFollowingId(id);
+		return companyRepo.findById(id).map(company -> CompanyDetails.from(company, followerCount, followingCount))
 				.orElseThrow(() -> new BusinessException("Company ID: %d was not found".formatted(id)));
 	}
 
 	public CompanyDetails findByCompanyName(String email) {
-		return companyRepo.findByEmail(email).map(CompanyDetails::from).orElse(null);
+		var company = companyRepo.findByEmail(email).orElseThrow(() -> new BusinessException("Company Username: %s is not found".formatted(email)));
+		long followerCount = accountFollowRepo.countByFollowerId(company.getId());
+		long followingCount = accountFollowRepo.countByFollowingId(company.getId());
+		return CompanyDetails.from(company, followerCount, followingCount);
+	}
+	
+	public ModificationResult<Long> findCompanyExists(String email) {
+		var companyId = companyRepo.findIdByAccountEmail(email).orElse(0L);
+		return new ModificationResult<Long>(companyId);
 	}
 
 	@Transactional

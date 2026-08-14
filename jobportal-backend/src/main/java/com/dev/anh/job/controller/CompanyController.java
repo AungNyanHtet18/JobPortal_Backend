@@ -34,6 +34,11 @@ public class CompanyController {
 		 return companyService.findByCompanyName(email);
 	}
 	
+	@GetMapping("companyExists/{email}")
+	ModificationResult<Long> findCompanyExists(@PathVariable String email) {
+		 return companyService.findCompanyExists(email);
+	}
+	
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ModificationResult<Long>createCompany(
 						@RequestPart("form") @Validated CompanyForm form,

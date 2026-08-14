@@ -8,6 +8,8 @@ public record ApplicantDetails(
 	Long id,
 	String name,
 	String email,
+	Long followerCount,
+	Long followingCount,
 	Gender gender,
 	String professionalSummary,
 	String contactDetail,
@@ -22,7 +24,7 @@ public record ApplicantDetails(
 	String resume,
 	String cvForm) {
 
-	public static ApplicantDetails from(Applicant entity) {
+	public static ApplicantDetails from(Applicant entity, Long followerCount, Long followingCount) {
 		var experience = entity.getExperiences().stream().map(ApplicantExperienceDetails:: from).toList();
 		var link = entity.getLinks().stream().map(ApplicantSocialLinkDetails:: from).toList();
 		var education = entity.getEducations().stream().map(ApplicantEducationDetails:: from).toList();
@@ -34,6 +36,8 @@ public record ApplicantDetails(
 				entity.getId(),			
 				entity.getAccount().getName(), 
 				entity.getAccount().getEmail(), 
+				followerCount,
+				followingCount,
 				entity.getGender(),
 				entity.getProfessionalSummary(),
 				entity.getContactDetail(), 
