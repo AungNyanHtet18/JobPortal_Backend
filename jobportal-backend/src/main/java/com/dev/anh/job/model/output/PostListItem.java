@@ -71,18 +71,18 @@ public record PostListItem(
 		}
 
 		cq.multiselect(
-				root.get(Post_.id), 
-				root.get(Post_.content), 
-				root.get(Post_.postPhoto),
-				root.get(Post_.account).get(Account_.id),
-				root.get(Post_.account).get(Account_.name), 
-				root.get(Post_.account).get(Account_.email), 
-				root.get(Post_.account).get(Account_.role),
-				photo,
-				reactionCount, 
-				commentCount, 
-				userReacted, 
-				root.get(Post_.createdAt));
+			root.get(Post_.id), 
+			root.get(Post_.content), 
+			root.get(Post_.postPhoto),
+			root.get(Post_.account).get(Account_.id),
+			root.get(Post_.account).get(Account_.name), 
+			root.get(Post_.account).get(Account_.email), 
+			root.get(Post_.account).get(Account_.role),
+			photo,
+			reactionCount, 
+			commentCount, 
+			userReacted, 
+			root.get(Post_.createdAt));
 
 		// Group By for Join Operations
 		List<Expression<?>> groups = new ArrayList<>();

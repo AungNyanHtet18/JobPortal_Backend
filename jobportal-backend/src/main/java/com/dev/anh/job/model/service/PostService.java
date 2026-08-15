@@ -37,20 +37,6 @@ public class PostService {
 		return postRepo.search(queryFunc(postSearch));
 	}
 
-	private Function<CriteriaBuilder, CriteriaQuery<PostListItem>> queryFunc(PostSearch postSearch) {
-		return cb -> {
-			var cq = cb.createQuery(PostListItem.class);
-			var root = cq.from(Post.class);
-
-			var account = root.join(Post_.account, JoinType.INNER);
-
-			PostListItem.select(account, cq, cb, root, postSearch.username());
-			cq.where(postSearch.where(account, cb, root));
-
-			return cq;
-		};
-	}
-
 	@Transactional
 	public ModificationResult<Long> createPost(String username, PostForm form, MultipartFile file) {
 
@@ -92,5 +78,19 @@ public class PostService {
 	public ModificationResult<String> deletePost(Long id) {
 		postRepo.deleteById(id);
 		return new ModificationResult<String>("You successfully deleted post.");
+	}
+	
+	private Function<CriteriaBuilder, CriteriaQuery<PostListItem>> queryFunc(PostSearch postSearch) {
+		return cb -> {
+			var cq = cb.createQuery(PostListItem.class);
+			var root = cq.from(Post.class);
+
+			var account = root.join(Post_.account, JoinType.INNER);
+
+			PostListItem.select(account, cq, cb, root, postSearch.username());
+			cq.where(postSearch.where(account, cb, root));
+
+			return cq;
+		};
 	}
 }

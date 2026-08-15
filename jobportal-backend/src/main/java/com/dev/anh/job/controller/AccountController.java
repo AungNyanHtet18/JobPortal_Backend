@@ -21,5 +21,4 @@ public class AccountController {
 	ModificationResult<Boolean> checkRoleStatus(@PathVariable String email) {
 		 return accountService.checkRoleStatus(email);
 	}
-	
 }
