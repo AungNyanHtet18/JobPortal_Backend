@@ -29,5 +29,7 @@ public class ChatMessage extends AbstractEntity {
 	
 	@Column(nullable = false)
 	private String content;
+	
+	private boolean read = false;
 		
 }

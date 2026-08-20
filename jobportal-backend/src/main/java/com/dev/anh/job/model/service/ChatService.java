@@ -14,10 +14,13 @@ import com.dev.anh.job.model.entity.ChatMessage;
 import com.dev.anh.job.model.entity.ChatRoom;
 import com.dev.anh.job.model.entity.ChatRoom_;
 import com.dev.anh.job.model.input.ChatMessageForm;
+import com.dev.anh.job.model.input.UnReadMessageSenderRequestList;
 import com.dev.anh.job.model.output.AccountFollowListItem;
 import com.dev.anh.job.model.output.ChatAccountDetail;
 import com.dev.anh.job.model.output.ChatMessageItem;
 import com.dev.anh.job.model.output.ChatRoomAccountListItem;
+import com.dev.anh.job.model.output.ModificationResult;
+import com.dev.anh.job.model.output.UnReadMessageSenderListItem;
 import com.dev.anh.job.model.repo.AccountFollowRepo;
 import com.dev.anh.job.model.repo.AccountRepo;
 import com.dev.anh.job.model.repo.ChatMessageRepo;
@@ -51,6 +54,7 @@ public class ChatService {
 		message.setChatRoom(room);
 		message.setSender(sender);
 		message.setContent(form.content().trim());
+		message.setRead(false);
 
 		var saved = chatMessageRepo.save(message);
 
@@ -137,5 +141,25 @@ public class ChatService {
 		if(sender.getId().equals(recipient.getId())) {
 			throw new BusinessException("You cannot chat with yourself.");
 		}
+	}
+
+	public ModificationResult<List<UnReadMessageSenderListItem>> unReadMessage(String username,
+			List<UnReadMessageSenderRequestList> senderList) {
+		
+		List<UnReadMessageSenderListItem> unReadMessageSenderList = new ArrayList<UnReadMessageSenderListItem>();
+		var recipient = accountService.findAccount(username);
+		
+		senderList.forEach(sender -> { 
+			  chatRoomRepo.findRoomBetween(recipient.getId(), sender.senderId())
+			  		.ifPresent(chatRoom -> {
+			  			var unReadList = chatMessageRepo.findUnReadMessage(chatRoom.getId(), false, sender.senderId());
+			  			
+			  			if(unReadList.size() > 0) {
+			  				 unReadMessageSenderList.add(new UnReadMessageSenderListItem(sender.senderId()));
+			  			};
+			  		});
+		});
+		
+		return new ModificationResult<List<UnReadMessageSenderListItem>>(unReadMessageSenderList);
 	}
 }

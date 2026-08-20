@@ -1,10 +1,8 @@
 package com.dev.anh.job.model.repo;
 
 import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import com.dev.anh.job.model.BaseRepository;
 import com.dev.anh.job.model.entity.ChatMessage;
 import com.dev.anh.job.model.output.ChatMessageItem;
@@ -38,4 +36,13 @@ public interface ChatMessageRepo extends BaseRepository<ChatMessage, Long>{
 		order by m.createdAt asc, m.id asc
 		""")
 	List<ChatMessageItem> findMessagesByRoomId(@Param("roomId") Long roomId);
+
+	@Query("""
+			select m.read 
+			from ChatMessage m
+			where m.chatRoom.id = :roomId and m.read = :read and m.sender.id = :senderId
+			""")
+	List<Boolean> findUnReadMessage(@Param("roomId") Long roomId, @Param("read") boolean read, @Param("senderId") Long senderId);
+
+
 }

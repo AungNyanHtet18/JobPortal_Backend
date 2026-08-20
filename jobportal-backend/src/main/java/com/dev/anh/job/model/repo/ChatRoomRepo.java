@@ -16,4 +16,7 @@ public interface ChatRoomRepo extends BaseRepository<ChatRoom, Long>{
 		   or (c.sender.id = :recipientId and c.recipient.id = :accountId)
 		""")
 	Optional<ChatRoom> findRoomBetween(@Param("accountId") Long accountId, @Param("recipientId") Long recipientId);
+
+	
+	
 }
