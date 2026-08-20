@@ -38,13 +38,14 @@ public class JobportalSecurityConfig {
 		 });
 		 
 		 http.authorizeHttpRequests(request -> { 
-			 request.requestMatchers("/token/**", "/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**").permitAll();
+			 request.requestMatchers("/token/**", "/swagger-ui/**","/v3/api-docs/**","/profile/**","/companyprofile/**","/resume/**","/cv/**","/postphoto/**", "/ws", "/ws/**").permitAll();
 			 request.requestMatchers("/admin/**").hasAuthority("Admin");
 			 request.requestMatchers(HttpMethod.GET, "/company/companyId/{id}").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
 			 request.requestMatchers("/company/**").hasAnyAuthority("Admin", "CompanyAccount");
 			 request.requestMatchers("/account/**").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
 			 request.requestMatchers("/applicant/**").hasAnyAuthority("Admin","Applicant", "CompanyAccount");
 			 request.requestMatchers("/job/**").hasAnyAuthority("Admin", "Applicant", "CompanyAccount");
+			 request.requestMatchers("/chat/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/post/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/apply/**").hasAnyAuthority("Applicant", "CompanyAccount");
 			 request.requestMatchers("/quiz/**").hasAnyAuthority("Admin","Applicant");
@@ -88,7 +89,6 @@ public class JobportalSecurityConfig {
 			    admin.setActive(true);
 			    admin.setRoleStatus(true);
 			    admin.setActivatedAt(LocalDateTime.now());
-			    
 			    repo.save(admin);
 		   }
 		};

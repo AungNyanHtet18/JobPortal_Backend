@@ -14,7 +14,8 @@ import jakarta.persistence.criteria.Root;
 public record AccountFollowListItem(
 	Long accountId,
 	String accountName,
-	String accountPhoto) {
+	String accountPhoto,
+	Role accountRole) {
 
 	public static void select(CriteriaQuery<AccountFollowListItem> cq, CriteriaBuilder cb, Root<AccountFollow> root) {
 		
@@ -30,7 +31,8 @@ public record AccountFollowListItem(
 		cq.multiselect(
 		  following.get(Account_.id),
 		  following.get(Account_.name),
-		  accountPhoto);
+		  accountPhoto,
+		  following.get(Account_.role));
 	}
 
 }
