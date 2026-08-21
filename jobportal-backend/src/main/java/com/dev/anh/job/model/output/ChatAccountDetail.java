@@ -15,11 +15,15 @@ public record ChatAccountDetail(
 		
 		switch(account.getRole()) {
 			case Applicant ->  {
-				accountPhoto = account.getApplicant().getProfilePhoto();
+				if(account.getApplicant() != null) {
+					accountPhoto = account.getApplicant().getProfilePhoto();
+				}
 			}
 			
 			case CompanyAccount -> {
-				accountPhoto = account.getCompany().getProfilePhoto();
+				if(account.getCompany() != null) {
+					accountPhoto = account.getCompany().getProfilePhoto();
+				}
 			}
 			
 			default -> {

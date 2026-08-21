@@ -1,6 +1,8 @@
 package com.dev.anh.job.model.repo;
 
 import java.util.List;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.dev.anh.job.model.BaseRepository;
@@ -40,9 +42,20 @@ public interface ChatMessageRepo extends BaseRepository<ChatMessage, Long>{
 	@Query("""
 			select m.read 
 			from ChatMessage m
-			where m.chatRoom.id = :roomId and m.read = :read and m.sender.id = :senderId
+			where m.chatRoom.id = :roomId and m.sender.id = :senderId and m.read = :read
 			""")
-	List<Boolean> findUnReadMessage(@Param("roomId") Long roomId, @Param("read") boolean read, @Param("senderId") Long senderId);
+	List<Boolean> findUnReadMessage(@Param("roomId") Long roomId, @Param("senderId") Long senderId, @Param("read") boolean read);
 
+	
+	@Modifying
+	@Query("""
+			update ChatMessage m 
+			set m.read = true
+			where m.chatRoom.id = :roomId and m.sender.id = :senderId
+			""")
+	void updateReadMessage(@Param("roomId") Long roomId, @Param("senderId") Long senderId);
+	
+	
 
+	
 }

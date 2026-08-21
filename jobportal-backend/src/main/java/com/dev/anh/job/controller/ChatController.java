@@ -82,8 +82,10 @@ public class ChatController {
 		return chatService.unReadMessage(username, senderList);
 	}
 	
-	
-	
-	
+	@GetMapping("readMessage/{senderId}")
+	ModificationResult<Long> readMessage(@PathVariable @NotNull(message = "Sender Id is required") Long senderId) {
+		var username = SecurityContextHolder.getContext().getAuthentication().getName(); 
+		return chatService.readMessage(username, senderId);
+	}
 	
 }

@@ -152,7 +152,7 @@ public class ChatService {
 		senderList.forEach(sender -> { 
 			  chatRoomRepo.findRoomBetween(recipient.getId(), sender.senderId())
 			  		.ifPresent(chatRoom -> {
-			  			var unReadList = chatMessageRepo.findUnReadMessage(chatRoom.getId(), false, sender.senderId());
+			  			var unReadList = chatMessageRepo.findUnReadMessage(chatRoom.getId(), sender.senderId(), false);
 			  			
 			  			if(unReadList.size() > 0) {
 			  				 unReadMessageSenderList.add(new UnReadMessageSenderListItem(sender.senderId()));
@@ -161,5 +161,17 @@ public class ChatService {
 		});
 		
 		return new ModificationResult<List<UnReadMessageSenderListItem>>(unReadMessageSenderList);
+	}
+	
+	@Transactional
+	public ModificationResult<Long> readMessage(String username, Long senderId) {
+		var recipient = accountService.findAccount(username);
+		var sender = accountService.findAccount(senderId);
+		checkChatAllowed(sender, recipient);
+		
+		chatRoomRepo.findRoomBetween(recipient.getId(), sender.getId())
+			.ifPresent(room -> {chatMessageRepo.updateReadMessage(room.getId(), senderId);});
+							
+		return new ModificationResult<Long>(sender.getId());
 	}
 }
